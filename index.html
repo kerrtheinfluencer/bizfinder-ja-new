@@ -3,44 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BizFinder JA</title>
+  <title>BizFinder JA - File Upload & Advanced Search</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Poppins', Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa, #e0e8f5); color: #333; line-height: 1.6; min-height: 100vh; }
-    header { background: linear-gradient(90deg, #2ecc71, #27ae60); color: #fff; text-align: center; padding: 20px; font-size: 28px; font-weight: bold; text-transform: uppercase; position: relative; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #e0e8f5);
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
     #businessName { cursor: pointer; }
-    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: #fff; color: #2ecc71; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: background 0.3s, transform 0.2s; font-weight: 500; }
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      color: #2ecc71;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 500;
+    }
     #profile-btn { right: 20px; display: none; }
     #login-btn { right: 120px; }
     #signup-btn { right: 220px; }
-    .nav-btn:hover { background: #f8f9fa; transform: translateY(-2px); }
+    .nav-btn:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
     .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-    #search-bar { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; transition: border-color 0.3s; }
-    #search-bar:focus { border-color: #2ecc71; outline: none; }
-    .hot-products { background: linear-gradient(135deg, #ffffff, #f5f7fa); padding: 10px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border-left: 3px solid #2ecc71; display: flex; flex-wrap: wrap; justify-content: space-around; }
-    .hot-products h3 { width: 100%; font-size: 1.2em; color: #2ecc71; margin-bottom: 10px; }
-    .hot-product-item { display: flex; align-items: center; margin: 5px; }
-    .hot-product-item img { width: 40px; height: 40px; margin-right: 8px; border-radius: 4px; }
-    .hot-product-item span { font-size: 0.8em; color: #34495e; }
-    #feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-gap: 20px; }
-    .business-card, .store-page, .profile-page { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); transition: transform 0.3s, box-shadow 0.3s; }
-    .business-card:hover, .store-page:hover, .profile-page:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); }
-    .business-card h3, .store-page h3, .profile-page h3 { margin-bottom: 15px; color: #2ecc71; font-size: 1.5em; }
-    .category { font-style: italic; color: #7f8c8d; margin-bottom: 15px; }
-    .business-card img, .store-page img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
-    .contact a { margin-right: 15px; text-decoration: none; color: #3498db; transition: color 0.3s; }
-    .contact a:hover { color: #2980b9; }
-    .views { font-size: 14px; color: #7f8c8d; margin-top: 10px; }
-    .price { font-weight: bold; color: #e67e22; }
-    button { background: #2ecc71; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; transition: background 0.3s, transform 0.2s; font-weight: 500; }
-    button:hover { background: #27ae60; transform: translateY(-2px); }
-    .loading { text-align: center; padding: 20px; display: none; color: #7f8c8d; }
-    .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 35px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); z-index: 1000; text-align: center; max-width: 500px; width: 90%; display: none; }
-    .modal h2 { color: #2ecc71; margin-bottom: 20px; font-size: 1.8em; }
-    .modal input, .modal select { display: block; width: 100%; margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1em; transition: border-color 0.3s; }
-    .modal input:focus, .modal select:focus { border-color: #2ecc71; outline: none; }
-    .edit-profile-form { margin-top: 10px; }
-    .edit-profile-form input { margin-bottom: 10px; }
+    #search-bar {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+    #search-bar:focus {
+      border-color: #2ecc71;
+      outline: none;
+    }
+    .hot-products {
+      background: linear-gradient(135deg, #ffffff, #f5f7fa);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-left: 3px solid #2ecc71;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .hot-products h3 {
+      width: 100%;
+      font-size: 1.2em;
+      color: #2ecc71;
+      margin-bottom: 10px;
+    }
+    .hot-product-item {
+      display: flex;
+      align-items: center;
+      margin: 5px;
+    }
+    .hot-product-item img {
+      width: 40px;
+      height: 40px;
+      margin-right: 8px;
+      border-radius: 4px;
+    }
+    .hot-product-item span {
+      font-size: 0.8em;
+      color: #34495e;
+    }
+    #feed {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 20px;
+    }
+    .business-card, .store-page, .profile-page {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .business-card:hover, .store-page:hover, .profile-page:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    .business-card h3, .store-page h3, .profile-page h3 {
+      margin-bottom: 15px;
+      color: #2ecc71;
+      font-size: 1.5em;
+    }
+    .category {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-bottom: 15px;
+    }
+    .business-card img, .store-page img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .contact a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: #3498db;
+      transition: color 0.3s;
+    }
+    .contact a:hover {
+      color: #2980b9;
+    }
+    .views {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-top: 10px;
+    }
+    .price {
+      font-weight: bold;
+      color: #e67e22;
+    }
+    button {
+      background: #2ecc71;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 500;
+    }
+    button:hover {
+      background: #27ae60;
+      transform: translateY(-2px);
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      display: none;
+      color: #7f8c8d;
+    }
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    .modal h2 {
+      color: #2ecc71;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+    .modal input, .modal select {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+    .modal input:focus, .modal select:focus {
+      border-color: #2ecc71;
+      outline: none;
+    }
   </style>
 </head>
 <body>
@@ -52,7 +208,7 @@
   </header>
 
   <main class="container">
-    <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()" />
+    <input type="text" id="search-bar" placeholder="Search (business, product, price, etc.)..." onkeyup="searchBusinesses()" />
     <div id="hot-products" class="hot-products"></div>
     <div id="feed"></div>
     <div id="store-page" style="display: none;"></div>
@@ -68,6 +224,7 @@
     <button id="feed-btn">Continue to Feed</button>
   </div>
 
+  <!-- Business Sign-Up -->
   <div id="business-form" class="modal">
     <h2>Business Sign-Up</h2>
     <input type="text" id="biz-name" placeholder="Business Name" required />
@@ -80,6 +237,7 @@
       <option value="Home & Kitchen">Home & Kitchen</option>
       <option value="Beauty & Personal Care">Beauty & Personal Care</option>
     </select>
+    <input type="file" id="biz-file" accept="image/*" />
     <input type="text" id="biz-product" placeholder="Featured Product Name" required />
     <input type="text" id="biz-price" placeholder="Product Price (e.g., $29.99)" required />
     <input type="text" id="biz-desc" placeholder="Short Description" required />
@@ -90,6 +248,7 @@
     <button onclick="closeModal('business-form')">Close</button>
   </div>
 
+  <!-- Customer Sign-Up -->
   <div id="customer-form" class="modal">
     <h2>Customer Sign-Up</h2>
     <input type="text" id="cust-name" placeholder="Name" required />
@@ -99,6 +258,7 @@
     <button onclick="closeModal('customer-form')">Close</button>
   </div>
 
+  <!-- Login Form -->
   <div id="login-form" class="modal">
     <h2>Login</h2>
     <input type="email" id="login-email" placeholder="Email" required />
@@ -107,27 +267,25 @@
     <button onclick="closeModal('login-form')">Close</button>
   </div>
 
-  <!-- Modal for adding a new product -->
+  <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="new-prod-name" placeholder="Product Name" required />
     <input type="text" id="new-prod-price" placeholder="Price (e.g. 10.00)" required />
-    <input type="text" id="new-prod-photo" placeholder="Photo URL (optional)" />
+    <input type="file" id="new-prod-file" accept="image/*" />
     <input type="text" id="new-prod-desc" placeholder="Product Description" />
     <button onclick="addNewProduct()">Add Product</button>
     <button onclick="closeModal('add-product-modal')">Close</button>
   </div>
 
-  <!-- Modal for editing business profile -->
+  <!-- Edit Profile Modal -->
   <div id="edit-profile-modal" class="modal">
     <h2>Edit Profile</h2>
-    <div class="edit-profile-form">
-      <input type="text" id="edit-location" placeholder="Location" />
-      <input type="text" id="edit-desc" placeholder="Short Description" />
-      <input type="text" id="edit-displayphoto" placeholder="Display Photo URL" />
-      <button onclick="updateProfile()">Update Profile</button>
-      <button onclick="closeModal('edit-profile-modal')">Close</button>
-    </div>
+    <input type="file" id="edit-file" accept="image/*" />
+    <input type="text" id="edit-location" placeholder="Location" />
+    <input type="text" id="edit-desc" placeholder="Short Description" />
+    <button onclick="updateProfile()">Update Profile</button>
+    <button onclick="closeModal('edit-profile-modal')">Close</button>
   </div>
 
   <script>
@@ -135,6 +293,7 @@
     let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
     let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
     let displayedCount = 5;
+
     const popup = document.getElementById('popup');
     const businessForm = document.getElementById('business-form');
     const customerForm = document.getElementById('customer-form');
@@ -149,8 +308,42 @@
     const signupBtn = document.getElementById('signup-btn');
     const searchBar = document.getElementById('search-bar');
     const businessName = document.getElementById('businessName');
-    const addProductModal = document.getElementById('add-product-modal');
-    const editProfileModal = document.getElementById('edit-profile-modal');
+
+    const bizFile = document.getElementById('biz-file');
+    let bizFileData = '';
+    bizFile?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        bizFileData = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const newProdFile = document.getElementById('new-prod-file');
+    let newProdFileData = '';
+    newProdFile?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        newProdFileData = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const editFile = document.getElementById('edit-file');
+    let editFileData = '';
+    editFile?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        editFileData = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
     function generateDummyBusinesses(count) {
       const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
@@ -197,6 +390,7 @@
       popup.style.display = 'none';
       displayFeed();
     });
+
     loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
     signupBtn.addEventListener('click', () => popup.style.display = 'block');
     profileBtn.addEventListener('click', () => showProfile());
@@ -269,7 +463,9 @@
     }
 
     window.addEventListener('scroll', () => {
-      if (feed.style.display === 'grid' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
+      if (feed.style.display === 'grid' &&
+          (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 &&
+          displayedCount < businesses.length) {
         loading.style.display = 'block';
         setTimeout(() => {
           displayedCount = Math.min(displayedCount + 5, businesses.length);
@@ -281,13 +477,22 @@
 
     function searchBusinesses() {
       const q = searchBar.value.toLowerCase().trim();
-      const f = businesses.filter(b =>
-        b.name.toLowerCase().includes(q) ||
-        b.category.toLowerCase().includes(q) ||
-        b.location.toLowerCase().includes(q)
-      );
+      const filtered = businesses.filter(b => {
+        if (b.name.toLowerCase().includes(q)) return true;
+        if (b.category.toLowerCase().includes(q)) return true;
+        if (b.location.toLowerCase().includes(q)) return true;
+        if (b.desc.toLowerCase().includes(q)) return true;
+        if (b.products.some(p =>
+          p.name.toLowerCase().includes(q) ||
+          p.desc.toLowerCase().includes(q) ||
+          p.price.toString().includes(q)
+        )) {
+          return true;
+        }
+        return false;
+      });
       displayedCount = 5;
-      displayFeed(f);
+      displayFeed(filtered);
     }
 
     function submitBusiness() {
@@ -302,12 +507,14 @@
         const whatsapp = document.getElementById('biz-whatsapp').value.trim();
         const instagram = document.getElementById('biz-instagram').value.trim();
         const location = document.getElementById('biz-location').value.trim();
+
         if (!name || !email || !password || !category || !product || !price || !desc || !whatsapp || !instagram || !location)
           throw new Error('Please fill in all fields!');
         if (!/\S+@\S+\.\S+/.test(email))
           throw new Error('Please enter a valid email address!');
         if (!/^(876)\d{7}$/.test(whatsapp))
           throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+
         const newBiz = {
           id: crypto.randomUUID(),
           name,
@@ -324,17 +531,21 @@
           whatsapp,
           instagram,
           location,
-          displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+          displayPhoto: bizFileData || 'https://via.placeholder.com/300x200.png?text=Display+Photo',
           views: 0
         };
         const user = { id: newBiz.id, type: 'business', name, email, password };
+
         businesses.push(newBiz);
         users.push(user);
         currentUser = user;
         localStorage.setItem('businesses', JSON.stringify(businesses));
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
         closeModal('business-form');
+        bizFileData = '';
+        bizFile.value = '';
         updateUIForUser();
         displayFeed();
       } catch (err) {
@@ -348,15 +559,18 @@
         const name = document.getElementById('cust-name').value.trim();
         const email = document.getElementById('cust-email').value.trim();
         const password = document.getElementById('cust-password').value.trim();
+
         if (!name || !email || !password)
           throw new Error('Please fill in all fields!');
         if (!/\S+@\S+\.\S+/.test(email))
           throw new Error('Please enter a valid email address!');
+
         const newCust = { id: crypto.randomUUID(), type: 'customer', name, email, password, recentlyViewed: [] };
         users.push(newCust);
         currentUser = newCust;
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
         closeModal('customer-form');
         updateUIForUser();
         displayFeed();
@@ -472,8 +686,9 @@
       if (!business) return;
       document.getElementById('edit-location').value = business.location;
       document.getElementById('edit-desc').value = business.desc;
-      document.getElementById('edit-displayphoto').value = business.displayPhoto;
-      editProfileModal.style.display = 'block';
+      editFileData = '';
+      editFile.value = '';
+      document.getElementById('edit-profile-modal').style.display = 'block';
     }
 
     function updateProfile() {
@@ -481,10 +696,11 @@
       if (!business) return;
       const newLocation = document.getElementById('edit-location').value.trim();
       const newDesc = document.getElementById('edit-desc').value.trim();
-      const newPhoto = document.getElementById('edit-displayphoto').value.trim();
       if (newLocation) business.location = newLocation;
       if (newDesc) business.desc = newDesc;
-      if (newPhoto) business.displayPhoto = newPhoto;
+      if (editFileData) {
+        business.displayPhoto = editFileData;
+      }
       localStorage.setItem('businesses', JSON.stringify(businesses));
       closeModal('edit-profile-modal');
       showProfile();
@@ -492,7 +708,12 @@
     window.updateProfile = updateProfile;
 
     function showAddProduct() {
-      addProductModal.style.display = 'block';
+      newProdFileData = '';
+      newProdFile.value = '';
+      document.getElementById('new-prod-name').value = '';
+      document.getElementById('new-prod-price').value = '';
+      document.getElementById('new-prod-desc').value = '';
+      document.getElementById('add-product-modal').style.display = 'block';
     }
 
     function addNewProduct() {
@@ -500,17 +721,16 @@
       if (!business) return;
       const name = document.getElementById('new-prod-name').value.trim();
       const price = document.getElementById('new-prod-price').value.trim();
-      const photo = document.getElementById('new-prod-photo').value.trim() || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
       const desc = document.getElementById('new-prod-desc').value.trim() || 'No description';
       if (!name || !price) {
-        alert('Please enter product name and price');
+        alert('Please enter product name and price.');
         return;
       }
       const newP = {
         id: crypto.randomUUID(),
         name,
         desc,
-        photo,
+        photo: newProdFileData || 'https://via.placeholder.com/300x200.png?text=Product+Photo',
         price: parseFloat(price).toFixed(2),
         views: 0
       };
