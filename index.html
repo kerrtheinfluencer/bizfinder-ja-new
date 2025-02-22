@@ -200,7 +200,8 @@
     <script>
         // Data initialization
         let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
-        let users = JSON.parse(localStorage.getItem('users')) || [];
+        // Ensure users is always an array, even if localStorage returns null or invalid data
+        let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let displayedCount = 5;
 
@@ -366,6 +367,10 @@
                 };
                 businesses.push(business);
                 const user = { id: business.id, type: 'business', name, email: `${name.toLowerCase().replace(' ', '')}@example.com` };
+                // Ensure users is an array before pushing
+                if (!Array.isArray(users)) {
+                    users = [];
+                }
                 users.push(user);
                 currentUser = user;
 
@@ -406,6 +411,10 @@
                     email,
                     recentlyViewed: []
                 };
+                // Ensure users is an array before pushing
+                if (!Array.isArray(users)) {
+                    users = [];
+                }
                 users.push(user);
                 currentUser = user;
 
@@ -428,6 +437,11 @@
             try {
                 console.log('Logging in...');
                 const email = document.getElementById('login-email').value.trim();
+                // Ensure users is an array before finding
+                if (!Array.isArray(users)) {
+                    users = [];
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
                 const user = users.find(u => u.email === email);
                 if (user) {
                     currentUser = user;
