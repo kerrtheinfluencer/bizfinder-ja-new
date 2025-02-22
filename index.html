@@ -19,6 +19,7 @@
             padding: 20px;
             font-size: 24px;
             font-weight: bold;
+            text-transform: uppercase;
         }
         #feed {
             max-width: 800px;
@@ -64,22 +65,132 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        /* Welcome Popup Styles */
+        #welcome-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        #welcome-popup h2 {
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+        #welcome-popup p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #welcome-popup button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
         #signup-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 15px 30px;
+            background: #2ecc71;
+            color: white;
+        }
+        #dismiss-btn {
+            background: #ccc;
+            color: #333;
+        }
+        /* Sign-Up Modal Styles */
+        #signup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #signup-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        #signup-form h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        #signup-form input, #signup-form select, #signup-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #signup-form button {
             background: #28a745;
             color: white;
-            text-align: center;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
             border-radius: 5px;
-            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <header>BizFinder JA</header>
+
     <div id="feed"></div>
-    <a id="signup-btn" href="signup.html">Sign Up as Business</a>
+
+    <!-- Welcome Popup for First-Time Viewers -->
+    <div id="welcome-popup">
+        <div class="popup-content">
+            <h2>Welcome to BizFinder JA!</h2>
+            <p>Sign up to get started with your business listing.</p>
+            <button id="signup-btn">Sign Up Now</button>
+            <button id="dismiss-btn">Maybe Later</button>
+        </div>
+    </div>
+
+    <!-- Sign-Up Modal -->
+    <div id="signup-modal">
+        <div id="signup-form">
+            <h2>Business Sign-Up</h2>
+            <input type="text" id="biz-name" placeholder="Business Name" required>
+            <select id="biz-category" required>
+                <option value="">Select Category</option>
+                <option value="Food & Drinks">Food & Drinks</option>
+                <option value="Fashion & Accessories">Fashion & Accessories</option>
+                <option value="Tech & Electronics">Tech & Electronics</option>
+                <option value="Home & Kitchen">Home & Kitchen</option>
+                <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+            </select>
+            <input type="text" id="biz-product" placeholder="Featured Product Name" required>
+            <textarea id="biz-desc" placeholder="Short Description" required></textarea>
+            <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
+            <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
+            <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
+            <button onclick="submitBusiness()">Submit</button>
+            <button onclick="closeSignupModal()">Close</button>
+        </div>
+    </div>
+
     <script>
         // Generate dummy business data
         function generateDummyBusinesses(count) {
@@ -109,6 +220,16 @@
         let displayedCount = 5; // Start with 5 businesses
 
         const feed = document.getElementById('feed');
+        const welcomePopup = document.getElementById('welcome-popup');
+        const signupModal = document.getElementById('signup-modal');
+
+        // Check if it's the user's first visit and they haven't signed up
+        if (!localStorage.getItem('signedUp')) {
+            if (!localStorage.getItem('firstVisit')) {
+                localStorage.setItem('firstVisit', 'true');
+                welcomePopup.style.display = 'flex';
+            }
+        }
 
         // Display businesses function
         function displayBusinesses() {
@@ -151,6 +272,40 @@
         window.viewDetails = function(index) {
             businesses[index].views++;
             displayBusinesses();
+        };
+
+        // Welcome popup button actions
+        document.getElementById('signup-btn').addEventListener('click', () => {
+            welcomePopup.style.display = 'none';
+            signupModal.style.display = 'flex';
+        });
+        document.getElementById('dismiss-btn').addEventListener('click', () => {
+            welcomePopup.style.display = 'none';
+        });
+
+        // Close signup modal
+        window.closeSignupModal = function() {
+            signupModal.style.display = 'none';
+        };
+
+        // Submit business form
+        window.submitBusiness = function() {
+            const business = {
+                name: document.getElementById('biz-name').value,
+                category: document.getElementById('biz-category').value,
+                product: document.getElementById('biz-product').value,
+                desc: document.getElementById('biz-desc').value,
+                whatsapp: document.getElementById('biz-whatsapp').value,
+                instagram: document.getElementById('biz-instagram').value,
+                location: document.getElementById('biz-location').value,
+                displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+                productPhoto: 'https://via.placeholder.com/300x200.png?text=Product+Photo',
+                views: 0
+            };
+            businesses.push(business);
+            localStorage.setItem('signedUp', 'true');
+            displayBusinesses();
+            closeSignupModal();
         };
     </script>
 </body>
