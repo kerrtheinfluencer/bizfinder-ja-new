@@ -5,201 +5,609 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BizFinder JA</title>
     <style>
-        body {
-            background-color: #e6f0fa;
-            font-family: Arial, sans-serif;
+        /* Reset and Base Styles */
+        * {
             margin: 0;
             padding: 0;
-        }
-        .header {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            position: relative;
-        }
-        .header h1 {
-            margin: 0;
-        }
-        .profile-btn {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            background-color: #218838;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .profile-btn:hover {
-            background-color: #1e7e34;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-            display: flex;
-        }
-        .filter-section {
-            flex: 1;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-right: 20px;
-        }
-        .filter-section.collapsed .filter-content {
-            display: none;
-        }
-        .filter-toggle {
-            cursor: pointer;
-            color: #007bff;
-            margin-bottom: 10px;
-        }
-        .filter-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-        }
-        .results-section {
-            flex: 3;
-        }
-        .search-sort {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        input, select {
-            padding: 8px;
-            width: 100%;
             box-sizing: border-box;
         }
-        .business-card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #e0e8f5); /* Light, modern gradient background */
+            color: #333;
+            line-height: 1.6;
         }
-        .business-card button {
-            background-color: #28a745;
+
+        /* Header */
+        header {
+            background: linear-gradient(90deg, #2ecc71, #27ae60); /* Vibrant green gradient */
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        #profile-btn, #login-btn, #signup-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            color: #2ecc71;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            font-weight: 500;
+        }
+        #profile-btn { right: 20px; display: none; }
+        #login-btn { right: 120px; }
+        #signup-btn { right: 220px; }
+        #profile-btn:hover, #login-btn:hover, #signup-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Business Cards, Store, and Profile Pages */
+        .business-card, .store-page, .profile-page {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .business-card:hover, .store-page:hover, .profile-page:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        .business-card h3, .store-page h3, .profile-page h3 {
+            margin: 0 0 15px;
+            color: #2ecc71;
+            font-size: 1.5em;
+        }
+        .business-card .category, .store-page .category {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .business-card img, .store-page img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .contact a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #3498db;
+            transition: color 0.3s;
+        }
+        .contact a:hover {
+            color: #2980b9;
+        }
+        .views {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        /* Buttons */
+        button {
+            background: #2ecc71;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            font-weight: 500;
         }
-        .business-card button:hover {
-            background-color: #218838;
+        button:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
         }
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-            .filter-section {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
+
+        /* Popup and Forms */
+        #popup, #business-form, #customer-form, #login-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            display: none;
+        }
+        #business-form, #customer-form, #login-form { max-width: 650px; }
+        #popup h2, #business-form h2, #customer-form h2, #login-form h2 {
+            color: #2ecc71;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        input, select {
+            display: block;
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #2ecc71;
+            outline: none;
+        }
+
+        /* Hot Products Box */
+        .hot-products {
+            background: linear-gradient(135deg, #ffffff, #f5f7fa);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #2ecc71;
+        }
+        .hot-products h3 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .hot-products p {
+            color: #34495e;
+            margin: 10px 0;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+        .hot-products p:hover {
+            color: #2ecc71;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+            color: #7f8c8d;
+        }
+
+        /* Search Bar (Optional Feature) */
+        #search-bar {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        #search-bar:focus {
+            border-color: #2ecc71;
+            outline: none;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>BIZFINDER JA</h1>
-        <button class="profile-btn" onclick="goToProfile()">Profile</button>
+    <header>
+        BizFinder JA
+        <button id="profile-btn">Profile</button>
+        <button id="login-btn">Login</button>
+        <button id="signup-btn">Sign Up</button>
+    </header>
+
+    <div class="container" id="main-content">
+        <!-- Optional Search Bar -->
+        <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
+        
+        <div id="hot-products" class="hot-products"></div>
+        <div id="feed"></div>
+        <div id="store-page" style="display: none;"></div>
+        <div id="profile-page" style="display: none;"></div>
+        <div id="loading" class="loading">Loading...</div>
     </div>
-    <div class="container">
-        <div class="filter-section">
-            <div class="filter-toggle" onclick="toggleFilters()">Toggle Filters</div>
-            <div class="filter-content">
-                <h3>Filter by:</h3>
-                <div class="filter-group">
-                    <label><input type="checkbox" class="filter" data-type="category" value="Food & Drinks"> Food & Drinks</label>
-                    <label><input type="checkbox" class="filter" data-type="category" value="Fashion & Accessories"> Fashion & Accessories</label>
-                    <label><input type="checkbox" class="filter" data-type="category" value="Tech & Electronics"> Tech & Electronics</label>
-                    <label><input type="checkbox" class="filter" data-type="category" value="Home & Kitchen"> Home & Kitchen</label>
-                    <label><input type="checkbox" class="filter" data-type="category" value="Beauty & Personal Care"> Beauty & Personal Care</label>
-                </div>
-                <h3>Location:</h3>
-                <div class="filter-group">
-                    <label><input type="checkbox" class="filter" data-type="location" value="Montego Bay"> Montego Bay</label>
-                    <label><input type="checkbox" class="filter" data-type="location" value="Kingston"> Kingston</label>
-                    <label><input type="checkbox" class="filter" data-type="location" value="Ocho Rios"> Ocho Rios</label>
-                    <label><input type="checkbox" class="filter" data-type="location" value="Negril"> Negril</label>
-                </div>
-            </div>
-        </div>
-        <div class="results-section">
-            <div class="search-sort">
-                <input type="text" id="search" placeholder="Search businesses..." oninput="updateResults()">
-                <select id="sort" onchange="updateResults()">
-                    <option value="views">Sort by Views</option>
-                    <option value="name">Sort by Name</option>
-                </select>
-            </div>
-            <div id="results"></div>
-        </div>
+
+    <div id="popup">
+        <h2>Welcome to BizFinder JA!</h2>
+        <p>Sign up to join our vibrant community.</p>
+        <button id="business-btn">Sign Up as Business</button>
+        <button id="customer-btn">Sign Up as Customer</button>
+        <button id="feed-btn">Continue to Feed</button>
     </div>
+
+    <div id="business-form">
+        <h2>Business Sign-Up</h2>
+        <input type="text" id="biz-name" placeholder="Business Name" required>
+        <input type="email" id="biz-email" placeholder="Email" required>
+        <input type="password" id="biz-password" placeholder="Password" required>
+        <select id="biz-category">
+            <option value="Food & Drinks">Food & Drinks</option>
+            <option value="Fashion & Accessories">Fashion & Accessories</option>
+            <option value="Tech & Electronics">Tech & Electronics</option>
+            <option value="Home & Kitchen">Home & Kitchen</option>
+            <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+        </select>
+        <input type="text" id="biz-product" placeholder="Featured Product Name" required>
+        <input type="text" id="biz-desc" placeholder="Short Description" required>
+        <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
+        <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
+        <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
+        <button onclick="submitBusiness()">Submit</button>
+        <button onclick="closeForm('business-form')">Close</button>
+    </div>
+
+    <div id="customer-form">
+        <h2>Customer Sign-Up</h2>
+        <input type="text" id="cust-name" placeholder="Name" required>
+        <input type="email" id="cust-email" placeholder="Email" required>
+        <input type="password" id="cust-password" placeholder="Password" required>
+        <button onclick="submitCustomer()">Submit</button>
+        <button onclick="closeForm('customer-form')">Close</button>
+    </div>
+
+    <div id="login-form">
+        <h2>Login</h2>
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <button onclick="closeForm('login-form')">Close</button>
+    </div>
+
     <script>
-        const businesses = [
-            { id: 1, name: "Taste of Jamaica", category: "Food & Drinks", location: "Montego Bay", views: 120 },
-            { id: 2, name: "Tech Haven", category: "Tech & Electronics", location: "Kingston", views: 85 },
-            { id: 3, name: "Style Central", category: "Fashion & Accessories", location: "Ocho Rios", views: 150 },
-            { id: 4, name: "Beauty Bliss", category: "Beauty & Personal Care", location: "Negril", views: 90 }
-        ];
+        // Data initialization
+        let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+        let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let displayedCount = 5;
 
-        function toggleFilters() {
-            document.querySelector('.filter-section').classList.toggle('collapsed');
+        // DOM elements
+        const popup = document.getElementById('popup');
+        const businessForm = document.getElementById('business-form');
+        const customerForm = document.getElementById('customer-form');
+        const loginForm = document.getElementById('login-form');
+        const feed = document.getElementById('feed');
+        const storePage = document.getElementById('store-page');
+        const profilePage = document.getElementById('profile-page');
+        const hotProducts = document.getElementById('hot-products');
+        const loading = document.getElementById('loading');
+        const profileBtn = document.getElementById('profile-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const searchBar = document.getElementById('search-bar');
+
+        // Generate dummy businesses
+        function generateDummyBusinesses(count) {
+            const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
+            const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
+            const businesses = [];
+            for (let i = 0; i < count; i++) {
+                const category = categories[Math.floor(Math.random() * categories.length)];
+                const location = locations[Math.floor(Math.random() * locations.length)];
+                businesses.push({
+                    id: Date.now() + i,
+                    name: `Business ${i + 1}`,
+                    category,
+                    products: [
+                        { name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
+                    ],
+                    desc: `Description for business ${i + 1}.`,
+                    whatsapp: `876555${String(i).padStart(4, '0')}`,
+                    instagram: `business${i + 1}`,
+                    location,
+                    displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+                    views: 0
+                });
+            }
+            return businesses;
         }
 
-        function goToProfile() {
-            alert('Redirecting to profile page...');
-            // In production, replace with: window.location.href = '/profile';
-        }
+        // Show initial popup if no user
+        if (!currentUser) popup.style.display = 'block';
+        else updateUIForUser();
 
-        function viewStore(id) {
-            alert(`Viewing store with ID: ${id}`);
-            // In production, replace with: window.location.href = `/store/${id}`;
-        }
-
-        function updateResults() {
-            const searchTerm = document.getElementById('search').value.toLowerCase();
-            const sortBy = document.getElementById('sort').value;
-            const filters = Array.from(document.querySelectorAll('.filter:checked')).reduce((acc, el) => {
-                const type = el.dataset.type;
-                if (!acc[type]) acc[type] = [];
-                acc[type].push(el.value);
-                return acc;
-            }, {});
-
-            let filtered = businesses.filter(b => {
-                const matchesSearch = b.name.toLowerCase().includes(searchTerm);
-                const matchesCategory = !filters.category || filters.category.includes(b.category);
-                const matchesLocation = !filters.location || filters.location.includes(b.location);
-                return matchesSearch && matchesCategory && matchesLocation;
-            });
-
-            filtered.sort((a, b) => sortBy === 'views' ? b.views - a.views : a.name.localeCompare(b.name));
-
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = filtered.length > 0 ? filtered.map(b => `
-                <div class="business-card">
-                    <div>
-                        <h4>${b.name}</h4>
-                        <p>Category: ${b.category} | Location: ${b.location} | Views: ${b.views}</p>
-                    </div>
-                    <button onclick="viewStore(${b.id})">View Store</button>
-                </div>
-            `).join('') : '<p>No businesses found.</p>';
-        }
-
-        // Initial render
-        updateResults();
-
-        // Add event listeners for filter checkboxes
-        document.querySelectorAll('.filter').forEach(filter => {
-            filter.addEventListener('change', updateResults);
+        // Popup button actions
+        document.getElementById('business-btn').addEventListener('click', () => {
+            popup.style.display = 'none';
+            businessForm.style.display = 'block';
         });
+        document.getElementById('customer-btn').addEventListener('click', () => {
+            popup.style.display = 'none';
+            customerForm.style.display = 'block';
+        });
+        document.getElementById('feed-btn').addEventListener('click', () => {
+            popup.style.display = 'none';
+            displayFeed();
+        });
+
+        // Login, Sign Up, and Profile button actions
+        loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
+        signupBtn.addEventListener('click', () => popup.style.display = 'block');
+        profileBtn.addEventListener('click', () => showProfile());
+
+        // Display feed
+        function displayFeed(filteredBusinesses = businesses) {
+            feed.style.display = 'block';
+            storePage.style.display = 'none';
+            profilePage.style.display = 'none';
+            const businessesToShow = filteredBusinesses.slice(0, displayedCount);
+            feed.innerHTML = '';
+            businessesToShow.forEach((business, index) => {
+                const card = document.createElement('div');
+                card.className = 'business-card';
+                const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
+                card.innerHTML = `
+                    <h3>${business.name}</h3>
+                    <p class="category">${business.category}</p>
+                    <img src="${business.displayPhoto}" alt="${business.name}">
+                    <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+                    ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+                    <p>${business.desc}</p>
+                    <p><strong>Location:</strong> ${business.location}</p>
+                    <div class="contact">
+                        <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                        <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                    </div>
+                    <p class="views">Views: ${business.views}</p>
+                    <button onclick="viewStore(${index})">View Store</button>
+                `;
+                feed.appendChild(card);
+            });
+            displayHotProducts(filteredBusinesses);
+        }
+
+        // Display hot products
+        function displayHotProducts(filteredBusinesses = businesses) {
+            const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
+            hotProducts.innerHTML = '<h3>Hot Products</h3>';
+            hot.forEach(biz => {
+                const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
+                hotProducts.innerHTML += `<p>${biz.name} - ${productName} (Views: ${biz.views})</p>`;
+            });
+        }
+
+        // Endless scrolling
+        window.addEventListener('scroll', () => {
+            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    displayedCount = Math.min(displayedCount + 5, businesses.length);
+                    displayFeed();
+                    loading.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // Search functionality
+        function searchBusinesses() {
+            const query = searchBar.value.toLowerCase().trim();
+            const filteredBusinesses = businesses.filter(biz => 
+                biz.name.toLowerCase().includes(query) || 
+                biz.category.toLowerCase().includes(query) || 
+                biz.location.toLowerCase().includes(query)
+            );
+            displayedCount = 5; // Reset displayed count for search
+            displayFeed(filteredBusinesses);
+        }
+
+        // Submit business
+        window.submitBusiness = function() {
+            try {
+                const name = document.getElementById('biz-name').value.trim();
+                const email = document.getElementById('biz-email').value.trim();
+                const password = document.getElementById('biz-password').value.trim();
+                const category = document.getElementById('biz-category').value;
+                const product = document.getElementById('biz-product').value.trim();
+                const desc = document.getElementById('biz-desc').value.trim();
+                const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+                const instagram = document.getElementById('biz-instagram').value.trim();
+                const location = document.getElementById('biz-location').value.trim();
+
+                if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+                    throw new Error('Please fill in all fields!');
+                }
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    throw new Error('Please enter a valid email address!');
+                }
+                if (!/^(876)\d{7}$/.test(whatsapp)) {
+                    throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+                }
+
+                const business = {
+                    id: Date.now(),
+                    name,
+                    category,
+                    products: [{ name: product, desc, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }],
+                    desc,
+                    whatsapp,
+                    instagram,
+                    location,
+                    displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+                    views: 0
+                };
+                const user = { id: business.id, type: 'business', name, email, password };
+
+                if (!Array.isArray(businesses)) businesses = [];
+                if (!Array.isArray(users)) users = [];
+                businesses.push(business);
+                users.push(user);
+                currentUser = user;
+
+                localStorage.setItem('businesses', JSON.stringify(businesses));
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                closeForm('business-form');
+                updateUIForUser();
+                displayFeed();
+            } catch (error) {
+                alert(`An error occurred while signing up: ${error.message}`);
+            }
+        };
+
+        // Submit customer
+        window.submitCustomer = function() {
+            try {
+                const name = document.getElementById('cust-name').value.trim();
+                const email = document.getElementById('cust-email').value.trim();
+                const password = document.getElementById('cust-password').value.trim();
+
+                if (!name || !email || !password) {
+                    throw new Error('Please fill in all fields!');
+                }
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    throw new Error('Please enter a valid email address!');
+                }
+
+                const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+
+                if (!Array.isArray(users)) users = [];
+                users.push(user);
+                currentUser = user;
+
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                closeForm('customer-form');
+                updateUIForUser();
+                displayFeed();
+            } catch (error) {
+                alert(`An error occurred while signing up: ${error.message}`);
+            }
+        };
+
+        // Login
+        window.login = function() {
+            try {
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+
+                if (!email || !password) {
+                    throw new Error('Please enter both email and password!');
+                }
+
+                if (!Array.isArray(users)) {
+                    users = [];
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+                const user = users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    closeForm('login-form');
+                    updateUIForUser();
+                    displayFeed();
+                } else {
+                    throw new Error('Invalid email or password!');
+                }
+            } catch (error) {
+                alert(`An error occurred while logging in: ${error.message}`);
+            }
+        };
+
+        // View store
+        window.viewStore = function(index) {
+            const business = businesses[index];
+            business.views++;
+            if (currentUser && currentUser.type === 'customer') {
+                currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+                currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            localStorage.setItem('businesses', JSON.stringify(businesses));
+            feed.style.display = 'none';
+            storePage.style.display = 'block';
+            profilePage.style.display = 'none';
+            storePage.innerHTML = `
+                <button onclick="displayFeed()">Back to Feed</button>
+                <h3>${business.name}</h3>
+                <p class="category">${business.category}</p>
+                <img src="${business.displayPhoto}" alt="${business.name}">
+                <p>${business.desc}</p>
+                <p><strong>Location:</strong> ${business.location}</p>
+                <div class="contact">
+                    <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                    <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                </div>
+                <p class="views">Views: ${business.views}</p>
+                <h4>Products</h4>
+                ${business.products.map(p => `
+                    <div>
+                        <p><strong>${p.name}</strong></p>
+                        <img src="${p.photo}" alt="${p.name}">
+                        <p>${p.desc}</p>
+                        <p class="views">Views: ${p.views}</p>
+                    </div>
+                `).join('')}
+            `;
+        };
+
+        // Show profile
+        function showProfile() {
+            if (!currentUser) return;
+            feed.style.display = 'none';
+            storePage.style.display = 'none';
+            profilePage.style.display = 'block';
+            profilePage.innerHTML = `
+                <button onclick="displayFeed()">Back to Feed</button>
+                <h3>${currentUser.name}'s Profile</h3>
+                <p>Email: ${currentUser.email}</p>
+            `;
+            if (currentUser.type === 'business') {
+                const business = businesses.find(b => b.id === currentUser.id);
+                profilePage.innerHTML += `
+                    <h4>Business Metrics</h4>
+                    <p>Total Views: ${business.views}</p>
+                    <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
+                `;
+            } else if (currentUser.type === 'customer') {
+                profilePage.innerHTML += `
+                    <h4>Recently Viewed</h4>
+                    ${currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>Nothing viewed yet!</p>'}
+                `;
+            }
+            profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
+        }
+
+        // Logout
+        window.logout = function() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUIForUser();
+            displayFeed();
+        };
+
+        // Close form
+        window.closeForm = function(formId) {
+            document.getElementById(formId).style.display = 'none';
+        };
+
+        // Update UI for logged-in user
+        function updateUIForUser() {
+            profileBtn.style.display = currentUser ? 'block' : 'none';
+            loginBtn.style.display = currentUser ? 'none' : 'block';
+            signupBtn.style.display = currentUser ? 'none' : 'block';
+        }
+
+        // Initial load
+        displayFeed();
     </script>
 </body>
 </html>
