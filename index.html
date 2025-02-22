@@ -1,337 +1,651 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizFinder JA</title>
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #e0e8f5);
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Header styles */
-        header {
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
-        #businessName {
-            cursor: pointer;
-        }
-
-        /* Button styles */
-        #profile-btn, #login-btn, #signup-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: white;
-            color: #2ecc71;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            font-weight: 500;
-        }
-
-        #profile-btn { right: 20px; display: none; }
-        #login-btn { right: 120px; }
-        #signup-btn { right: 220px; }
-
-        #profile-btn:hover, #login-btn:hover, #signup-btn:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-        }
-
-        /* Main container */
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Card styles */
-        .business-card, .store-page, .profile-page {
-            background: white;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .business-card:hover, .store-page:hover, .profile-page:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Form styles */
-        #popup, #business-form, #customer-form, #login-form {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            display: none;
-        }
-
-        /* Hot products banner */
-        .hot-products {
-            padding: 8px 15px;
-            margin: 10px 0;
-            overflow-x: auto;
-            white-space: nowrap;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .hot-product-item {
-            display: inline-flex;
-            align-items: center;
-            margin: 0 10px;
-            padding: 5px 10px;
-            background: #f8f9fa;
-            border-radius: 20px;
-        }
-
-        .hot-product-item img {
-            width: 35px;
-            height: 35px;
-            margin-right: 8px;
-            border-radius: 4px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizFinder JA</title>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #e0e8f5);
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #2ecc71, #27ae60);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    #businessName {
+      cursor: pointer;
+    }
+    #profile-btn, #login-btn, #signup-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      color: #2ecc71;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 500;
+    }
+    #profile-btn { right: 20px; display: none; }
+    #login-btn { right: 120px; }
+    #signup-btn { right: 220px; }
+    #profile-btn:hover, #login-btn:hover, #signup-btn:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
+    
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    /* Business Cards, Store, and Profile Pages */
+    .business-card, .store-page, .profile-page {
+      background: white;
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .business-card:hover, .store-page:hover, .profile-page:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    .business-card h3, .store-page h3, .profile-page h3 {
+      margin: 0 0 15px;
+      color: #2ecc71;
+      font-size: 1.5em;
+    }
+    .business-card .category, .store-page .category {
+      font-style: italic;
+      color: #7f8c8d;
+      margin-bottom: 15px;
+    }
+    .business-card img, .store-page img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .contact a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: #3498db;
+      transition: color 0.3s;
+    }
+    .contact a:hover {
+      color: #2980b9;
+    }
+    .views {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-top: 10px;
+    }
+    
+    /* Buttons */
+    button {
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 500;
+    }
+    button:hover {
+      background: #27ae60;
+      transform: translateY(-2px);
+    }
+    
+    /* Popup and Forms */
+    #popup, #business-form, #customer-form, #login-form {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #business-form, #customer-form, #login-form { max-width: 650px; }
+    #popup h2, #business-form h2, #customer-form h2, #login-form h2 {
+      color: #2ecc71;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+    input, select {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #2ecc71;
+      outline: none;
+    }
+    
+    /* Hot Products Banner (Optimized) */
+    .hot-products {
+      background: linear-gradient(135deg, #ffffff, #f5f7fa);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-left: 3px solid #2ecc71;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .hot-product-item {
+      display: flex;
+      align-items: center;
+      margin: 5px;
+    }
+    .hot-product-item img {
+      width: 40px;
+      height: 40px;
+      margin-right: 8px;
+      border-radius: 4px;
+    }
+    .hot-product-item span {
+      font-size: 0.8em;
+      color: #34495e;
+    }
+    
+    /* Loading Spinner */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      display: none;
+      color: #7f8c8d;
+    }
+    
+    /* Search Bar */
+    #search-bar {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+    #search-bar:focus {
+      border-color: #2ecc71;
+      outline: none;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <span id="businessName">BizFinder JA</span>
-        <button id="profile-btn">Profile</button>
-        <button id="login-btn">Login</button>
-        <button id="signup-btn">Sign Up</button>
-    </header>
-
-    <div class="container" id="main-content">
-        <input type="text" id="search-bar" placeholder="Search businesses...">
-        <div id="hot-products" class="hot-products"></div>
-        <div id="feed"></div>
-        <div id="store-page" style="display: none;"></div>
-        <div id="profile-page" style="display: none;"></div>
-        <div id="loading" class="loading">Loading...</div>
-    </div>
-
-    <!-- Popups and Forms -->
-    <div id="popup">
-        <h2>Welcome to BizFinder JA!</h2>
-        <p>Sign up to join our vibrant community.</p>
-        <button id="business-btn">Sign Up as Business</button>
-        <button id="customer-btn">Sign Up as Customer</button>
-        <button id="feed-btn">Continue to Feed</button>
-    </div>
-
-    <div id="business-form">
-        <h2>Business Sign-Up</h2>
-        <input type="text" id="biz-name" placeholder="Business Name" required>
-        <input type="email" id="biz-email" placeholder="Email" required>
-        <input type="password" id="biz-password" placeholder="Password" required>
-        <select id="biz-category">
-            <option value="Food & Drinks">Food & Drinks</option>
-            <option value="Fashion & Accessories">Fashion & Accessories</option>
-            <option value="Tech & Electronics">Tech & Electronics</option>
-            <option value="Home & Kitchen">Home & Kitchen</option>
-            <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-        </select>
-        <input type="text" id="biz-product" placeholder="Featured Product Name" required>
-        <input type="text" id="biz-desc" placeholder="Short Description" required>
-        <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number" required>
-        <input type="text" id="biz-instagram" placeholder="Instagram Handle" required>
-        <input type="text" id="biz-location" placeholder="Location" required>
-        <button onclick="submitBusiness()">Submit</button>
-        <button onclick="closeForm('business-form')">Close</button>
-    </div>
-
-    <div id="customer-form">
-        <h2>Customer Sign-Up</h2>
-        <input type="text" id="cust-name" placeholder="Name" required>
-        <input type="email" id="cust-email" placeholder="Email" required>
-        <input type="password" id="cust-password" placeholder="Password" required>
-        <button onclick="submitCustomer()">Submit</button>
-        <button onclick="closeForm('customer-form')">Close</button>
-    </div>
-
-    <div id="login-form">
-        <h2>Login</h2>
-        <input type="email" id="login-email" placeholder="Email" required>
-        <input type="password" id="login-password" placeholder="Password" required>
-        <button onclick="login()">Login</button>
-        <button onclick="closeForm('login-form')">Close</button>
-    </div>
-
-    <script>
-        // Data initialization
-        let businesses = JSON.parse(localStorage.getItem('businesses')) || [];
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let displayedCount = 5;
-
-        // Generate dummy data if empty
-        if (businesses.length === 0) {
-            businesses = generateDummyBusinesses(50);
-            localStorage.setItem('businesses', JSON.stringify(businesses));
+  <header>
+    <span id="businessName">BizFinder JA</span>
+    <button id="profile-btn">Profile</button>
+    <button id="login-btn">Login</button>
+    <button id="signup-btn">Sign Up</button>
+  </header>
+  
+  <div class="container" id="main-content">
+    <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
+    <div id="hot-products" class="hot-products"></div>
+    <div id="feed"></div>
+    <div id="store-page" style="display: none;"></div>
+    <div id="profile-page" style="display: none;"></div>
+    <div id="loading" class="loading">Loading...</div>
+  </div>
+  
+  <div id="popup">
+    <h2>Welcome to BizFinder JA!</h2>
+    <p>Sign up to join our vibrant community.</p>
+    <button id="business-btn">Sign Up as Business</button>
+    <button id="customer-btn">Sign Up as Customer</button>
+    <button id="feed-btn">Continue to Feed</button>
+  </div>
+  
+  <div id="business-form">
+    <h2>Business Sign-Up</h2>
+    <input type="text" id="biz-name" placeholder="Business Name" required>
+    <input type="email" id="biz-email" placeholder="Email" required>
+    <input type="password" id="biz-password" placeholder="Password" required>
+    <select id="biz-category">
+      <option value="Food & Drinks">Food & Drinks</option>
+      <option value="Fashion & Accessories">Fashion & Accessories</option>
+      <option value="Tech & Electronics">Tech & Electronics</option>
+      <option value="Home & Kitchen">Home & Kitchen</option>
+      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+    </select>
+    <input type="text" id="biz-product" placeholder="Featured Product Name" required>
+    <input type="text" id="biz-desc" placeholder="Short Description" required>
+    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
+    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
+    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
+    <button onclick="submitBusiness()">Submit</button>
+    <button onclick="closeForm('business-form')">Close</button>
+  </div>
+  
+  <div id="customer-form">
+    <h2>Customer Sign-Up</h2>
+    <input type="text" id="cust-name" placeholder="Name" required>
+    <input type="email" id="cust-email" placeholder="Email" required>
+    <input type="password" id="cust-password" placeholder="Password" required>
+    <button onclick="submitCustomer()">Submit</button>
+    <button onclick="closeForm('customer-form')">Close</button>
+  </div>
+  
+  <div id="login-form">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <button onclick="closeForm('login-form')">Close</button>
+  </div>
+  
+  <script>
+    // Data initialization
+    let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+    let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+    let displayedCount = 5;
+    
+    // DOM elements
+    const popup = document.getElementById('popup');
+    const businessForm = document.getElementById('business-form');
+    const customerForm = document.getElementById('customer-form');
+    const loginForm = document.getElementById('login-form');
+    const feed = document.getElementById('feed');
+    const storePage = document.getElementById('store-page');
+    const profilePage = document.getElementById('profile-page');
+    const hotProducts = document.getElementById('hot-products');
+    const loading = document.getElementById('loading');
+    const profileBtn = document.getElementById('profile-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+    const searchBar = document.getElementById('search-bar');
+    const businessName = document.getElementById('businessName');
+    
+    // Generate dummy businesses with unique ids using crypto.randomUUID()
+    function generateDummyBusinesses(count) {
+      const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
+      const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
+      const dummyBusinesses = [];
+      for (let i = 0; i < count; i++) {
+        const category = categories[Math.floor(Math.random() * categories.length)];
+        const location = locations[Math.floor(Math.random() * locations.length)];
+        dummyBusinesses.push({
+          id: crypto.randomUUID(),
+          name: `Business ${i + 1}`,
+          category,
+          products: [{
+            name: `Product ${i + 1}`,
+            desc: `Description for product ${i + 1}`,
+            photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo',
+            views: 0
+          }],
+          desc: `Description for business ${i + 1}.`,
+          whatsapp: `876555${String(i).padStart(4, '0')}`,
+          instagram: `business${i + 1}`,
+          location,
+          displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+          views: 0
+        });
+      }
+      return dummyBusinesses;
+    }
+    
+    // Show initial popup if no user
+    if (!currentUser) popup.style.display = 'block';
+    else updateUIForUser();
+    
+    // Popup button actions
+    document.getElementById('business-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      businessForm.style.display = 'block';
+    });
+    document.getElementById('customer-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      customerForm.style.display = 'block';
+    });
+    document.getElementById('feed-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      displayFeed();
+    });
+    
+    // Login, Sign Up, and Profile button actions
+    loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
+    signupBtn.addEventListener('click', () => popup.style.display = 'block');
+    profileBtn.addEventListener('click', () => showProfile());
+    
+    // Make header business name clickable to always show feed
+    businessName.addEventListener('click', function() {
+      feed.style.display = 'block';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'none';
+      if (feed.getAttribute('data-active') === 'true') {
+        // If already on feed, shuffle businesses
+        const shuffled = [...businesses].sort(() => Math.random() - 0.5);
+        displayFeed(shuffled);
+      } else {
+        displayFeed();
+        feed.setAttribute('data-active', 'true');
+      }
+    });
+    
+    // Display feed
+    function displayFeed(filteredBusinesses = businesses) {
+      feed.style.display = 'block';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'none';
+      const businessesToShow = filteredBusinesses.slice(0, displayedCount);
+      feed.innerHTML = '';
+      businessesToShow.forEach((business) => {
+        const card = document.createElement('div');
+        card.className = 'business-card';
+        const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
+        card.innerHTML = `
+          <h3>${business.name}</h3>
+          <p class="category">${business.category}</p>
+          <img src="${business.displayPhoto}" alt="${business.name}">
+          <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+          ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+          <p>${business.desc}</p>
+          <p><strong>Location:</strong> ${business.location}</p>
+          <div class="contact">
+            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+          </div>
+          <p class="views">Views: ${business.views}</p>
+          <button onclick="viewStore('${business.id}')">View Store</button>
+        `;
+        feed.appendChild(card);
+      });
+      displayHotProducts(filteredBusinesses);
+    }
+    
+    // Display hot products as a banner (optimized)
+    function displayHotProducts(filteredBusinesses = businesses) {
+      const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
+      hotProducts.innerHTML = '<h3>Hot Products</h3>';
+      hot.forEach(biz => {
+        const product = biz.products[0];
+        hotProducts.innerHTML += `
+          <div class="hot-product-item">
+            <img src="${product.photo}" alt="${product.name}" width="40" height="40">
+            <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
+          </div>
+        `;
+      });
+    }
+    
+    // Endless scrolling
+    window.addEventListener('scroll', () => {
+      if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
+        loading.style.display = 'block';
+        setTimeout(() => {
+          displayedCount = Math.min(displayedCount + 5, businesses.length);
+          displayFeed();
+          loading.style.display = 'none';
+        }, 500);
+      }
+    });
+    
+    // Search functionality
+    function searchBusinesses() {
+      const query = searchBar.value.toLowerCase().trim();
+      const filteredBusinesses = businesses.filter(biz => 
+        biz.name.toLowerCase().includes(query) || 
+        biz.category.toLowerCase().includes(query) || 
+        biz.location.toLowerCase().includes(query)
+      );
+      displayedCount = 5;
+      displayFeed(filteredBusinesses);
+    }
+    
+    // Submit business with unique id using crypto.randomUUID()
+    window.submitBusiness = function() {
+      try {
+        const name = document.getElementById('biz-name').value.trim();
+        const email = document.getElementById('biz-email').value.trim();
+        const password = document.getElementById('biz-password').value.trim();
+        const category = document.getElementById('biz-category').value;
+        const product = document.getElementById('biz-product').value.trim();
+        const desc = document.getElementById('biz-desc').value.trim();
+        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+        const instagram = document.getElementById('biz-instagram').value.trim();
+        const location = document.getElementById('biz-location').value.trim();
+    
+        if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+          throw new Error('Please fill in all fields!');
         }
-
-        // DOM elements
-        const elements = {
-            popup: document.getElementById('popup'),
-            businessForm: document.getElementById('business-form'),
-            customerForm: document.getElementById('customer-form'),
-            loginForm: document.getElementById('login-form'),
-            feed: document.getElementById('feed'),
-            storePage: document.getElementById('store-page'),
-            profilePage: document.getElementById('profile-page'),
-            hotProducts: document.getElementById('hot-products'),
-            loading: document.getElementById('loading'),
-            profileBtn: document.getElementById('profile-btn'),
-            loginBtn: document.getElementById('login-btn'),
-            signupBtn: document.getElementById('signup-btn'),
-            searchBar: document.getElementById('search-bar'),
-            businessName: document.getElementById('businessName')
+        if (!/\S+@\S+\.\S+/.test(email)) {
+          throw new Error('Please enter a valid email address!');
+        }
+        if (!/^(876)\d{7}$/.test(whatsapp)) {
+          throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+        }
+    
+        const business = {
+          id: crypto.randomUUID(),
+          name,
+          category,
+          products: [{
+            name: product,
+            desc,
+            photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo',
+            views: 0
+          }],
+          desc,
+          whatsapp,
+          instagram,
+          location,
+          displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+          views: 0
         };
-
-        // Generate dummy businesses
-        function generateDummyBusinesses(count) {
-            const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 
-                             'Home & Kitchen', 'Beauty & Personal Care'];
-            const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
-            
-            return Array.from({ length: count }, (_, i) => ({
-                id: `biz-${Date.now()}-${i}-${Math.random().toString(36).slice(2)}`,
-                name: `Business ${i + 1}`,
-                category: categories[i % categories.length],
-                products: [{
-                    name: `Product ${i + 1}`,
-                    desc: `Popular product from Business ${i + 1}`,
-                    photo: 'https://picsum.photos/300/200?random=' + i,
-                    views: 0
-                }],
-                desc: `Description for Business ${i + 1}`,
-                whatsapp: `876555${String(i).padStart(4, '0')}`,
-                instagram: `business${i + 1}`,
-                location: locations[i % locations.length],
-                displayPhoto: 'https://picsum.photos/300/200?business=' + i,
-                views: 0
-            }));
+        const user = { id: business.id, type: 'business', name, email, password };
+    
+        if (!Array.isArray(businesses)) businesses = [];
+        if (!Array.isArray(users)) users = [];
+        businesses.push(business);
+        users.push(user);
+        currentUser = user;
+    
+        localStorage.setItem('businesses', JSON.stringify(businesses));
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+        closeForm('business-form');
+        updateUIForUser();
+        displayFeed();
+      } catch (error) {
+        alert(`An error occurred while signing up: ${error.message}`);
+      }
+    };
+    
+    // Submit customer with unique id using crypto.randomUUID()
+    window.submitCustomer = function() {
+      try {
+        const name = document.getElementById('cust-name').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const password = document.getElementById('cust-password').value.trim();
+    
+        if (!name || !email || !password) {
+          throw new Error('Please fill in all fields!');
         }
-
-        // Initialization
-        function init() {
-            if (!currentUser) elements.popup.style.display = 'block';
-            else updateUIForUser();
-            
-            attachEventListeners();
-            displayFeed();
+        if (!/\S+@\S+\.\S+/.test(email)) {
+          throw new Error('Please enter a valid email address!');
         }
-
-        // Event listeners
-        function attachEventListeners() {
-            document.getElementById('business-btn').addEventListener('click', () => toggleForm('business'));
-            document.getElementById('customer-btn').addEventListener('click', () => toggleForm('customer'));
-            document.getElementById('feed-btn').addEventListener('click', hidePopup);
-            elements.loginBtn.addEventListener('click', () => toggleForm('login'));
-            elements.signupBtn.addEventListener('click', () => elements.popup.style.display = 'block');
-            elements.profileBtn.addEventListener('click', showProfile);
-            elements.businessName.addEventListener('click', handleHeaderClick);
-            elements.searchBar.addEventListener('input', handleSearch);
+    
+        const user = { id: crypto.randomUUID(), type: 'customer', name, email, password, recentlyViewed: [] };
+    
+        if (!Array.isArray(users)) users = [];
+        users.push(user);
+        currentUser = user;
+    
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+        closeForm('customer-form');
+        updateUIForUser();
+        displayFeed();
+      } catch (error) {
+        alert(`An error occurred while signing up: ${error.message}`);
+      }
+    };
+    
+    // Login
+    window.login = function() {
+      try {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+    
+        if (!email || !password) {
+          throw new Error('Please enter both email and password!');
         }
-
-        // Core functions
-        function displayFeed(filteredBusinesses = businesses) {
-            elements.feed.innerHTML = filteredBusinesses.slice(0, displayedCount).map(biz => `
-                <div class="business-card">
-                    <h3>${biz.name}</h3>
-                    <p class="category">${biz.category}</p>
-                    <img src="${biz.displayPhoto}" alt="${biz.name}">
-                    <p><strong>Featured Product:</strong> ${biz.products[0].name}</p>
-                    <p>${biz.desc}</p>
-                    <p><strong>Location:</strong> ${biz.location}</p>
-                    <div class="contact">
-                        <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
-                        <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
-                    </div>
-                    <p class="views">Views: ${biz.views}</p>
-                    <button onclick="viewStore('${biz.id}')">View Store</button>
-                </div>
-            `).join('');
-            
-            displayHotProducts(filteredBusinesses);
-            window.location.hash = '#feed';
+    
+        if (!Array.isArray(users)) {
+          users = [];
+          localStorage.setItem('users', JSON.stringify(users));
         }
-
-        function viewStore(id) {
-            const business = businesses.find(b => b.id === id);
-            if (!business) return;
-
-            business.views++;
-            business.products.forEach(p => p.views++);
-            localStorage.setItem('businesses', JSON.stringify(businesses));
-
-            elements.storePage.innerHTML = `
-                <div class="store-page">
-                    <button onclick="displayFeed()">← Back to Feed</button>
-                    <h3>${business.name}</h3>
-                    <p class="category">${business.category}</p>
-                    <img src="${business.displayPhoto}" alt="${business.name}">
-                    <p>${business.desc}</p>
-                    <p><strong>Location:</strong> ${business.location}</p>
-                    <div class="contact">
-                        <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                        <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                    </div>
-                    <p class="views">Total Views: ${business.views}</p>
-                    <h4>Featured Products</h4>
-                    ${business.products.map(p => `
-                        <div class="product">
-                            <img src="${p.photo}" alt="${p.name}">
-                            <div>
-                                <h5>${p.name}</h5>
-                                <p>${p.desc}</p>
-                                <p class="views">Product Views: ${p.views}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-
-            elements.feed.style.display = 'none';
-            elements.storePage.style.display = 'block';
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) {
+          currentUser = user;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          closeForm('login-form');
+          updateUIForUser();
+          displayFeed();
+        } else {
+          throw new Error('Invalid email or password!');
         }
-
-        // Initialize the application
-        init();
-    </script>
+      } catch (error) {
+        alert(`An error occurred while logging in: ${error.message}`);
+      }
+    };
+    
+    // View store using unique id
+    window.viewStore = function(businessId) {
+      const business = businesses.find(b => b.id === businessId);
+      if (!business) {
+        console.error('Business not found!');
+        return;
+      }
+      business.views++;
+      if (currentUser && currentUser.type === 'customer') {
+        currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+        currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+      localStorage.setItem('businesses', JSON.stringify(businesses));
+      feed.style.display = 'none';
+      storePage.style.display = 'block';
+      profilePage.style.display = 'none';
+      storePage.innerHTML = `
+        <button onclick="displayFeed()">Back to Feed</button>
+        <h3>${business.name}</h3>
+        <p class="category">${business.category}</p>
+        <img src="${business.displayPhoto}" alt="${business.name}">
+        <p>${business.desc}</p>
+        <p><strong>Location:</strong> ${business.location}</p>
+        <div class="contact">
+          <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+          <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+        </div>
+        <p class="views">Views: ${business.views}</p>
+        <h4>Products</h4>
+        ${business.products.map(p => `
+          <div>
+            <p><strong>${p.name}</strong></p>
+            <img src="${p.photo}" alt="${p.name}">
+            <p>${p.desc}</p>
+            <p class="views">Views: ${p.views}</p>
+          </div>
+        `).join('')}
+      `;
+    };
+    
+    // Show profile
+    function showProfile() {
+      if (!currentUser) return;
+      feed.style.display = 'none';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'block';
+      profilePage.innerHTML = `
+        <button onclick="displayFeed()">Back to Feed</button>
+        <h3>${currentUser.name}'s Profile</h3>
+        <p>Email: ${currentUser.email}</p>
+      `;
+      if (currentUser.type === 'business') {
+        const business = businesses.find(b => b.id === currentUser.id);
+        profilePage.innerHTML += `
+          <h4>Business Metrics</h4>
+          <p>Total Views: ${business.views}</p>
+          <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
+        `;
+      } else if (currentUser.type === 'customer') {
+        profilePage.innerHTML += `
+          <h4>Recently Viewed</h4>
+          ${currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>Nothing viewed yet!</p>'}
+        `;
+      }
+      profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
+    }
+    
+    // Logout
+    window.logout = function() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      updateUIForUser();
+      displayFeed();
+    };
+    
+    // Close form
+    window.closeForm = function(formId) {
+      document.getElementById(formId).style.display = 'none';
+    };
+    
+    // Update UI for logged-in user
+    function updateUIForUser() {
+      profileBtn.style.display = currentUser ? 'block' : 'none';
+      loginBtn.style.display = currentUser ? 'none' : 'block';
+      signupBtn.style.display = currentUser ? 'none' : 'block';
+    }
+    
+    // Initial load
+    displayFeed();
+  </script>
 </body>
 </html>
