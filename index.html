@@ -39,6 +39,8 @@
     .modal h2 { color: #2ecc71; margin-bottom: 20px; font-size: 1.8em; }
     .modal input, .modal select { display: block; width: 100%; margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1em; transition: border-color 0.3s; }
     .modal input:focus, .modal select:focus { border-color: #2ecc71; outline: none; }
+    .edit-profile-form { margin-top: 10px; }
+    .edit-profile-form input { margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -48,6 +50,7 @@
     <button id="login-btn" class="nav-btn">Login</button>
     <button id="signup-btn" class="nav-btn">Sign Up</button>
   </header>
+
   <main class="container">
     <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()" />
     <div id="hot-products" class="hot-products"></div>
@@ -56,6 +59,7 @@
     <div id="profile-page" style="display: none;"></div>
     <div id="loading" class="loading">Loading...</div>
   </main>
+
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
     <p>Join our vibrant community to discover businesses and products across Jamaica.</p>
@@ -63,6 +67,7 @@
     <button id="customer-btn">Sign Up as Customer</button>
     <button id="feed-btn">Continue to Feed</button>
   </div>
+
   <div id="business-form" class="modal">
     <h2>Business Sign-Up</h2>
     <input type="text" id="biz-name" placeholder="Business Name" required />
@@ -84,6 +89,7 @@
     <button onclick="submitBusiness()">Submit</button>
     <button onclick="closeModal('business-form')">Close</button>
   </div>
+
   <div id="customer-form" class="modal">
     <h2>Customer Sign-Up</h2>
     <input type="text" id="cust-name" placeholder="Name" required />
@@ -92,6 +98,7 @@
     <button onclick="submitCustomer()">Submit</button>
     <button onclick="closeModal('customer-form')">Close</button>
   </div>
+
   <div id="login-form" class="modal">
     <h2>Login</h2>
     <input type="email" id="login-email" placeholder="Email" required />
@@ -99,6 +106,30 @@
     <button onclick="login()">Login</button>
     <button onclick="closeModal('login-form')">Close</button>
   </div>
+
+  <!-- Modal for adding a new product -->
+  <div id="add-product-modal" class="modal">
+    <h2>Add Product</h2>
+    <input type="text" id="new-prod-name" placeholder="Product Name" required />
+    <input type="text" id="new-prod-price" placeholder="Price (e.g. 10.00)" required />
+    <input type="text" id="new-prod-photo" placeholder="Photo URL (optional)" />
+    <input type="text" id="new-prod-desc" placeholder="Product Description" />
+    <button onclick="addNewProduct()">Add Product</button>
+    <button onclick="closeModal('add-product-modal')">Close</button>
+  </div>
+
+  <!-- Modal for editing business profile -->
+  <div id="edit-profile-modal" class="modal">
+    <h2>Edit Profile</h2>
+    <div class="edit-profile-form">
+      <input type="text" id="edit-location" placeholder="Location" />
+      <input type="text" id="edit-desc" placeholder="Short Description" />
+      <input type="text" id="edit-displayphoto" placeholder="Display Photo URL" />
+      <button onclick="updateProfile()">Update Profile</button>
+      <button onclick="closeModal('edit-profile-modal')">Close</button>
+    </div>
+  </div>
+
   <script>
     let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(10);
     let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
@@ -118,18 +149,20 @@
     const signupBtn = document.getElementById('signup-btn');
     const searchBar = document.getElementById('search-bar');
     const businessName = document.getElementById('businessName');
+    const addProductModal = document.getElementById('add-product-modal');
+    const editProfileModal = document.getElementById('edit-profile-modal');
 
     function generateDummyBusinesses(count) {
       const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
       const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
-      const dummy = [];
+      const arr = [];
       for (let i = 0; i < count; i++) {
-        const category = categories[Math.floor(Math.random() * categories.length)];
-        const location = locations[Math.floor(Math.random() * locations.length)];
-        dummy.push({
+        const cat = categories[Math.floor(Math.random() * categories.length)];
+        const loc = locations[Math.floor(Math.random() * locations.length)];
+        arr.push({
           id: crypto.randomUUID(),
           name: `Business ${i + 1}`,
-          category,
+          category: cat,
           products: [{
             id: crypto.randomUUID(),
             name: `Product ${i + 1}`,
@@ -141,12 +174,12 @@
           desc: `Short description for Business ${i + 1}.`,
           whatsapp: `87612345${(i + 10)}`,
           instagram: `business${i + 1}`,
-          location,
+          location: loc,
           displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
           views: 0
         });
       }
-      return dummy;
+      return arr;
     }
 
     if (!currentUser) popup.style.display = 'block';
@@ -417,6 +450,8 @@
             <h4>Business Metrics</h4>
             <p>Total Views: ${b.views}</p>
             <p>Featured Product: ${b.products.sort((a, c) => c.views - a.views)[0].name}</p>
+            <button onclick="showEditProfile()">Edit Profile</button>
+            <button onclick="showAddProduct()">Add Product</button>
           `;
         }
       } else if (currentUser.type === 'customer') {
@@ -431,6 +466,60 @@
       }
       profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
     }
+
+    function showEditProfile() {
+      const business = businesses.find(b => b.id === currentUser.id);
+      if (!business) return;
+      document.getElementById('edit-location').value = business.location;
+      document.getElementById('edit-desc').value = business.desc;
+      document.getElementById('edit-displayphoto').value = business.displayPhoto;
+      editProfileModal.style.display = 'block';
+    }
+
+    function updateProfile() {
+      const business = businesses.find(b => b.id === currentUser.id);
+      if (!business) return;
+      const newLocation = document.getElementById('edit-location').value.trim();
+      const newDesc = document.getElementById('edit-desc').value.trim();
+      const newPhoto = document.getElementById('edit-displayphoto').value.trim();
+      if (newLocation) business.location = newLocation;
+      if (newDesc) business.desc = newDesc;
+      if (newPhoto) business.displayPhoto = newPhoto;
+      localStorage.setItem('businesses', JSON.stringify(businesses));
+      closeModal('edit-profile-modal');
+      showProfile();
+    }
+    window.updateProfile = updateProfile;
+
+    function showAddProduct() {
+      addProductModal.style.display = 'block';
+    }
+
+    function addNewProduct() {
+      const business = businesses.find(b => b.id === currentUser.id);
+      if (!business) return;
+      const name = document.getElementById('new-prod-name').value.trim();
+      const price = document.getElementById('new-prod-price').value.trim();
+      const photo = document.getElementById('new-prod-photo').value.trim() || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+      const desc = document.getElementById('new-prod-desc').value.trim() || 'No description';
+      if (!name || !price) {
+        alert('Please enter product name and price');
+        return;
+      }
+      const newP = {
+        id: crypto.randomUUID(),
+        name,
+        desc,
+        photo,
+        price: parseFloat(price).toFixed(2),
+        views: 0
+      };
+      business.products.push(newP);
+      localStorage.setItem('businesses', JSON.stringify(businesses));
+      closeModal('add-product-modal');
+      showProfile();
+    }
+    window.addNewProduct = addNewProduct;
 
     function logout() {
       currentUser = null;
