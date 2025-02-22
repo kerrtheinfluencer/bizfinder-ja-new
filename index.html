@@ -18,8 +18,8 @@
             line-height: 1.6;
         }
 
-        /* Header */
-        header {
+        /* Header (Semantic and Accessible) */
+        header[role="banner"] {
             background: linear-gradient(90deg, #2ecc71, #27ae60);
             color: white;
             text-align: center;
@@ -30,7 +30,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
         }
-        #profile.btn, #login-btn, #signup-btn {
+        #profile-btn, #login-btn, #signup-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -42,6 +42,7 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
             font-weight: 500;
+            aria-label: "Profile, Login, or Sign Up buttons";
         }
         #profile-btn { right: 20px; display: none; }
         #login-btn { right: 120px; }
@@ -51,26 +52,33 @@
             transform: translateY(-2px);
         }
 
-        /* Container */
-        .container {
+        /* Container (Semantic Main) */
+        main.container {
             max-width: 1200px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
-        /* Sorting and Search */
-        #sort-options, #search-bar {
+        /* Sorting, Search, and Filters */
+        #sort-options, #search-bar, .filter-checkbox {
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
         }
-        #sort-options:focus, #search-bar:focus {
+        #sort-options:focus, #search-bar:focus, .filter-checkbox:focus {
             border-color: #2ecc71;
             outline: none;
+        }
+        .filters {
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         /* Business Cards, Store, and Profile Pages */
@@ -111,6 +119,7 @@
             border-radius: 8px;
             margin-bottom: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            loading: lazy; /* Lazy loading for images */
         }
         .contact a {
             margin-right: 15px;
@@ -206,21 +215,16 @@
             position: absolute;
             top: 50px;
             left: 0;
-            width: 100%;
+            width: 300%; /* Three slides */
             height: calc(100% - 50px);
             display: flex;
             animation: slideBanner 15s infinite; /* 15s for 3 slides (5s each) with smooth transitions */
         }
         .hot-products .slide {
-            flex: 0 0 100%;
+            flex: 0 0 33.333%; /* Each slide takes 1/3 of the width */
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        .hot-products .slide.active {
-            opacity: 1;
         }
         .hot-products p {
             color: #34495e;
@@ -236,8 +240,8 @@
         /* Keyframes for banner animation */
         @keyframes slideBanner {
             0%, 33.33% { transform: translateX(0); }
-            33.34%, 66.66% { transform: translateX(-100%); }
-            66.67%, 100% { transform: translateX(-200%); }
+            33.34%, 66.66% { transform: translateX(-33.333%); }
+            66.67%, 100% { transform: translateX(-66.666%); }
         }
 
         /* Loading Spinner */
@@ -267,17 +271,17 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            header { font-size: 22px; padding: 15px; }
+            header[role="banner"] { font-size: 22px; padding: 15px; }
             #profile-btn, #login-btn, #signup-btn { padding: 8px 12px; right: 10px; }
-            .container { padding: 0 10px; margin: 20px auto; }
+            main.container { padding: 0 10px; margin: 20px auto; }
             .business-card, .store-page, .profile-page { padding: 15px; }
             button { padding: 10px 18px; }
             #popup, #business-form, #customer-form, #login-form { max-width: 90%; padding: 20px; }
-            input, select, #sort-options, #search-bar { padding: 10px; }
+            input, select, #sort-options, #search-bar, .filter-checkbox { padding: 10px; }
             .hot-products { height: 150px; }
         }
         @media (max-width: 480px) {
-            header { font-size: 18px; }
+            header[role="banner"] { font-size: 18px; }
             #profile-btn, #login-btn, #signup-btn { display: block; position: static; margin: 5px auto; width: 100%; }
             .business-card img, .store-page img { max-height: 150px; }
             .hot-products { height: 120px; }
@@ -285,30 +289,45 @@
     </style>
 </head>
 <body>
-    <header>
+    <header role="banner">
         BizFinder JA
-        <button id="profile-btn">Profile</button>
-        <button id="login-btn">Login</button>
-        <button id="signup-btn">Sign Up</button>
+        <button id="profile-btn" aria-label="Go to profile">Profile</button>
+        <button id="login-btn" aria-label="Log in">Login</button>
+        <button id="signup-btn" aria-label="Sign up">Sign Up</button>
     </header>
 
-    <div class="container" id="main-content">
-        <!-- Sorting and Search -->
-        <select id="sort-options" onchange="sortBusinesses()">
+    <main class="container" id="main-content">
+        <!-- Sorting, Search, and Filters -->
+        <select id="sort-options" onchange="sortBusinesses()" aria-label="Sort businesses">
             <option value="views">Sort by Views</option>
             <option value="location">Sort by Location</option>
             <option value="category">Sort by Category</option>
         </select>
-        <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
+        <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()" aria-label="Search businesses">
+        
+        <div class="filters" role="region" aria-label="Business filters">
+            <h4>Filter by:</h4>
+            <label><input type="checkbox" class="filter-checkbox" name="category-food" onchange="filterBusinesses()"> Food & Drinks</label>
+            <label><input type="checkbox" class="filter-checkbox" name="category-fashion" onchange="filterBusinesses()"> Fashion & Accessories</label>
+            <label><input type="checkbox" class="filter-checkbox" name="category-tech" onchange="filterBusinesses()"> Tech & Electronics</label>
+            <label><input type="checkbox" class="filter-checkbox" name="category-home" onchange="filterBusinesses()"> Home & Kitchen</label>
+            <label><input type="checkbox" class="filter-checkbox" name="category-beauty" onchange="filterBusinesses()"> Beauty & Personal Care</label>
+            <label><input type="checkbox" class="filter-checkbox" name="location-montego" onchange="filterBusinesses()"> Montego Bay</label>
+            <label><input type="checkbox" class="filter-checkbox" name="location-kingston" onchange="filterBusinesses()"> Kingston</label>
+            <label><input type="checkbox" class="filter-checkbox" name="location-ocho" onchange="filterBusinesses()"> Ocho Rios</label>
+            <label><input type="checkbox" class="filter-checkbox" name="location-negril" onchange="filterBusinesses()"> Negril</label>
+            <label><input type="checkbox" class="filter-checkbox" name="location-mandeville" onchange="filterBusinesses()"> Mandeville</label>
+            <label><input type="checkbox" class="filter-checkbox" name="rating" onchange="filterBusinesses()"> Rated Businesses (1+ stars)</label>
+        </div>
         
         <div id="hot-products" class="hot-products"></div>
         <div id="feed"></div>
         <div id="store-page" style="display: none;"></div>
         <div id="profile-page" style="display: none;"></div>
         <div id="loading" class="loading">Loading...</div>
-    </div>
+    </main>
 
-    <div id="popup">
+    <div id="popup" role="dialog" aria-label="Welcome to BizFinder JA">
         <h2>Welcome to BizFinder JA!</h2>
         <p>Sign up to join our vibrant community.</p>
         <button id="business-btn">Sign Up as Business</button>
@@ -316,49 +335,58 @@
         <button id="feed-btn">Continue to Feed</button>
     </div>
 
-    <div id="business-form">
+    <div id="business-form" role="dialog" aria-label="Business Sign-Up Form">
         <h2>Business Sign-Up</h2>
-        <input type="text" id="biz-name" placeholder="Business Name" required>
-        <input type="email" id="biz-email" placeholder="Email" required>
-        <input type="password" id="biz-password" placeholder="Password" required>
-        <select id="biz-category">
+        <input type="text" id="biz-name" placeholder="Business Name" required aria-label="Business name">
+        <input type="email" id="biz-email" placeholder="Email" required aria-label="Business email">
+        <input type="password" id="biz-password" placeholder="Password" required aria-label="Business password">
+        <select id="biz-category" aria-label="Business category">
             <option value="Food & Drinks">Food & Drinks</option>
             <option value="Fashion & Accessories">Fashion & Accessories</option>
             <option value="Tech & Electronics">Tech & Electronics</option>
             <option value="Home & Kitchen">Home & Kitchen</option>
             <option value="Beauty & Personal Care">Beauty & Personal Care</option>
         </select>
-        <input type="text" id="biz-product" placeholder="Featured Product Name" required>
-        <input type="text" id="biz-desc" placeholder="Short Description" required>
-        <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
-        <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
-        <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
-        <input type="file" id="biz-display-photo" accept="image/*" onchange="previewImage('biz-display-photo', 'biz-display-preview')">
-        <img id="biz-display-preview" style="max-width: 200px; display: none; margin-top: 10px;">
-        <input type="file" id="biz-product-photo" accept="image/*" onchange="previewImage('biz-product-photo', 'biz-product-preview')">
-        <img id="biz-product-preview" style="max-width: 200px; display: none; margin-top: 10px;">
+        <input type="text" id="biz-product" placeholder="Featured Product Name" required aria-label="Featured product name">
+        <input type="text" id="biz-desc" placeholder="Short Description" required aria-label="Business description">
+        <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required aria-label="WhatsApp number">
+        <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required aria-label="Instagram handle">
+        <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required aria-label="Business location">
+        <input type="file" id="biz-display-photo" accept="image/*" onchange="previewImage('biz-display-photo', 'biz-display-preview')" aria-label="Upload display photo">
+        <img id="biz-display-preview" style="max-width: 200px; display: none; margin-top: 10px;" alt="Preview of display photo">
+        <input type="file" id="biz-product-photo" accept="image/*" onchange="previewImage('biz-product-photo', 'biz-product-preview')" aria-label="Upload product photo">
+        <img id="biz-product-preview" style="max-width: 200px; display: none; margin-top: 10px;" alt="Preview of product photo">
         <button onclick="submitBusiness()">Submit</button>
         <button onclick="closeForm('business-form')">Close</button>
     </div>
 
-    <div id="customer-form">
+    <div id="customer-form" role="dialog" aria-label="Customer Sign-Up Form">
         <h2>Customer Sign-Up</h2>
-        <input type="text" id="cust-name" placeholder="Name" required>
-        <input type="email" id="cust-email" placeholder="Email" required>
-        <input type="password" id="cust-password" placeholder="Password" required>
+        <input type="text" id="cust-name" placeholder="Name" required aria-label="Customer name">
+        <input type="email" id="cust-email" placeholder="Email" required aria-label="Customer email">
+        <input type="password" id="cust-password" placeholder="Password" required aria-label="Customer password">
         <button onclick="submitCustomer()">Submit</button>
         <button onclick="closeForm('customer-form')">Close</button>
     </div>
 
-    <div id="login-form">
+    <div id="login-form" role="dialog" aria-label="Login Form">
         <h2>Login</h2>
-        <input type="email" id="login-email" placeholder="Email" required>
-        <input type="password" id="login-password" placeholder="Password" required>
+        <input type="email" id="login-email" placeholder="Email" required aria-label="Login email">
+        <input type="password" id="login-password" placeholder="Password" required aria-label="Login password">
         <button onclick="login()">Login</button>
         <button onclick="closeForm('login-form')">Close</button>
     </div>
 
     <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
+
         // Data initialization
         let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
         let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
@@ -380,6 +408,7 @@
         const signupBtn = document.getElementById('signup-btn');
         const sortOptions = document.getElementById('sort-options');
         const searchBar = document.getElementById('search-bar');
+        const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
 
         // Generate dummy businesses
         function generateDummyBusinesses(count) {
@@ -471,16 +500,16 @@
                 card.className = 'business-card';
                 const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
                 card.innerHTML = `
-                    <h3><a href="#" onclick="displayFeed(); return false;">${business.name}</a></h3>
+                    <h3><a href="#" onclick="displayFeed(); return false;" aria-label="Return to feed for ${business.name}">${business.name}</a></h3>
                     <p class="category">${business.category}</p>
-                    <img src="${business.displayPhoto}" alt="${business.name}">
+                    <img src="${business.displayPhoto}" alt="${business.name} display photo" loading="lazy">
                     <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-                    ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+                    ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name} photo" loading="lazy">` : ''}
                     <p>${business.desc}</p>
                     <p><strong>Location:</strong> ${business.location}</p>
                     <div class="contact">
-                        <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                        <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                        <a href="https://wa.me/${business.whatsapp}" target="_blank" aria-label="WhatsApp for ${business.name}">WhatsApp</a>
+                        <a href="https://instagram.com/${business.instagram}" target="_blank" aria-label="Instagram for ${business.name}">Instagram</a>
                     </div>
                     <p class="views">Views: ${business.views}</p>
                     <button onclick="viewStore(${index})">View Store</button>
@@ -501,7 +530,6 @@
                 const slide = document.createElement('div');
                 slide.className = 'slide';
                 slide.innerHTML = `<p>${biz.name} - ${productName} (Views: ${biz.views})</p>`;
-                if (index === 0) slide.classList.add('active'); // Start with the first slide visible
                 slides.appendChild(slide);
             });
         }
@@ -527,12 +555,30 @@
                 biz.location.toLowerCase().includes(query)
             );
             displayedCount = 5; // Reset displayed count for search
-            displayFeed(filteredBusinesses, sortOptions.value);
+            displayFeed(filterBusinesses(filteredBusinesses), sortOptions.value);
         }
 
         // Sort functionality
         function sortBusinesses() {
-            displayFeed(businesses, sortOptions.value);
+            displayFeed(filterBusinesses(businesses), sortOptions.value);
+        }
+
+        // Filter functionality
+        function filterBusinesses(businessesToFilter = businesses) {
+            let filtered = [...businessesToFilter];
+            filterCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const [type, value] = checkbox.name.split('-');
+                    if (type === 'category') {
+                        filtered = filtered.filter(biz => biz.category === value);
+                    } else if (type === 'location') {
+                        filtered = filtered.filter(biz => biz.location === value);
+                    } else if (type === 'rating') {
+                        filtered = filtered.filter(biz => biz.ratings.length > 0 && biz.ratings.some(r => r.rating >= 1));
+                    }
+                }
+            });
+            return filtered;
         }
 
         // Submit business
@@ -678,21 +724,21 @@
             hotProducts.style.display = 'none'; // Hide Hot Products when viewing store
             storePage.innerHTML = `
                 <button onclick="returnToFeed()">Back to Feed</button>
-                <h3><a href="#" onclick="displayFeed(); return false;">${business.name}</a></h3>
+                <h3><a href="#" onclick="displayFeed(); return false;" aria-label="Return to feed for ${business.name}">${business.name}</a></h3>
                 <p class="category">${business.category}</p>
-                <img src="${business.displayPhoto}" alt="${business.name}">
+                <img src="${business.displayPhoto}" alt="${business.name} display photo" loading="lazy">
                 <p>${business.desc}</p>
                 <p><strong>Location:</strong> ${business.location}</p>
                 <div class="contact">
-                    <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                    <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                    <a href="https://wa.me/${business.whatsapp}" target="_blank" aria-label="WhatsApp for ${business.name}">WhatsApp</a>
+                    <a href="https://instagram.com/${business.instagram}" target="_blank" aria-label="Instagram for ${business.name}">Instagram</a>
                 </div>
                 <p class="views">Views: ${business.views}</p>
                 <h4>Products</h4>
                 ${business.products.map(p => `
                     <div>
                         <p><strong>${p.name}</strong></p>
-                        <img src="${p.photo}" alt="${p.name}">
+                        <img src="${p.photo}" alt="${p.name} photo" loading="lazy">
                         <p>${p.desc}</p>
                         <p class="views">Views: ${p.views}</p>
                     </div>
@@ -713,7 +759,7 @@
             storePage.style.display = 'none';
             profilePage.style.display = 'none';
             hotProducts.style.display = 'block'; // Show Hot Products again
-            displayFeed(businesses, sortOptions.value);
+            displayFeed(filterBusinesses(businesses), sortOptions.value);
         }
 
         // Add review
@@ -816,6 +862,20 @@
 
         // Initial load
         displayFeed();
+    </script>
+
+    <!-- Service Worker for offline support (simplified) -->
+    <script>
+        // Basic Service Worker registration (you'd need to create sw.js separately)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
+            });
+        }
     </script>
 </body>
 </html>
