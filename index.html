@@ -708,9 +708,17 @@
             }
         };
 
-        // View store
+        // View store (Fixed to show all store content)
         window.viewStore = function(index) {
+            if (index < 0 || index >= businesses.length) {
+                alert('Invalid business selected.');
+                return;
+            }
             const business = businesses[index];
+            if (!business) {
+                alert('Business data not found.');
+                return;
+            }
             business.views++;
             if (currentUser && currentUser.type === 'customer') {
                 currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
@@ -721,9 +729,9 @@
             feed.style.display = 'none';
             storePage.style.display = 'block';
             profilePage.style.display = 'none';
-            hotProducts.style.display = 'none'; // Hide Hot Products when viewing store
+            hotProducts.style.display = 'none'; // Ensure Hot Products is hidden
             storePage.innerHTML = `
-                <button onclick="returnToFeed()">Back to Feed</button>
+                <button onclick="returnToFeed()" aria-label="Return to feed">Back to Feed</button>
                 <h3><a href="#" onclick="displayFeed(); return false;" aria-label="Return to feed for ${business.name}">${business.name}</a></h3>
                 <p class="category">${business.category}</p>
                 <img src="${business.displayPhoto}" alt="${business.name} display photo" loading="lazy">
@@ -747,7 +755,7 @@
                 <div class="reviews-section">${business.ratings.map(r => `
                     <div class="review">
                         <p>${r.user}: <span class="rating">★</span> ${r.rating} - ${r.comment}</p>
-                    </div>`).join('')}</div>
+                    </div>`).join('') || '<p>No reviews yet.</p>'}</div>
                 <button onclick="addReview(${index})">Add Review</button>
                 ${currentUser && currentUser.type === 'customer' ? '<button onclick="saveBusiness(' + index + ')">Save Business</button>' : ''}
             `;
