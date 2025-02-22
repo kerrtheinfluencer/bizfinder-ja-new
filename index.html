@@ -224,6 +224,7 @@
 
     <div class="container" id="main-content">
         <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
+        <div id="search-results-info" style="text-align: center; margin-bottom: 10px; color: #7f8c8d;"></div>
         <div id="hot-products" class="hot-products"></div>
         <div id="feed"></div>
         <div id="store-page" style="display: none;"></div>
@@ -283,6 +284,7 @@
         let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let displayedCount = 5;
+        let currentBusinesses = businesses; // Tracks currently displayed list (filtered or full)
 
         // DOM elements
         const popup = document.getElementById('popup');
@@ -352,46 +354,56 @@
         // Make header business name clickable
         businessName.addEventListener('click', function() {
             if (feed.style.display === 'block') {
-                const shuffled = [...businesses].sort(() => Math.random() - 0.5);
-                displayFeed(shuffled);
+                currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+                displayedCount = 5;
+                displayFeed();
             } else {
                 displayFeed();
             }
         });
 
         // Display feed
-        function displayFeed(filteredBusinesses = businesses) {
+        function displayFeed() {
             feed.style.display = 'block';
             storePage.style.display = 'none';
             profilePage.style.display = 'none';
-            const businessesToShow = filteredBusinesses.slice(0, displayedCount);
-            feed.innerHTML = '';
-            businessesToShow.forEach((business, index) => {
-                const card = document.createElement('div');
-                card.className = 'business-card';
-                const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
-                card.innerHTML = `
-                    <h3>${business.name}</h3>
-                    <p class="category">${business.category}</p>
-                    <img src="${business.displayPhoto}" alt="${business.name}">
-                    <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-                    ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
-                    <p>${business.desc}</p>
-                    <p><strong>Location:</strong> ${business.location}</p>
-                    <div class="contact">
-                        <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                        <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                    </div>
-                    <p class="views">Views: ${business.views}</p>
-                    <button onclick="viewStore(${index})">View Store</button>
-                `;
-                feed.appendChild(card);
-            });
-            displayHotProducts(filteredBusinesses);
+            const businessesToShow = currentBusinesses.slice(0, displayedCount);
+            const totalResults = currentBusinesses.length;
+            const showing = businessesToShow.length;
+            const info = document.getElementById('search-results-info');
+            if (totalResults === 0) {
+                info.innerHTML = 'No results found.';
+                feed.innerHTML = '';
+            } else {
+                info.innerHTML = `Found ${totalResults} results, showing first ${showing}`;
+                feed.innerHTML = '';
+                businessesToShow.forEach((business) => {
+                    const card = document.createElement('div');
+                    card.className = 'business-card';
+                    const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
+                    card.innerHTML = `
+                        <h3>${business.name}</h3>
+                        <p class="category">${business.category}</p>
+                        <img src="${business.displayPhoto}" alt="${business.name}">
+                        <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+                        ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+                        <p>${business.desc}</p>
+                        <p><strong>Location:</strong> ${business.location}</p>
+                        <div class="contact">
+                            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                        </div>
+                        <p class="views">Views: ${business.views}</p>
+                        <button onclick="viewStore('${business.id}')">View Store</button>
+                    `;
+                    feed.appendChild(card);
+                });
+            }
+            displayHotProducts(currentBusinesses);
         }
 
         // Display hot products as a banner
-        function displayHotProducts(filteredBusinesses = businesses) {
+        function displayHotProducts(filteredBusinesses = currentBusinesses) {
             const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
             hotProducts.innerHTML = '<h3>Hot Products</h3>';
             hot.forEach(biz => {
@@ -407,10 +419,10 @@
 
         // Endless scrolling
         window.addEventListener('scroll', () => {
-            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
+            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
                 loading.style.display = 'block';
                 setTimeout(() => {
-                    displayedCount = Math.min(displayedCount + 5, businesses.length);
+                    displayedCount = Math.min(displayedCount + 5, currentBusinesses.length);
                     displayFeed();
                     loading.style.display = 'none';
                 }, 500);
@@ -420,13 +432,21 @@
         // Search functionality
         function searchBusinesses() {
             const query = searchBar.value.toLowerCase().trim();
-            const filteredBusinesses = businesses.filter(biz => 
-                biz.name.toLowerCase().includes(query) || 
-                biz.category.toLowerCase().includes(query) || 
-                biz.location.toLowerCase().includes(query)
-            );
+            if (query) {
+                currentBusinesses = businesses.filter(biz => 
+                    biz.name.toLowerCase().includes(query) || 
+                    biz.category.toLowerCase().includes(query) || 
+                    biz.location.toLowerCase().includes(query) ||
+                    (biz.products && biz.products.some(product => 
+                        product.name.toLowerCase().includes(query) || 
+                        product.desc.toLowerCase().includes(query)
+                    ))
+                );
+            } else {
+                currentBusinesses = businesses;
+            }
             displayedCount = 5;
-            displayFeed(filteredBusinesses);
+            displayFeed();
         }
 
         // Submit business
@@ -544,9 +564,10 @@
             }
         };
 
-        // View store (corrected)
-        window.viewStore = function(index) {
-            const business = businesses[index];
+        // View store
+        window.viewStore = function(bizId) {
+            const business = businesses.find(b => b.id == bizId);
+            if (!business) return;
             business.views++;
             if (currentUser && currentUser.type === 'customer') {
                 currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
