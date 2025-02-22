@@ -34,16 +34,9 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        #profile-btn {
-            right: 20px;
-            display: none;
-        }
-        #login-btn {
-            right: 100px;
-        }
-        #signup-btn {
-            right: 180px;
-        }
+        #profile-btn { right: 20px; display: none; }
+        #login-btn { right: 100px; }
+        #signup-btn { right: 180px; }
         #profile-btn:hover, #login-btn:hover, #signup-btn:hover {
             background: #e0e0e0;
         }
@@ -158,6 +151,8 @@
     <div id="business-form">
         <h2>Business Sign-Up</h2>
         <input type="text" id="biz-name" placeholder="Business Name" required>
+        <input type="email" id="biz-email" placeholder="Email" required>
+        <input type="password" id="biz-password" placeholder="Password" required>
         <select id="biz-category">
             <option value="Food & Drinks">Food & Drinks</option>
             <option value="Fashion & Accessories">Fashion & Accessories</option>
@@ -178,6 +173,7 @@
         <h2>Customer Sign-Up</h2>
         <input type="text" id="cust-name" placeholder="Name" required>
         <input type="email" id="cust-email" placeholder="Email" required>
+        <input type="password" id="cust-password" placeholder="Password" required>
         <button onclick="submitCustomer()">Submit</button>
         <button onclick="closeForm('customer-form')">Close</button>
     </div>
@@ -185,6 +181,7 @@
     <div id="login-form">
         <h2>Login</h2>
         <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
         <button onclick="login()">Login</button>
         <button onclick="closeForm('login-form')">Close</button>
     </div>
@@ -200,7 +197,6 @@
     <script>
         // Data initialization
         let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
-        // Ensure users is always an array, even if localStorage returns null or invalid data
         let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let displayedCount = 5;
@@ -219,7 +215,7 @@
         const loginBtn = document.getElementById('login-btn');
         const signupBtn = document.getElementById('signup-btn');
 
-        // Generate dummy businesses
+        // Generate dummy businesses if none exist
         function generateDummyBusinesses(count) {
             const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
             const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
@@ -245,11 +241,11 @@
             return businesses;
         }
 
-        // Show initial popup if no user
+        // Show popup if no user is logged in
         if (!currentUser) popup.style.display = 'block';
         else updateUIForUser();
 
-        // Popup button actions
+        // Event listeners for popup buttons
         document.getElementById('business-btn').addEventListener('click', () => {
             popup.style.display = 'none';
             businessForm.style.display = 'block';
@@ -263,20 +259,12 @@
             displayFeed();
         });
 
-        // Login button
-        loginBtn.addEventListener('click', () => {
-            loginForm.style.display = 'block';
-        });
-
-        // Sign Up button
-        signupBtn.addEventListener('click', () => {
-            popup.style.display = 'block';
-        });
-
-        // Profile button
+        // Login/Sign-up/Profile button actions
+        loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
+        signupBtn.addEventListener('click', () => popup.style.display = 'block');
         profileBtn.addEventListener('click', () => showProfile());
 
-        // Display feed
+        // Display business feed
         function displayFeed() {
             feed.style.display = 'block';
             storePage.style.display = 'none';
@@ -286,12 +274,14 @@
             businessesToShow.forEach((business, index) => {
                 const card = document.createElement('div');
                 card.className = 'business-card';
+                // Safely access the first product, with fallback if none exist
+                const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
                 card.innerHTML = `
                     <h3>${business.name}</h3>
                     <p class="category">${business.category}</p>
                     <img src="${business.displayPhoto}" alt="${business.name}">
-                    <p><strong>Featured Product:</strong> ${business.products[0].name}</p>
-                    <img src="${business.products[0].photo}" alt="${business.products[0].name}">
+                    <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+                    ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
                     <p>${business.desc}</p>
                     <p><strong>Location:</strong> ${business.location}</p>
                     <div class="contact">
@@ -306,18 +296,17 @@
             displayHotProducts();
         }
 
-        // Display hot products
+        // Display hot products (top 3 by views)
         function displayHotProducts() {
             const hot = businesses.sort((a, b) => b.views - a.views).slice(0, 3);
             hotProducts.innerHTML = '<h3>Hot Products</h3>';
             hot.forEach(biz => {
-                hotProducts.innerHTML += `
-                    <p>${biz.name} - ${biz.products[0].name} (Views: ${biz.views})</p>
-                `;
+                const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
+                hotProducts.innerHTML += `<p>${biz.name} - ${productName} (Views: ${biz.views})</p>`;
             });
         }
 
-        // Endless scrolling
+        // Endless scrolling for feed
         window.addEventListener('scroll', () => {
             if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
                 loading.style.display = 'block';
@@ -329,11 +318,12 @@
             }
         });
 
-        // Submit business
+        // Submit business sign-up
         window.submitBusiness = function() {
             try {
-                console.log('Submitting business...');
                 const name = document.getElementById('biz-name').value.trim();
+                const email = document.getElementById('biz-email').value.trim();
+                const password = document.getElementById('biz-password').value.trim();
                 const category = document.getElementById('biz-category').value;
                 const product = document.getElementById('biz-product').value.trim();
                 const desc = document.getElementById('biz-desc').value.trim();
@@ -341,12 +331,13 @@
                 const instagram = document.getElementById('biz-instagram').value.trim();
                 const location = document.getElementById('biz-location').value.trim();
 
-                // Basic validation
-                if (!name || !category || !product || !desc || !whatsapp || !instagram || !location) {
+                // Validate inputs
+                if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
                     throw new Error('Please fill in all fields!');
                 }
-
-                // Validate WhatsApp (simple check for Jamaican format: 876 followed by 7 digits)
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    throw new Error('Please enter a valid email address!');
+                }
                 if (!/^(876)\d{7}$/.test(whatsapp)) {
                     throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
                 }
@@ -365,12 +356,12 @@
                     displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
                     views: 0
                 };
+                const user = { id: business.id, type: 'business', name, email, password }; // Password stored in plain text (not secure)
+
+                // Ensure arrays are valid
+                if (!Array.isArray(businesses)) businesses = [];
+                if (!Array.isArray(users)) users = [];
                 businesses.push(business);
-                const user = { id: business.id, type: 'business', name, email: `${name.toLowerCase().replace(' ', '')}@example.com` };
-                // Ensure users is an array before pushing
-                if (!Array.isArray(users)) {
-                    users = [];
-                }
                 users.push(user);
                 currentUser = user;
 
@@ -379,25 +370,23 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                console.log('Business submitted:', business);
                 closeForm('business-form');
                 updateUIForUser();
                 displayFeed();
             } catch (error) {
-                console.error('Error in submitBusiness:', error);
                 alert(`An error occurred while signing up: ${error.message}`);
             }
         };
 
-        // Submit customer
+        // Submit customer sign-up
         window.submitCustomer = function() {
             try {
-                console.log('Submitting customer...');
                 const name = document.getElementById('cust-name').value.trim();
                 const email = document.getElementById('cust-email').value.trim();
+                const password = document.getElementById('cust-password').value.trim();
 
-                // Basic validation
-                if (!name || !email) {
+                // Validate inputs
+                if (!name || !email || !password) {
                     throw new Error('Please fill in all fields!');
                 }
                 if (!/\S+@\S+\.\S+/.test(email)) {
@@ -409,12 +398,12 @@
                     type: 'customer',
                     name,
                     email,
+                    password, // Password stored in plain text (not secure)
                     recentlyViewed: []
                 };
-                // Ensure users is an array before pushing
-                if (!Array.isArray(users)) {
-                    users = [];
-                }
+
+                // Ensure users array is valid
+                if (!Array.isArray(users)) users = [];
                 users.push(user);
                 currentUser = user;
 
@@ -422,27 +411,31 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                console.log('Customer submitted:', user);
                 closeForm('customer-form');
                 updateUIForUser();
                 displayFeed();
             } catch (error) {
-                console.error('Error in submitCustomer:', error);
                 alert(`An error occurred while signing up: ${error.message}`);
             }
         };
 
-        // Login
+        // Login function
         window.login = function() {
             try {
-                console.log('Logging in...');
                 const email = document.getElementById('login-email').value.trim();
-                // Ensure users is an array before finding
+                const password = document.getElementById('login-password').value.trim();
+
+                // Validate inputs
+                if (!email || !password) {
+                    throw new Error('Please enter both email and password!');
+                }
+
+                // Ensure users array is valid
                 if (!Array.isArray(users)) {
                     users = [];
                     localStorage.setItem('users', JSON.stringify(users));
                 }
-                const user = users.find(u => u.email === email);
+                const user = users.find(u => u.email === email && u.password === password);
                 if (user) {
                     currentUser = user;
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -450,15 +443,14 @@
                     updateUIForUser();
                     displayFeed();
                 } else {
-                    throw new Error('User not found!');
+                    throw new Error('Invalid email or password!');
                 }
             } catch (error) {
-                console.error('Error in login:', error);
                 alert(`An error occurred while logging in: ${error.message}`);
             }
         };
 
-        // View store
+        // View store details
         window.viewStore = function(index) {
             const business = businesses[index];
             business.views++;
@@ -495,7 +487,7 @@
             `;
         };
 
-        // Show profile
+        // Show user profile
         function showProfile() {
             if (!currentUser) return;
             feed.style.display = 'none';
@@ -522,7 +514,7 @@
             profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
         }
 
-        // Logout
+        // Logout function
         window.logout = function() {
             currentUser = null;
             localStorage.removeItem('currentUser');
@@ -535,14 +527,14 @@
             document.getElementById(formId).style.display = 'none';
         };
 
-        // Update UI for logged-in user
+        // Update UI based on user login status
         function updateUIForUser() {
             profileBtn.style.display = currentUser ? 'block' : 'none';
             loginBtn.style.display = currentUser ? 'none' : 'block';
             signupBtn.style.display = currentUser ? 'none' : 'block';
         }
 
-        // Initial load
+        // Initial page load
         displayFeed();
     </script>
 </body>
