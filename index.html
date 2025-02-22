@@ -46,10 +46,13 @@
       transform: translateY(-2px);
     }
     .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    .search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
     #search-bar {
       width: 100%;
       padding: 12px;
-      margin-bottom: 20px;
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 1em;
@@ -58,6 +61,12 @@
     #search-bar:focus {
       border-color: #2ecc71;
       outline: none;
+    }
+    #search-feedback {
+      font-size: 0.9em;
+      color: #7f8c8d;
+      margin-top: 5px;
+      text-align: right;
     }
     .hot-products {
       background: linear-gradient(135deg, #ffffff, #f5f7fa);
@@ -237,7 +246,16 @@
   </header>
 
   <main class="container">
-    <input type="text" id="search-bar" placeholder="Search (business, product, price, etc.)..." onkeyup="searchBusinesses()" />
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="search-bar" 
+        placeholder="Search (business, product, price, etc.)..." 
+        list="search-suggestions"
+      />
+      <datalist id="search-suggestions"></datalist>
+      <div id="search-feedback"></div>
+    </div>
     <div id="hot-products" class="hot-products"></div>
     <div id="feed"></div>
     <div id="store-page" style="display: none;"></div>
@@ -321,6 +339,8 @@
     const loginBtn = document.getElementById('login-btn');
     const signupBtn = document.getElementById('signup-btn');
     const searchBar = document.getElementById('search-bar');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    const searchFeedback = document.getElementById('search-feedback');
     const businessName = document.getElementById('businessName');
 
     function generateDummyBusinesses(count) {
@@ -393,7 +413,7 @@
       const slice = filtered.slice(0, displayedCount);
       feed.innerHTML = '';
       if (slice.length === 0) {
-        feed.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No results found. Try a different search term.</p>';
+        feed.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No results found.</p>';
       } else {
         slice.forEach((biz) => {
           const product = (biz.products && biz.products.length > 0) ? biz.products[0] : null;
@@ -457,26 +477,60 @@
       }
     });
 
-    function searchBusinesses() {
-      const q = searchBar.value.toLowerCase().trim();
+    // Debounce function to limit search frequency
+    function debounce(func, delay) {
+      let timeoutId;
+      return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+      };
+    }
+
+    // New search function with autocomplete
+    function performSearch() {
+      const query = searchBar.value.trim().toLowerCase();
       const filtered = businesses.filter(b => {
-        if (b.name.toLowerCase().includes(q)) return true;
-        if (b.category.toLowerCase().includes(q)) return true;
-        if (b.location.toLowerCase().includes(q)) return true;
-        if (b.desc.toLowerCase().includes(q)) return true;
-        if (b.products.some(p =>
-          p.name.toLowerCase().includes(q) ||
-          p.desc.toLowerCase().includes(q) ||
-          p.price.toString().includes(q)
-        )) {
-          return true;
-        }
-        return false;
+        const businessMatch = 
+          b.name.toLowerCase().includes(query) ||
+          b.category.toLowerCase().includes(query) ||
+          b.location.toLowerCase().includes(query) ||
+          b.desc.toLowerCase().includes(query);
+        const productMatch = b.products.some(p => 
+          p.name.toLowerCase().includes(query) ||
+          p.desc.toLowerCase().includes(query) ||
+          p.price.toString().includes(query)
+        );
+        return businessMatch || productMatch;
       });
-      // Display all matching businesses instead of limiting to 5
+
+      // Update autocomplete suggestions
+      const suggestions = new Set();
+      businesses.forEach(b => {
+        suggestions.add(b.name);
+        b.products.forEach(p => {
+          suggestions.add(p.name);
+          suggestions.add(`$${p.price}`);
+        });
+      });
+      const matchingSuggestions = Array.from(suggestions)
+        .filter(s => s.toLowerCase().includes(query))
+        .slice(0, 5); // Limit to 5 suggestions
+      searchSuggestions.innerHTML = matchingSuggestions
+        .map(s => `<option value="${s}">`)
+        .join('');
+
+      // Display all filtered results
       displayedCount = filtered.length;
       displayFeed(filtered);
+
+      // Provide feedback
+      searchFeedback.textContent = query 
+        ? `Found ${filtered.length} result${filtered.length === 1 ? '' : 's'}`
+        : 'Showing all businesses';
     }
+
+    // Attach debounced search to input event
+    searchBar.addEventListener('input', debounce(performSearch, 300));
 
     function submitBusiness() {
       try {
