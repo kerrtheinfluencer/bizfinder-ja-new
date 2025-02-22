@@ -730,7 +730,314 @@
         function viewDetails(index) {
             businesses[index].views++;
             displayBusinesses();
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFinder JA - Jamaican Business Hub</title>
+    <style>
+        /* Reset and Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
         }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
+        }
+
+        /* Welcome Popup */
+        #welcome-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+        }
+        #welcome-popup h2 { color: #27ae60; margin-bottom: 20px; }
+        #welcome-popup button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #2980b9;
+            color: white;
+        }
+        #welcome-popup button:nth-child(2) { background: #e74c3c; }
+        #welcome-popup button:nth-child(3) { background: #ccc; color: #333; }
+
+        /* Sign-Up Modals */
+        .signup-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+        }
+        .signup-form h2 { color: #27ae60; margin-bottom: 20px; }
+        .signup-form input, .signup-form select, .signup-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .signup-form button {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Feed */
+        #feed {
+            max-width: 800px;
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .business-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .business-card h3 { color: #2980b9; font-size: 1.5rem; }
+        .business-card .category { color: #27ae60; font-weight: bold; }
+        .business-card p { margin: 10px 0; }
+        .business-card .contact a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #e74c3c;
+        }
+        .business-card .views { color: #e74c3c; }
+
+        /* Profile Icon */
+        #profile-icon {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            background: #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+        }
+        #profile-icon.signed-in::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+        }
+        #profile-link {
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>BizFinder JA - Jamaican Business Hub</header>
+
+    <!-- Welcome Popup -->
+    <div id="welcome-popup">
+        <h2>Welcome to BizFinder JA!</h2>
+        <button onclick="showForm('business-form')">Sign Up as Business</button>
+        <button onclick="showForm('customer-form')">Sign Up as Customer</button>
+        <button onclick="document.getElementById('welcome-popup').style.display='none'">Continue to Feed</button>
+    </div>
+
+    <!-- Business Sign-Up Form -->
+    <div id="business-form" class="signup-form">
+        <h2>Business Sign-Up</h2>
+        <input type="text" placeholder="Business Name" required>
+        <select required>
+            <option value="">Select Category</option>
+            <option value="Food & Drinks">Food & Drinks</option>
+            <option value="Fashion & Accessories">Fashion & Accessories</option>
+            <option value="Tech & Electronics">Tech & Electronics</option>
+        </select>
+        <input type="text" placeholder="Featured Product Name" required>
+        <textarea placeholder="Short Description" required></textarea>
+        <input type="text" placeholder="WhatsApp Number (e.g., 876551234)" required>
+        <input type="text" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
+        <input type="text" placeholder="Location (e.g., Montego Bay)" required>
+        <button onclick="submitBusiness()">Submit</button>
+        <button onclick="closeForm('business-form')">Close</button>
+    </div>
+
+    <!-- Customer Sign-Up Form -->
+    <div id="customer-form" class="signup-form">
+        <h2>Customer Sign-Up</h2>
+        <input type="text" placeholder="Name" required>
+        <input type="email" placeholder="Email" required>
+        <button onclick="submitCustomer()">Submit</button>
+        <button onclick="closeForm('customer-form')">Close</button>
+    </div>
+
+    <!-- Feed -->
+    <div id="feed"></div>
+
+    <!-- Profile Icon -->
+    <div id="profile-icon" onclick="toggleProfileLink()">👤</div>
+    <div id="profile-link">
+        <a href="#" onclick="viewProfile()">View Full Profile</a>
+    </div>
+
+    <script>
+        let signedIn = false;
+        let userType = '';
+        const welcomePopup = document.getElementById('welcome-popup');
+        const feed = document.getElementById('feed');
+        const profileIcon = document.getElementById('profile-icon');
+        const profileLink = document.getElementById('profile-link');
+
+        // Show welcome popup for first-time visitors
+        if (!localStorage.getItem('firstVisit')) {
+            localStorage.setItem('firstVisit', 'true');
+            welcomePopup.style.display = 'block';
+        }
+
+        // Dummy business data for the feed
+        const businesses = [
+            { name: "Taste of Mobay", category: "Food & Drinks", product: "Jerk Chicken", desc: "Authentic Jamaican jerk chicken.", whatsapp: "876551234", instagram: "tasteofmobay", location: "Montego Bay", views: 0 },
+            { name: "Rasta Threads", category: "Fashion & Accessories", product: "Handmade Apparel", desc: "Unique clothing inspired by Jamaican culture.", whatsapp: "876551235", instagram: "rastathreads", location: "Kingston", views: 0 }
+        ];
+        let displayedCount = 2;
+
+        // Display businesses in the feed
+        function displayBusinesses() {
+            feed.innerHTML = '';
+            businesses.slice(0, displayedCount).forEach((business, index) => {
+                const card = document.createElement('div');
+                card.className = 'business-card';
+                card.innerHTML = `
+                    <h3>${business.name}</h3>
+                    <p class="category">${business.category}</p>
+                    <p><strong>Featured Product:</strong> ${business.product}</p>
+                    <p>${business.desc}</p>
+                    <p><strong>Location:</strong> ${business.location}</p>
+                    <div class="contact">
+                        <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                        <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                    </div>
+                    <p class="views">Views: ${business.views}</p>
+                    <button onclick="viewDetails(${index})">View Details</button>
+                `;
+                feed.appendChild(card);
+            });
+        }
+        displayBusinesses();
+
+        // Endless scroll (simplified)
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < 10) {
+                businesses.push({
+                    name: `Business ${displayedCount + 1}`,
+                    category: "Tech & Electronics",
+                    product: `Product ${displayedCount + 1}`,
+                    desc: "Sample description.",
+                    whatsapp: `876551${displayedCount + 234}`,
+                    instagram: `business${displayedCount + 1}`,
+                    location: "Ocho Rios",
+                    views: 0
+                });
+                displayedCount++;
+                displayBusinesses();
+            }
+        });
+
+        // Show sign-up forms
+        function showForm(formId) {
+            welcomePopup.style.display = 'none';
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        // Submit business form
+        function submitBusiness() {
+            signedIn = true;
+            userType = 'business';
+            profileIcon.classList.add('signed-in');
+            document.getElementById('business-form').style.display = 'none';
+            alert('Business Signed Up Successfully');
+        }
+
+        // Submit customer form
+        function submitCustomer() {
+            signedIn = true;
+            userType = 'customer';
+            profileIcon.classList.add('signed-in');
+            document.getElementById('customer-form').style.display = 'none';
+            alert('Customer Signed Up Successfully');
+        }
+
+        // Close form
+        function closeForm(formId) {
+            document.getElementById(formId).style.display = 'none';
+        }
+
+        // Toggle profile link
+        function toggleProfileLink() {
+            if (signedIn) {
+                profileLink.style.display = profileLink.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        // View profile
+        function viewProfile() {
+            alert(`Viewing ${userType} profile.`);
+        }
+
+        // View details and increment views
+        function viewDetails(index) {
+            businesses[index].views++;
+            displayBusinesses();
+        }
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
