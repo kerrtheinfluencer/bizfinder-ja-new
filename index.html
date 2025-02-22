@@ -197,8 +197,6 @@
       border-color: #2ecc71;
       outline: none;
     }
-
-    /* Modal for "View All Products" */
     #all-products-modal .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -394,28 +392,32 @@
       profilePage.style.display = 'none';
       const slice = filtered.slice(0, displayedCount);
       feed.innerHTML = '';
-      slice.forEach((biz) => {
-        const product = (biz.products && biz.products.length > 0) ? biz.products[0] : null;
-        const featuredName = product ? product.name : 'No product';
-        const featuredPrice = product ? `$${product.price}` : '$0.00';
-        const card = document.createElement('div');
-        card.className = 'business-card';
-        card.innerHTML = `
-          <h3>${biz.name}</h3>
-          <p class="category">${biz.category}</p>
-          <img src="${biz.displayPhoto}" alt="${biz.name}" />
-          <p>${biz.desc}</p>
-          <p><strong>Location:</strong> ${biz.location}</p>
-          <div class="contact">
-            <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
-            <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
-          </div>
-          <p class="views">Views: ${biz.views}</p>
-          <p><strong>Featured:</strong> ${featuredName} - <span class="price">${featuredPrice}</span></p>
-          <button onclick="viewStore('${biz.id}')">View Store</button>
-        `;
-        feed.appendChild(card);
-      });
+      if (slice.length === 0) {
+        feed.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No results found. Try a different search term.</p>';
+      } else {
+        slice.forEach((biz) => {
+          const product = (biz.products && biz.products.length > 0) ? biz.products[0] : null;
+          const featuredName = product ? product.name : 'No product';
+          const featuredPrice = product ? `$${product.price}` : '$0.00';
+          const card = document.createElement('div');
+          card.className = 'business-card';
+          card.innerHTML = `
+            <h3>${biz.name}</h3>
+            <p class="category">${biz.category}</p>
+            <img src="${biz.displayPhoto}" alt="${biz.name}" />
+            <p>${biz.desc}</p>
+            <p><strong>Location:</strong> ${biz.location}</p>
+            <div class="contact">
+              <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
+              <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
+            </div>
+            <p class="views">Views: ${biz.views}</p>
+            <p><strong>Featured:</strong> ${featuredName} - <span class="price">${featuredPrice}</span></p>
+            <button onclick="viewStore('${biz.id}')">View Store</button>
+          `;
+          feed.appendChild(card);
+        });
+      }
       displayHotProducts(filtered);
     }
 
@@ -471,7 +473,8 @@
         }
         return false;
       });
-      displayedCount = 5;
+      // Display all matching businesses instead of limiting to 5
+      displayedCount = filtered.length;
       displayFeed(filtered);
     }
 
@@ -623,7 +626,6 @@
     }
     window.viewStore = viewStore;
 
-    // Show ALL products in a modal for a given store
     function showAllProducts(bizId) {
       const b = businesses.find(x => x.id === bizId);
       if (!b) return;
