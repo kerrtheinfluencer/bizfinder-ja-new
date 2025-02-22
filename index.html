@@ -332,18 +332,22 @@
         window.submitBusiness = function() {
             try {
                 console.log('Submitting business...');
-                const name = document.getElementById('biz-name').value;
+                const name = document.getElementById('biz-name').value.trim();
                 const category = document.getElementById('biz-category').value;
-                const product = document.getElementById('biz-product').value;
-                const desc = document.getElementById('biz-desc').value;
-                const whatsapp = document.getElementById('biz-whatsapp').value;
-                const instagram = document.getElementById('biz-instagram').value;
-                const location = document.getElementById('biz-location').value;
+                const product = document.getElementById('biz-product').value.trim();
+                const desc = document.getElementById('biz-desc').value.trim();
+                const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+                const instagram = document.getElementById('biz-instagram').value.trim();
+                const location = document.getElementById('biz-location').value.trim();
 
                 // Basic validation
-                if (!name || !product || !desc || !whatsapp || !instagram || !location) {
-                    alert('Please fill in all fields!');
-                    return;
+                if (!name || !category || !product || !desc || !whatsapp || !instagram || !location) {
+                    throw new Error('Please fill in all fields!');
+                }
+
+                // Validate WhatsApp (simple check for Jamaican format: 876 followed by 7 digits)
+                if (!/^(876)\d{7}$/.test(whatsapp)) {
+                    throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
                 }
 
                 const business = {
@@ -365,6 +369,7 @@
                 users.push(user);
                 currentUser = user;
 
+                // Save to localStorage
                 localStorage.setItem('businesses', JSON.stringify(businesses));
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -375,7 +380,7 @@
                 displayFeed();
             } catch (error) {
                 console.error('Error in submitBusiness:', error);
-                alert('An error occurred while signing up. Please try again.');
+                alert(`An error occurred while signing up: ${error.message}`);
             }
         };
 
@@ -383,17 +388,15 @@
         window.submitCustomer = function() {
             try {
                 console.log('Submitting customer...');
-                const name = document.getElementById('cust-name').value;
-                const email = document.getElementById('cust-email').value;
+                const name = document.getElementById('cust-name').value.trim();
+                const email = document.getElementById('cust-email').value.trim();
 
                 // Basic validation
                 if (!name || !email) {
-                    alert('Please fill in all fields!');
-                    return;
+                    throw new Error('Please fill in all fields!');
                 }
                 if (!/\S+@\S+\.\S+/.test(email)) {
-                    alert('Please enter a valid email address!');
-                    return;
+                    throw new Error('Please enter a valid email address!');
                 }
 
                 const user = {
@@ -406,6 +409,7 @@
                 users.push(user);
                 currentUser = user;
 
+                // Save to localStorage
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
@@ -415,7 +419,7 @@
                 displayFeed();
             } catch (error) {
                 console.error('Error in submitCustomer:', error);
-                alert('An error occurred while signing up. Please try again.');
+                alert(`An error occurred while signing up: ${error.message}`);
             }
         };
 
@@ -423,7 +427,7 @@
         window.login = function() {
             try {
                 console.log('Logging in...');
-                const email = document.getElementById('login-email').value;
+                const email = document.getElementById('login-email').value.trim();
                 const user = users.find(u => u.email === email);
                 if (user) {
                     currentUser = user;
@@ -432,11 +436,11 @@
                     updateUIForUser();
                     displayFeed();
                 } else {
-                    alert('User not found!');
+                    throw new Error('User not found!');
                 }
             } catch (error) {
                 console.error('Error in login:', error);
-                alert('An error occurred while logging in. Please try again.');
+                alert(`An error occurred while logging in: ${error.message}`);
             }
         };
 
