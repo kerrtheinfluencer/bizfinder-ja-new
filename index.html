@@ -3,25 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIZFINDER JA</title>
+    <title>BizFinder JA</title>
     <style>
-        body { background-color: #e6f0fa; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; position: relative; }
-        .header h1 { margin: 0; }
-        .profile-btn { position: absolute; right: 10px; top: 10px; background-color: #218838; color: white; border: none; padding: 5px 10px; cursor: pointer; }
-        .profile-btn:hover { background-color: #1e7e34; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; }
-        .filter-section { flex: 1; background: white; padding: 15px; border-radius: 5px; margin-right: 20px; }
-        .filter-section.collapsed .filter-content { display: none; }
-        .filter-toggle { cursor: pointer; color: #007bff; margin-bottom: 10px; }
-        .filter-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
-        .results-section { flex: 3; }
-        .search-sort { display: flex; gap: 10px; margin-bottom: 15px; }
-        input, select { padding: 8px; width: 100%; box-sizing: border-box; }
-        .business-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .business-card button { background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; }
-        .business-card button:hover { background-color: #218838; }
-        @media (max-width: 768px) { .container { flex-direction: column; } .filter-section { margin-right: 0; margin-bottom: 20px; } }
+        body {
+            background-color: #e6f0fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .profile-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #218838;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .profile-btn:hover {
+            background-color: #1e7e34;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+        }
+        .filter-section {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        .filter-section.collapsed .filter-content {
+            display: none;
+        }
+        .filter-toggle {
+            cursor: pointer;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+        .results-section {
+            flex: 3;
+        }
+        .search-sort {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        input, select {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .business-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .business-card button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .business-card button:hover {
+            background-color: #218838;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .filter-section {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -75,12 +154,12 @@
 
         function goToProfile() {
             alert('Redirecting to profile page...');
-            // Replace with actual redirect logic, e.g., window.location.href = '/profile';
+            // In production, replace with: window.location.href = '/profile';
         }
 
         function viewStore(id) {
             alert(`Viewing store with ID: ${id}`);
-            // Replace with actual navigation, e.g., window.location.href = `/store/${id}`;
+            // In production, replace with: window.location.href = `/store/${id}`;
         }
 
         function updateResults() {
@@ -103,16 +182,24 @@
             filtered.sort((a, b) => sortBy === 'views' ? b.views - a.views : a.name.localeCompare(b.name));
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = filtered.map(b => `
+            resultsDiv.innerHTML = filtered.length > 0 ? filtered.map(b => `
                 <div class="business-card">
-                    <h4>${b.name}</h4>
-                    <p>Category: ${b.category} | Location: ${b.location} | Views: ${b.views}</p>
+                    <div>
+                        <h4>${b.name}</h4>
+                        <p>Category: ${b.category} | Location: ${b.location} | Views: ${b.views}</p>
+                    </div>
                     <button onclick="viewStore(${b.id})">View Store</button>
                 </div>
-            `).join('');
+            `).join('') : '<p>No businesses found.</p>';
         }
 
-        updateResults(); // Initial render
+        // Initial render
+        updateResults();
+
+        // Add event listeners for filter checkboxes
+        document.querySelectorAll('.filter').forEach(filter => {
+            filter.addEventListener('change', updateResults);
+        });
     </script>
 </body>
 </html>
