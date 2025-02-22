@@ -13,14 +13,14 @@
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #e0e8f5); /* Light, modern gradient background */
+            background: linear-gradient(135deg, #f5f7fa, #e0e8f5);
             color: #333;
             line-height: 1.6;
         }
 
         /* Header */
         header {
-            background: linear-gradient(90deg, #2ecc71, #27ae60); /* Vibrant green gradient */
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
             color: white;
             text-align: center;
             padding: 20px;
@@ -58,6 +58,21 @@
             padding: 0 20px;
         }
 
+        /* Sorting and Search */
+        #sort-options, #search-bar {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        #sort-options:focus, #search-bar:focus {
+            border-color: #2ecc71;
+            outline: none;
+        }
+
         /* Business Cards, Store, and Profile Pages */
         .business-card, .store-page, .profile-page {
             background: white;
@@ -70,6 +85,14 @@
         .business-card:hover, .store-page:hover, .profile-page:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        .business-card h3 a, .store-page h3 a {
+            color: #2ecc71;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .business-card h3 a:hover, .store-page h3 a:hover {
+            color: #27ae60;
         }
         .business-card h3, .store-page h3, .profile-page h3 {
             margin: 0 0 15px;
@@ -158,24 +181,39 @@
             outline: none;
         }
 
-        /* Hot Products Box */
+        /* Hot Products Banner */
         .hot-products {
             background: linear-gradient(135deg, #ffffff, #f5f7fa);
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             margin-bottom: 30px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             border-left: 5px solid #2ecc71;
+            overflow: hidden;
+            position: relative;
+            height: 200px;
         }
         .hot-products h3 {
             color: #2ecc71;
             margin-bottom: 15px;
             font-size: 1.3em;
         }
+        .hot-products .banner-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s ease-in-out;
+        }
         .hot-products p {
             color: #34495e;
             margin: 10px 0;
-            font-size: 1em;
+            font-size: 1.1em;
+            text-align: center;
             transition: color 0.3s;
         }
         .hot-products p:hover {
@@ -190,19 +228,39 @@
             color: #7f8c8d;
         }
 
-        /* Search Bar (Optional Feature) */
-        #search-bar {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+        /* Ratings and Reviews */
+        .reviews-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
             border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
-        #search-bar:focus {
-            border-color: #2ecc71;
-            outline: none;
+        .review {
+            margin: 10px 0;
+            color: #34495e;
+        }
+        .rating {
+            color: #f1c40f;
+            font-size: 1.1em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header { font-size: 22px; padding: 15px; }
+            #profile-btn, #login-btn, #signup-btn { padding: 8px 12px; right: 10px; }
+            .container { padding: 0 10px; margin: 20px auto; }
+            .business-card, .store-page, .profile-page { padding: 15px; }
+            button { padding: 10px 18px; }
+            #popup, #business-form, #customer-form, #login-form { max-width: 90%; padding: 20px; }
+            input, select, #sort-options, #search-bar { padding: 10px; }
+            .hot-products { height: 150px; }
+        }
+        @media (max-width: 480px) {
+            header { font-size: 18px; }
+            #profile-btn, #login-btn, #signup-btn { display: block; position: static; margin: 5px auto; width: 100%; }
+            .business-card img, .store-page img { max-height: 150px; }
+            .hot-products { height: 120px; }
         }
     </style>
 </head>
@@ -215,7 +273,12 @@
     </header>
 
     <div class="container" id="main-content">
-        <!-- Optional Search Bar -->
+        <!-- Sorting and Search -->
+        <select id="sort-options" onchange="sortBusinesses()">
+            <option value="views">Sort by Views</option>
+            <option value="location">Sort by Location</option>
+            <option value="category">Sort by Category</option>
+        </select>
         <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
         
         <div id="hot-products" class="hot-products"></div>
@@ -250,6 +313,10 @@
         <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
         <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
         <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
+        <input type="file" id="biz-display-photo" accept="image/*" onchange="previewImage('biz-display-photo', 'biz-display-preview')">
+        <img id="biz-display-preview" style="max-width: 200px; display: none; margin-top: 10px;">
+        <input type="file" id="biz-product-photo" accept="image/*" onchange="previewImage('biz-product-photo', 'biz-product-preview')">
+        <img id="biz-product-preview" style="max-width: 200px; display: none; margin-top: 10px;">
         <button onclick="submitBusiness()">Submit</button>
         <button onclick="closeForm('business-form')">Close</button>
     </div>
@@ -291,6 +358,7 @@
         const profileBtn = document.getElementById('profile-btn');
         const loginBtn = document.getElementById('login-btn');
         const signupBtn = document.getElementById('signup-btn');
+        const sortOptions = document.getElementById('sort-options');
         const searchBar = document.getElementById('search-bar');
 
         // Generate dummy businesses
@@ -306,14 +374,15 @@
                     name: `Business ${i + 1}`,
                     category,
                     products: [
-                        { name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
+                        { name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0, reviews: [] }
                     ],
                     desc: `Description for business ${i + 1}.`,
                     whatsapp: `876555${String(i).padStart(4, '0')}`,
                     instagram: `business${i + 1}`,
                     location,
                     displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
-                    views: 0
+                    views: 0,
+                    ratings: []
                 });
             }
             return businesses;
@@ -342,19 +411,46 @@
         signupBtn.addEventListener('click', () => popup.style.display = 'block');
         profileBtn.addEventListener('click', () => showProfile());
 
+        // Preview image before upload (client-side simulation)
+        function previewImage(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         // Display feed
-        function displayFeed(filteredBusinesses = businesses) {
+        function displayFeed(filteredBusinesses = businesses, sortBy = 'views') {
             feed.style.display = 'block';
             storePage.style.display = 'none';
             profilePage.style.display = 'none';
-            const businessesToShow = filteredBusinesses.slice(0, displayedCount);
+            let sortedBusinesses = [...filteredBusinesses];
+            switch (sortBy) {
+                case 'views':
+                    sortedBusinesses.sort((a, b) => b.views - a.views);
+                    break;
+                case 'location':
+                    sortedBusinesses.sort((a, b) => a.location.localeCompare(b.location));
+                    break;
+                case 'category':
+                    sortedBusinesses.sort((a, b) => a.category.localeCompare(b.category));
+                    break;
+            }
+            const businessesToShow = sortedBusinesses.slice(0, displayedCount);
             feed.innerHTML = '';
             businessesToShow.forEach((business, index) => {
                 const card = document.createElement('div');
                 card.className = 'business-card';
                 const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
                 card.innerHTML = `
-                    <h3>${business.name}</h3>
+                    <h3><a href="#" onclick="displayFeed(); return false;">${business.name}</a></h3>
                     <p class="category">${business.category}</p>
                     <img src="${business.displayPhoto}" alt="${business.name}">
                     <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
@@ -367,20 +463,44 @@
                     </div>
                     <p class="views">Views: ${business.views}</p>
                     <button onclick="viewStore(${index})">View Store</button>
+                    <button onclick="addReview(${index})">Add Review</button>
                 `;
                 feed.appendChild(card);
             });
-            displayHotProducts(filteredBusinesses);
+            displayHotProducts(filteredBusinesses, sortBy);
+            startHotProductsCycle(filteredBusinesses, sortBy);
         }
 
-        // Display hot products
-        function displayHotProducts(filteredBusinesses = businesses) {
-            const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
-            hotProducts.innerHTML = '<h3>Hot Products</h3>';
-            hot.forEach(biz => {
-                const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
-                hotProducts.innerHTML += `<p>${biz.name} - ${productName} (Views: ${biz.views})</p>`;
-            });
+        // Display hot products as a cycling banner
+        let hotIndex = 0;
+        let hotInterval;
+
+        function displayHotProducts(filteredBusinesses = businesses, sortBy = 'views') {
+            const hot = [...filteredBusinesses].sort((a, b) => b.views - a.views);
+            hotProducts.innerHTML = '<h3>Hot Products</h3><div class="banner-content"></div>';
+            updateHotBanner(hot, sortBy);
+        }
+
+        function updateHotBanner(hot, sortBy) {
+            const bannerContent = hotProducts.querySelector('.banner-content');
+            const biz = hot[hotIndex];
+            const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
+            bannerContent.innerHTML = `
+                <p>${biz.name} - ${productName} (Views: ${biz.views})</p>
+            `;
+        }
+
+        function startHotProductsCycle(filteredBusinesses, sortBy) {
+            clearInterval(hotInterval); // Clear any existing interval
+            const hot = [...filteredBusinesses].sort((a, b) => b.views - a.views);
+            hotIndex = 0;
+            updateHotBanner(hot, sortBy);
+            hotInterval = setInterval(() => {
+                hotIndex = (hotIndex + 1) % hot.length;
+                updateHotBanner(hot, sortBy);
+                const bannerContent = hotProducts.querySelector('.banner-content');
+                bannerContent.style.transform = `translateX(-${hotIndex * 100}%)`;
+            }, 5000); // Cycle every 5 seconds
         }
 
         // Endless scrolling
@@ -404,7 +524,12 @@
                 biz.location.toLowerCase().includes(query)
             );
             displayedCount = 5; // Reset displayed count for search
-            displayFeed(filteredBusinesses);
+            displayFeed(filteredBusinesses, sortOptions.value);
+        }
+
+        // Sort functionality
+        function sortBusinesses() {
+            displayFeed(businesses, sortOptions.value);
         }
 
         // Submit business
@@ -419,6 +544,8 @@
                 const whatsapp = document.getElementById('biz-whatsapp').value.trim();
                 const instagram = document.getElementById('biz-instagram').value.trim();
                 const location = document.getElementById('biz-location').value.trim();
+                const displayPhotoInput = document.getElementById('biz-display-photo');
+                const productPhotoInput = document.getElementById('biz-product-photo');
 
                 if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
                     throw new Error('Please fill in all fields!');
@@ -430,17 +557,27 @@
                     throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
                 }
 
+                let displayPhoto = 'https://via.placeholder.com/300x200.png?text=Display+Photo';
+                let productPhoto = 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+                if (displayPhotoInput.files[0]) {
+                    displayPhoto = getBase64Image(displayPhotoInput.files[0]); // Client-side simulation
+                }
+                if (productPhotoInput.files[0]) {
+                    productPhoto = getBase64Image(productPhotoInput.files[0]); // Client-side simulation
+                }
+
                 const business = {
                     id: Date.now(),
                     name,
                     category,
-                    products: [{ name: product, desc, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }],
+                    products: [{ name: product, desc, photo: productPhoto, views: 0, reviews: [] }],
                     desc,
                     whatsapp,
                     instagram,
                     location,
-                    displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
-                    views: 0
+                    displayPhoto,
+                    views: 0,
+                    ratings: []
                 };
                 const user = { id: business.id, type: 'business', name, email, password };
 
@@ -476,7 +613,7 @@
                     throw new Error('Please enter a valid email address!');
                 }
 
-                const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+                const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [], savedBusinesses: [] };
 
                 if (!Array.isArray(users)) users = [];
                 users.push(user);
@@ -535,9 +672,10 @@
             feed.style.display = 'none';
             storePage.style.display = 'block';
             profilePage.style.display = 'none';
+            hotProducts.style.display = 'none'; // Hide Hot Products when viewing store
             storePage.innerHTML = `
-                <button onclick="displayFeed()">Back to Feed</button>
-                <h3>${business.name}</h3>
+                <button onclick="returnToFeed()">Back to Feed</button>
+                <h3><a href="#" onclick="displayFeed(); return false;">${business.name}</a></h3>
                 <p class="category">${business.category}</p>
                 <img src="${business.displayPhoto}" alt="${business.name}">
                 <p>${business.desc}</p>
@@ -556,7 +694,58 @@
                         <p class="views">Views: ${p.views}</p>
                     </div>
                 `).join('')}
+                <h4>Reviews</h4>
+                <div class="reviews-section">${business.ratings.map(r => `
+                    <div class="review">
+                        <p>${r.user}: <span class="rating">★</span> ${r.rating} - ${r.comment}</p>
+                    </div>`).join('')}</div>
+                <button onclick="addReview(${index})">Add Review</button>
+                ${currentUser && currentUser.type === 'customer' ? '<button onclick="saveBusiness(' + index + ')">Save Business</button>' : ''}
             `;
+        };
+
+        // Return to feed (ensures Hot Products reappears)
+        function returnToFeed() {
+            feed.style.display = 'block';
+            storePage.style.display = 'none';
+            profilePage.style.display = 'none';
+            hotProducts.style.display = 'block'; // Show Hot Products again
+            displayFeed(businesses, sortOptions.value);
+        }
+
+        // Add review
+        window.addReview = function(index) {
+            if (!currentUser || currentUser.type !== 'customer') {
+                alert('Please log in as a customer to add a review.');
+                return;
+            }
+            const rating = prompt('Rate this business (1-5 stars):');
+            const comment = prompt('Leave a comment:');
+            if (rating && comment && !isNaN(rating) && rating >= 1 && rating <= 5) {
+                const review = { user: currentUser.name, rating: parseInt(rating), comment };
+                businesses[index].ratings.push(review);
+                businesses[index].products[0].reviews.push(review); // Add to product reviews too
+                localStorage.setItem('businesses', JSON.stringify(businesses));
+                viewStore(index); // Refresh store page
+            } else {
+                alert('Please enter a valid rating (1-5) and comment.');
+            }
+        };
+
+        // Save business for customer
+        window.saveBusiness = function(index) {
+            if (!currentUser || currentUser.type !== 'customer') {
+                alert('Please log in as a customer to save businesses.');
+                return;
+            }
+            const business = businesses[index];
+            if (!currentUser.savedBusinesses.some(b => b.id === business.id)) {
+                currentUser.savedBusinesses.push({ id: business.id, name: business.name });
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Business saved to your profile!');
+            } else {
+                alert('This business is already saved!');
+            }
         };
 
         // Show profile
@@ -569,21 +758,26 @@
                 <button onclick="displayFeed()">Back to Feed</button>
                 <h3>${currentUser.name}'s Profile</h3>
                 <p>Email: ${currentUser.email}</p>
-            `;
-            if (currentUser.type === 'business') {
-                const business = businesses.find(b => b.id === currentUser.id);
-                profilePage.innerHTML += `
+                <h4>Account Settings</h4>
+                <button onclick="updateProfile()">Update Profile</button>
+                ${currentUser.type === 'business' ? `
                     <h4>Business Metrics</h4>
-                    <p>Total Views: ${business.views}</p>
-                    <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
-                `;
-            } else if (currentUser.type === 'customer') {
-                profilePage.innerHTML += `
+                    <p>Total Views: ${businesses.find(b => b.id === currentUser.id)?.views || 0}</p>
+                    <p>Hot Product: ${businesses.find(b => b.id === currentUser.id)?.products.sort((a, b) => b.views - a.views)[0]?.name || 'No product'}</p>
+                ` : `
                     <h4>Recently Viewed</h4>
                     ${currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>Nothing viewed yet!</p>'}
-                `;
-            }
-            profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
+                    <h4>Saved Businesses</h4>
+                    ${currentUser.savedBusinesses.length ? currentUser.savedBusinesses.map(b => `<p>${b.name}</p>`).join('') : '<p>No saved businesses yet!</p>'}
+                `}
+                <button onclick="logout()">Logout</button>
+            `;
+        }
+
+        // Update profile (simplified for demo)
+        function updateProfile() {
+            alert('Profile update functionality would require a backend for secure data changes.');
+            // In a real app, this would open a form to update name, email, or password, with backend validation.
         }
 
         // Logout
@@ -604,6 +798,17 @@
             profileBtn.style.display = currentUser ? 'block' : 'none';
             loginBtn.style.display = currentUser ? 'none' : 'block';
             signupBtn.style.display = currentUser ? 'none' : 'block';
+        }
+
+        // Convert image to base64 (client-side simulation)
+        function getBase64Image(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         // Initial load
