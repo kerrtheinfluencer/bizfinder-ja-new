@@ -13,14 +13,14 @@
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #e0e8f5); /* Light, modern gradient background */
+            background: linear-gradient(135deg, #f5f7fa, #e0e8f5);
             color: #333;
             line-height: 1.6;
         }
 
         /* Header */
         header {
-            background: linear-gradient(90deg, #2ecc71, #27ae60); /* Vibrant green gradient */
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
             color: white;
             text-align: center;
             padding: 20px;
@@ -29,6 +29,9 @@
             text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
+        }
+        #businessName {
+            cursor: pointer;
         }
         #profile-btn, #login-btn, #signup-btn {
             position: absolute;
@@ -158,28 +161,33 @@
             outline: none;
         }
 
-        /* Hot Products Box */
+        /* Hot Products Banner */
         .hot-products {
             background: linear-gradient(135deg, #ffffff, #f5f7fa);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border-left: 5px solid #2ecc71;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
         }
-        .hot-products h3 {
-            color: #2ecc71;
-            margin-bottom: 15px;
-            font-size: 1.3em;
+        .hot-product-item {
+            display: flex;
+            align-items: center;
+            margin: 5px;
         }
-        .hot-products p {
+        .hot-product-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .hot-product-item span {
+            font-size: 0.9em;
             color: #34495e;
-            margin: 10px 0;
-            font-size: 1em;
-            transition: color 0.3s;
-        }
-        .hot-products p:hover {
-            color: #2ecc71;
         }
 
         /* Loading Spinner */
@@ -190,7 +198,7 @@
             color: #7f8c8d;
         }
 
-        /* Search Bar (Optional Feature) */
+        /* Search Bar */
         #search-bar {
             width: 100%;
             padding: 12px;
@@ -208,16 +216,14 @@
 </head>
 <body>
     <header>
-        BizFinder JA
+        <span id="businessName">BizFinder JA</span>
         <button id="profile-btn">Profile</button>
         <button id="login-btn">Login</button>
         <button id="signup-btn">Sign Up</button>
     </header>
 
     <div class="container" id="main-content">
-        <!-- Optional Search Bar -->
         <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
-        
         <div id="hot-products" class="hot-products"></div>
         <div id="feed"></div>
         <div id="store-page" style="display: none;"></div>
@@ -292,6 +298,7 @@
         const loginBtn = document.getElementById('login-btn');
         const signupBtn = document.getElementById('signup-btn');
         const searchBar = document.getElementById('search-bar');
+        const businessName = document.getElementById('businessName');
 
         // Generate dummy businesses
         function generateDummyBusinesses(count) {
@@ -342,6 +349,16 @@
         signupBtn.addEventListener('click', () => popup.style.display = 'block');
         profileBtn.addEventListener('click', () => showProfile());
 
+        // Make header business name clickable
+        businessName.addEventListener('click', function() {
+            if (feed.style.display === 'block') {
+                const shuffled = [...businesses].sort(() => Math.random() - 0.5);
+                displayFeed(shuffled);
+            } else {
+                displayFeed();
+            }
+        });
+
         // Display feed
         function displayFeed(filteredBusinesses = businesses) {
             feed.style.display = 'block';
@@ -373,13 +390,18 @@
             displayHotProducts(filteredBusinesses);
         }
 
-        // Display hot products
+        // Display hot products as a banner
         function displayHotProducts(filteredBusinesses = businesses) {
             const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
             hotProducts.innerHTML = '<h3>Hot Products</h3>';
             hot.forEach(biz => {
-                const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
-                hotProducts.innerHTML += `<p>${biz.name} - ${productName} (Views: ${biz.views})</p>`;
+                const product = biz.products[0];
+                hotProducts.innerHTML += `
+                    <div class="hot-product-item">
+                        <img src="${product.photo}" alt="${product.name}" width="50" height="50">
+                        <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
+                    </div>
+                `;
             });
         }
 
@@ -403,7 +425,7 @@
                 biz.category.toLowerCase().includes(query) || 
                 biz.location.toLowerCase().includes(query)
             );
-            displayedCount = 5; // Reset displayed count for search
+            displayedCount = 5;
             displayFeed(filteredBusinesses);
         }
 
@@ -522,7 +544,7 @@
             }
         };
 
-        // View store
+        // View store (corrected)
         window.viewStore = function(index) {
             const business = businesses[index];
             business.views++;
