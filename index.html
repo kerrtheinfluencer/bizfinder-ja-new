@@ -330,62 +330,113 @@
 
         // Submit business
         window.submitBusiness = function() {
-            const business = {
-                id: Date.now(),
-                name: document.getElementById('biz-name').value,
-                category: document.getElementById('biz-category').value,
-                products: [
-                    { name: document.getElementById('biz-product').value, desc: document.getElementById('biz-desc').value, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
-                ],
-                desc: document.getElementById('biz-desc').value,
-                whatsapp: document.getElementById('biz-whatsapp').value,
-                instagram: document.getElementById('biz-instagram').value,
-                location: document.getElementById('biz-location').value,
-                displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
-                views: 0
-            };
-            businesses.push(business);
-            const user = { id: business.id, type: 'business', name: business.name, email: `${business.name.toLowerCase().replace(' ', '')}@example.com` };
-            users.push(user);
-            currentUser = user;
-            localStorage.setItem('businesses', JSON.stringify(businesses));
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            closeForm('business-form');
-            updateUIForUser();
-            displayFeed();
+            try {
+                console.log('Submitting business...');
+                const name = document.getElementById('biz-name').value;
+                const category = document.getElementById('biz-category').value;
+                const product = document.getElementById('biz-product').value;
+                const desc = document.getElementById('biz-desc').value;
+                const whatsapp = document.getElementById('biz-whatsapp').value;
+                const instagram = document.getElementById('biz-instagram').value;
+                const location = document.getElementById('biz-location').value;
+
+                // Basic validation
+                if (!name || !product || !desc || !whatsapp || !instagram || !location) {
+                    alert('Please fill in all fields!');
+                    return;
+                }
+
+                const business = {
+                    id: Date.now(),
+                    name,
+                    category,
+                    products: [
+                        { name: product, desc, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
+                    ],
+                    desc,
+                    whatsapp,
+                    instagram,
+                    location,
+                    displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
+                    views: 0
+                };
+                businesses.push(business);
+                const user = { id: business.id, type: 'business', name, email: `${name.toLowerCase().replace(' ', '')}@example.com` };
+                users.push(user);
+                currentUser = user;
+
+                localStorage.setItem('businesses', JSON.stringify(businesses));
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                console.log('Business submitted:', business);
+                closeForm('business-form');
+                updateUIForUser();
+                displayFeed();
+            } catch (error) {
+                console.error('Error in submitBusiness:', error);
+                alert('An error occurred while signing up. Please try again.');
+            }
         };
 
         // Submit customer
         window.submitCustomer = function() {
-            const user = {
-                id: Date.now(),
-                type: 'customer',
-                name: document.getElementById('cust-name').value,
-                email: document.getElementById('cust-email').value,
-                recentlyViewed: []
-            };
-            users.push(user);
-            currentUser = user;
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            closeForm('customer-form');
-            updateUIForUser();
-            displayFeed();
+            try {
+                console.log('Submitting customer...');
+                const name = document.getElementById('cust-name').value;
+                const email = document.getElementById('cust-email').value;
+
+                // Basic validation
+                if (!name || !email) {
+                    alert('Please fill in all fields!');
+                    return;
+                }
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    alert('Please enter a valid email address!');
+                    return;
+                }
+
+                const user = {
+                    id: Date.now(),
+                    type: 'customer',
+                    name,
+                    email,
+                    recentlyViewed: []
+                };
+                users.push(user);
+                currentUser = user;
+
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                console.log('Customer submitted:', user);
+                closeForm('customer-form');
+                updateUIForUser();
+                displayFeed();
+            } catch (error) {
+                console.error('Error in submitCustomer:', error);
+                alert('An error occurred while signing up. Please try again.');
+            }
         };
 
         // Login
         window.login = function() {
-            const email = document.getElementById('login-email').value;
-            const user = users.find(u => u.email === email);
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                closeForm('login-form');
-                updateUIForUser();
-                displayFeed();
-            } else {
-                alert('User not found!');
+            try {
+                console.log('Logging in...');
+                const email = document.getElementById('login-email').value;
+                const user = users.find(u => u.email === email);
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    closeForm('login-form');
+                    updateUIForUser();
+                    displayFeed();
+                } else {
+                    alert('User not found!');
+                }
+            } catch (error) {
+                console.error('Error in login:', error);
+                alert('An error occurred while logging in. Please try again.');
             }
         };
 
