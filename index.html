@@ -495,7 +495,7 @@
             }
             const businessesToShow = sortedBusinesses.slice(0, displayedCount);
             feed.innerHTML = '';
-            businessesToShow.forEach((business, index) => {
+            businessesToShow.forEach((business) => {
                 const card = document.createElement('div');
                 card.className = 'business-card';
                 const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
@@ -512,8 +512,8 @@
                         <a href="https://instagram.com/${business.instagram}" target="_blank" aria-label="Instagram for ${business.name}">Instagram</a>
                     </div>
                     <p class="views">Views: ${business.views}</p>
-                    <button onclick="viewStore(${index})">View Store</button>
-                    <button onclick="addReview(${index})">Add Review</button>
+                    <button onclick="viewStore('${business.id}')">View Store</button>
+                    <button onclick="addReview('${business.id}')">Add Review</button>
                 `;
                 feed.appendChild(card);
             });
@@ -525,7 +525,7 @@
             const hot = [...filteredBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
             hotProducts.innerHTML = '<h3>Hot Products</h3><div class="banner-slides"></div>';
             const slides = hotProducts.querySelector('.banner-slides');
-            hot.forEach((biz, index) => {
+            hot.forEach((biz) => {
                 const productName = biz.products && biz.products.length > 0 ? biz.products[0].name : 'No product';
                 const slide = document.createElement('div');
                 slide.className = 'slide';
@@ -709,12 +709,8 @@
         };
 
         // View store (Fixed to show all store content)
-        window.viewStore = function(index) {
-            if (index < 0 || index >= businesses.length) {
-                alert('Invalid business selected.');
-                return;
-            }
-            const business = businesses[index];
+        window.viewStore = function(bizId) {
+            const business = businesses.find(b => b.id === parseInt(bizId));
             if (!business) {
                 alert('Business data not found.');
                 return;
@@ -756,8 +752,8 @@
                     <div class="review">
                         <p>${r.user}: <span class="rating">★</span> ${r.rating} - ${r.comment}</p>
                     </div>`).join('') || '<p>No reviews yet.</p>'}</div>
-                <button onclick="addReview(${index})">Add Review</button>
-                ${currentUser && currentUser.type === 'customer' ? '<button onclick="saveBusiness(' + index + ')">Save Business</button>' : ''}
+                <button onclick="addReview('${business.id}')">Add Review</button>
+                ${currentUser && currentUser.type === 'customer' ? `<button onclick="saveBusiness('${business.id}')">Save Business</button>` : ''}
             `;
         };
 
@@ -771,7 +767,7 @@
         }
 
         // Add review
-        window.addReview = function(index) {
+        window.addReview = function(bizId) {
             if (!currentUser || currentUser.type !== 'customer') {
                 alert('Please log in as a customer to add a review.');
                 return;
@@ -780,28 +776,39 @@
             const comment = prompt('Leave a comment:');
             if (rating && comment && !isNaN(rating) && rating >= 1 && rating <= 5) {
                 const review = { user: currentUser.name, rating: parseInt(rating), comment };
-                businesses[index].ratings.push(review);
-                businesses[index].products[0].reviews.push(review); // Add to product reviews too
-                localStorage.setItem('businesses', JSON.stringify(businesses));
-                viewStore(index); // Refresh store page
+                const business = businesses.find(b => b.id === parseInt(bizId));
+                if (business) {
+                    business.ratings.push(review);
+                    if (business.products && business.products.length > 0) {
+                        business.products[0].reviews.push(review);
+                    }
+                    localStorage.setItem('businesses', JSON.stringify(businesses));
+                    viewStore(bizId); // Refresh store page
+                } else {
+                    alert('Business not found!');
+                }
             } else {
                 alert('Please enter a valid rating (1-5) and comment.');
             }
         };
 
         // Save business for customer
-        window.saveBusiness = function(index) {
+        window.saveBusiness = function(bizId) {
             if (!currentUser || currentUser.type !== 'customer') {
-                alert('Please log in as a customer to save businesses.');
+                alert('Please log in as a customer to save businesses!');
                 return;
             }
-            const business = businesses[index];
-            if (!currentUser.savedBusinesses.some(b => b.id === business.id)) {
-                currentUser.savedBusinesses.push({ id: business.id, name: business.name });
-                localStorage.setItem('users', JSON.stringify(users));
-                alert('Business saved to your profile!');
+            const business = businesses.find(b => b.id === parseInt(bizId));
+            if (business) {
+                if (!currentUser.savedBusinesses.some(b => b.id === business.id)) {
+                    currentUser.savedBusinesses.push({ id: business.id, name: business.name });
+                    localStorage.setItem('users', JSON.stringify(users));
+                    alert('Business saved to your profile!');
+                } else {
+                    alert('This business is already saved!');
+                }
             } else {
-                alert('This business is already saved!');
+                alert('Business not found!');
             }
         };
 
