@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizFinder JA</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -100,7 +100,7 @@
     <button onclick="closeModal('login-form')">Close</button>
   </div>
   <script>
-    let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+    let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(10);
     let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
     let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
     let displayedCount = 5;
@@ -118,14 +118,15 @@
     const signupBtn = document.getElementById('signup-btn');
     const searchBar = document.getElementById('search-bar');
     const businessName = document.getElementById('businessName');
+
     function generateDummyBusinesses(count) {
       const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
       const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
-      let dummyBusinesses = [];
+      const dummy = [];
       for (let i = 0; i < count; i++) {
-        let category = categories[Math.floor(Math.random() * categories.length)];
-        let location = locations[Math.floor(Math.random() * locations.length)];
-        dummyBusinesses.push({
+        const category = categories[Math.floor(Math.random() * categories.length)];
+        const location = locations[Math.floor(Math.random() * locations.length)];
+        dummy.push({
           id: crypto.randomUUID(),
           name: `Business ${i + 1}`,
           category,
@@ -134,112 +135,147 @@
             name: `Product ${i + 1}`,
             desc: `Description for product ${i + 1}`,
             photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo',
-            price: (Math.random() * 100 + 5).toFixed(2),
+            price: (Math.random() * 50 + 10).toFixed(2),
             views: 0
           }],
           desc: `Short description for Business ${i + 1}.`,
-          whatsapp: `876555${String(i).padStart(4, '0')}`,
+          whatsapp: `87612345${(i + 10)}`,
           instagram: `business${i + 1}`,
           location,
           displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
           views: 0
         });
       }
-      return dummyBusinesses;
+      return dummy;
     }
+
     if (!currentUser) popup.style.display = 'block';
     else updateUIForUser();
-    document.getElementById('business-btn').addEventListener('click', () => { popup.style.display = 'none'; businessForm.style.display = 'block'; });
-    document.getElementById('customer-btn').addEventListener('click', () => { popup.style.display = 'none'; customerForm.style.display = 'block'; });
-    document.getElementById('feed-btn').addEventListener('click', () => { popup.style.display = 'none'; displayFeed(); });
+
+    document.getElementById('business-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      businessForm.style.display = 'block';
+    });
+    document.getElementById('customer-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      customerForm.style.display = 'block';
+    });
+    document.getElementById('feed-btn').addEventListener('click', () => {
+      popup.style.display = 'none';
+      displayFeed();
+    });
     loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
     signupBtn.addEventListener('click', () => popup.style.display = 'block');
     profileBtn.addEventListener('click', () => showProfile());
+
     businessName.addEventListener('click', function() {
-      feed.style.display = 'block';
-      storePage.style.display = 'none';
-      profilePage.style.display = 'none';
-      if (feed.getAttribute('data-active') === 'true') { 
-        const shuffled = [...businesses].sort(() => Math.random() - 0.5);
-        displayFeed(shuffled);
-      } else { displayFeed(); feed.setAttribute('data-active', 'true'); }
-    });
-    function displayFeed(filteredBusinesses = businesses) {
       feed.style.display = 'grid';
       storePage.style.display = 'none';
       profilePage.style.display = 'none';
-      const businessesToShow = filteredBusinesses.slice(0, displayedCount);
+      if (feed.getAttribute('data-active') === 'true') {
+        const shuffled = [...businesses].sort(() => Math.random() - 0.5);
+        displayFeed(shuffled);
+      } else {
+        displayFeed();
+        feed.setAttribute('data-active', 'true');
+      }
+    });
+
+    function displayFeed(filtered = businesses) {
+      feed.style.display = 'grid';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'none';
+      const slice = filtered.slice(0, displayedCount);
       feed.innerHTML = '';
-      businessesToShow.forEach(business => {
-        let featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '', price: '0.00' };
-        let card = document.createElement('div');
+      slice.forEach((biz) => {
+        const product = (biz.products && biz.products.length > 0) ? biz.products[0] : null;
+        const featuredName = product ? product.name : 'No product';
+        const featuredPrice = product ? `$${product.price}` : '$0.00';
+        const card = document.createElement('div');
         card.className = 'business-card';
         card.innerHTML = `
-          <h3>${business.name}</h3>
-          <p class="category">${business.category}</p>
-          <img src="${business.displayPhoto}" alt="${business.name}" />
-          <p>${business.desc}</p>
-          <p><strong>Location:</strong> ${business.location}</p>
+          <h3>${biz.name}</h3>
+          <p class="category">${biz.category}</p>
+          <img src="${biz.displayPhoto}" alt="${biz.name}" />
+          <p>${biz.desc}</p>
+          <p><strong>Location:</strong> ${biz.location}</p>
           <div class="contact">
-            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+            <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
+            <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
           </div>
-          <p class="views">Views: ${business.views}</p>
-          <p><strong>Featured:</strong> ${featuredProduct.name} - <span class="price">$${featuredProduct.price}</span></p>
-          <button onclick="viewStore('${business.id}')">View Store</button>
+          <p class="views">Views: ${biz.views}</p>
+          <p><strong>Featured:</strong> ${featuredName} - <span class="price">${featuredPrice}</span></p>
+          <button onclick="viewStore('${biz.id}')">View Store</button>
         `;
         feed.appendChild(card);
       });
-      displayHotProducts(filteredBusinesses);
+      displayHotProducts(filtered);
     }
-    function displayHotProducts(filteredBusinesses = businesses) {
-      const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
+
+    function displayHotProducts(list = businesses) {
+      const top3 = [...list].sort((a, b) => b.views - a.views).slice(0, 3);
       hotProducts.innerHTML = '<h3>Hot Products</h3>';
-      hot.forEach(biz => {
-        let product = biz.products[0];
-        hotProducts.innerHTML += `
-          <div class="hot-product-item">
-            <img src="${product.photo}" alt="${product.name}" />
-            <span>${biz.name} - ${product.name} ($${product.price}, Views: ${biz.views})</span>
-          </div>
-        `;
+      top3.forEach((b) => {
+        const prod = (b.products && b.products.length > 0) ? b.products[0] : null;
+        if (!prod) {
+          hotProducts.innerHTML += `
+            <div class="hot-product-item">
+              <img src="https://via.placeholder.com/50" alt="No Product" />
+              <span>${b.name} - No Product</span>
+            </div>
+          `;
+        } else {
+          hotProducts.innerHTML += `
+            <div class="hot-product-item">
+              <img src="${prod.photo}" alt="${prod.name}" />
+              <span>${b.name} - ${prod.name} ($${prod.price}, Views: ${b.views})</span>
+            </div>
+          `;
+        }
       });
     }
+
     window.addEventListener('scroll', () => {
       if (feed.style.display === 'grid' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < businesses.length) {
         loading.style.display = 'block';
-        setTimeout(() => { displayedCount = Math.min(displayedCount + 5, businesses.length); displayFeed(); loading.style.display = 'none'; }, 500);
+        setTimeout(() => {
+          displayedCount = Math.min(displayedCount + 5, businesses.length);
+          displayFeed();
+          loading.style.display = 'none';
+        }, 500);
       }
     });
+
     function searchBusinesses() {
-      let query = searchBar.value.toLowerCase().trim();
-      let filteredBusinesses = businesses.filter(biz =>
-        biz.name.toLowerCase().includes(query) ||
-        biz.category.toLowerCase().includes(query) ||
-        biz.location.toLowerCase().includes(query)
+      const q = searchBar.value.toLowerCase().trim();
+      const f = businesses.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        b.category.toLowerCase().includes(q) ||
+        b.location.toLowerCase().includes(q)
       );
       displayedCount = 5;
-      displayFeed(filteredBusinesses);
+      displayFeed(f);
     }
+
     function submitBusiness() {
       try {
-        let name = document.getElementById('biz-name').value.trim();
-        let email = document.getElementById('biz-email').value.trim();
-        let password = document.getElementById('biz-password').value.trim();
-        let category = document.getElementById('biz-category').value;
-        let product = document.getElementById('biz-product').value.trim();
-        let price = document.getElementById('biz-price').value.trim().replace('$', '');
-        let desc = document.getElementById('biz-desc').value.trim();
-        let whatsapp = document.getElementById('biz-whatsapp').value.trim();
-        let instagram = document.getElementById('biz-instagram').value.trim();
-        let location = document.getElementById('biz-location').value.trim();
+        const name = document.getElementById('biz-name').value.trim();
+        const email = document.getElementById('biz-email').value.trim();
+        const password = document.getElementById('biz-password').value.trim();
+        const category = document.getElementById('biz-category').value;
+        const product = document.getElementById('biz-product').value.trim();
+        const price = document.getElementById('biz-price').value.trim().replace('$', '');
+        const desc = document.getElementById('biz-desc').value.trim();
+        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+        const instagram = document.getElementById('biz-instagram').value.trim();
+        const location = document.getElementById('biz-location').value.trim();
         if (!name || !email || !password || !category || !product || !price || !desc || !whatsapp || !instagram || !location)
           throw new Error('Please fill in all fields!');
         if (!/\S+@\S+\.\S+/.test(email))
           throw new Error('Please enter a valid email address!');
         if (!/^(876)\d{7}$/.test(whatsapp))
           throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
-        let business = {
+        const newBiz = {
           id: crypto.randomUUID(),
           name,
           category,
@@ -258,8 +294,8 @@
           displayPhoto: 'https://via.placeholder.com/300x200.png?text=Display+Photo',
           views: 0
         };
-        let user = { id: business.id, type: 'business', name, email, password };
-        businesses.push(business);
+        const user = { id: newBiz.id, type: 'business', name, email, password };
+        businesses.push(newBiz);
         users.push(user);
         currentUser = user;
         localStorage.setItem('businesses', JSON.stringify(businesses));
@@ -268,52 +304,62 @@
         closeModal('business-form');
         updateUIForUser();
         displayFeed();
-      } catch (error) { alert(`Error: ${error.message}`); }
+      } catch (err) {
+        alert(err.message);
+      }
     }
     window.submitBusiness = submitBusiness;
+
     function submitCustomer() {
       try {
-        let name = document.getElementById('cust-name').value.trim();
-        let email = document.getElementById('cust-email').value.trim();
-        let password = document.getElementById('cust-password').value.trim();
+        const name = document.getElementById('cust-name').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const password = document.getElementById('cust-password').value.trim();
         if (!name || !email || !password)
           throw new Error('Please fill in all fields!');
         if (!/\S+@\S+\.\S+/.test(email))
           throw new Error('Please enter a valid email address!');
-        let user = { id: crypto.randomUUID(), type: 'customer', name, email, password, recentlyViewed: [] };
-        users.push(user);
-        currentUser = user;
+        const newCust = { id: crypto.randomUUID(), type: 'customer', name, email, password, recentlyViewed: [] };
+        users.push(newCust);
+        currentUser = newCust;
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         closeModal('customer-form');
         updateUIForUser();
         displayFeed();
-      } catch (error) { alert(`Error: ${error.message}`); }
+      } catch (err) {
+        alert(err.message);
+      }
     }
     window.submitCustomer = submitCustomer;
+
     function login() {
       try {
-        let email = document.getElementById('login-email').value.trim();
-        let password = document.getElementById('login-password').value.trim();
-        if (!email || !password)
-          throw new Error('Please enter both email and password!');
-        let user = users.find(u => u.email === email && u.password === password);
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        if (!email || !password) throw new Error('Please enter both email and password!');
+        const user = users.find(u => u.email === email && u.password === password);
         if (user) {
           currentUser = user;
           localStorage.setItem('currentUser', JSON.stringify(currentUser));
           closeModal('login-form');
           updateUIForUser();
           displayFeed();
-        } else { throw new Error('Invalid email or password!'); }
-      } catch (error) { alert(`Error: ${error.message}`); }
+        } else {
+          throw new Error('Invalid email or password!');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
     }
     window.login = login;
-    function viewStore(businessId) {
-      let business = businesses.find(b => b.id === businessId);
-      if (!business) { console.error('Business not found!'); return; }
-      business.views++;
+
+    function viewStore(bizId) {
+      const b = businesses.find(x => x.id === bizId);
+      if (!b) return;
+      b.views++;
       if (currentUser && currentUser.type === 'customer') {
-        currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+        currentUser.recentlyViewed.unshift({ id: b.id, name: b.name });
         currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
         localStorage.setItem('users', JSON.stringify(users));
       }
@@ -321,30 +367,39 @@
       feed.style.display = 'none';
       storePage.style.display = 'block';
       profilePage.style.display = 'none';
+      let productList = '';
+      if (b.products && b.products.length > 0) {
+        productList = b.products.map((p) => {
+          return `
+            <div style="margin-bottom: 15px;">
+              <p><strong>${p.name}</strong> - <span class="price">$${p.price}</span></p>
+              <img src="${p.photo}" alt="${p.name}" style="width:100%; max-height:200px; object-fit:cover; border-radius:6px; margin-bottom:8px;" />
+              <p>${p.desc}</p>
+              <p class="views">Views: ${p.views}</p>
+            </div>
+          `;
+        }).join('');
+      } else {
+        productList = '<p>No products found.</p>';
+      }
       storePage.innerHTML = `
         <button onclick="displayFeed()">Back to Feed</button>
-        <h3>${business.name}</h3>
-        <p class="category">${business.category}</p>
-        <img src="${business.displayPhoto}" alt="${business.name}" />
-        <p>${business.desc}</p>
-        <p><strong>Location:</strong> ${business.location}</p>
+        <h3>${b.name}</h3>
+        <p class="category">${b.category}</p>
+        <img src="${b.displayPhoto}" alt="${b.name}" />
+        <p>${b.desc}</p>
+        <p><strong>Location:</strong> ${b.location}</p>
         <div class="contact">
-          <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-          <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+          <a href="https://wa.me/${b.whatsapp}" target="_blank">WhatsApp</a>
+          <a href="https://instagram.com/${b.instagram}" target="_blank">Instagram</a>
         </div>
-        <p class="views">Views: ${business.views}</p>
+        <p class="views">Views: ${b.views}</p>
         <h4>Products</h4>
-        ${business.products.map(p => `
-          <div style="margin-bottom: 15px;">
-            <p><strong>${p.name}</strong> - <span class="price">$${p.price}</span></p>
-            <img src="${p.photo}" alt="${p.name}" style="width:100%; max-height:200px; object-fit:cover; border-radius:6px; margin-bottom:8px;" />
-            <p>${p.desc}</p>
-            <p class="views">Views: ${p.views}</p>
-          </div>
-        `).join('')}
+        ${productList}
       `;
     }
     window.viewStore = viewStore;
+
     function showProfile() {
       if (!currentUser) return;
       feed.style.display = 'none';
@@ -356,20 +411,27 @@
         <p>Email: ${currentUser.email}</p>
       `;
       if (currentUser.type === 'business') {
-        let business = businesses.find(b => b.id === currentUser.id);
-        profilePage.innerHTML += `
-          <h4>Business Metrics</h4>
-          <p>Total Views: ${business.views}</p>
-          <p>Featured Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
-        `;
+        const b = businesses.find(bx => bx.id === currentUser.id);
+        if (b) {
+          profilePage.innerHTML += `
+            <h4>Business Metrics</h4>
+            <p>Total Views: ${b.views}</p>
+            <p>Featured Product: ${b.products.sort((a, c) => c.views - a.views)[0].name}</p>
+          `;
+        }
       } else if (currentUser.type === 'customer') {
         profilePage.innerHTML += `
           <h4>Recently Viewed</h4>
-          ${currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>Nothing viewed yet!</p>'}
+          ${
+            currentUser.recentlyViewed && currentUser.recentlyViewed.length
+              ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('')
+              : '<p>Nothing viewed yet!</p>'
+          }
         `;
       }
       profilePage.innerHTML += `<button onclick="logout()">Logout</button>`;
     }
+
     function logout() {
       currentUser = null;
       localStorage.removeItem('currentUser');
@@ -377,13 +439,18 @@
       displayFeed();
     }
     window.logout = logout;
-    function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
     window.closeModal = closeModal;
+
     function updateUIForUser() {
       profileBtn.style.display = currentUser ? 'block' : 'none';
       loginBtn.style.display = currentUser ? 'none' : 'block';
       signupBtn.style.display = currentUser ? 'none' : 'block';
     }
+
     displayFeed();
   </script>
 </body>
