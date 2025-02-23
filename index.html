@@ -93,13 +93,18 @@
       }
       .hot-products {
         padding: 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
       }
       .hot-product-grid {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         gap: 0.5rem;
+        animation: mobileSlide 15s infinite ease-in-out;
       }
       .hot-product-item {
+        flex: 0 0 auto;
+        width: 45%; /* Two items per row on mobile */
         margin: 0.25rem 0;
         padding: 0.5rem;
       }
@@ -278,7 +283,7 @@
       display: none;
     }
     
-    /* Hot Products Banner - Premium Design for PC */
+    /* Hot Products Banner - Premium Design for PC and Mobile Slideshow */
     .hot-products {
       background: var(--premium-bg);
       padding: 1.5rem;
@@ -302,6 +307,7 @@
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
       padding: 1rem;
+      animation: pcSlide 20s infinite ease-in-out;
     }
     @media (min-width: 1025px) {
       .hot-products .hot-product-grid {
@@ -318,6 +324,7 @@
       justify-content: space-between;
       transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
+      cursor: pointer;
     }
     .hot-product-item:hover {
       transform: translateY(-5px);
@@ -347,10 +354,89 @@
       animation: firePulse 1.5s infinite ease-in-out;
     }
 
-    /* Fire Emoji Animation */
+    /* Fire Emoji and Slide Animations */
     @keyframes firePulse {
       0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
       50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+    @keyframes pcSlide {
+      0%, 10% { transform: translateX(0); }
+      20%, 30% { transform: translateX(-33.33%); }
+      40%, 50% { transform: translateX(-66.66%); }
+      60%, 70% { transform: translateX(-100%); }
+      80%, 90% { transform: translateX(-66.66%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes mobileSlide {
+      0%, 25% { transform: translateX(0); }
+      50%, 75% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Hot Product Popup - Premium View */
+    #hot-product-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--premium-bg);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 2000;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      display: none;
+    }
+    #hot-product-popup img {
+      width: 150px;
+      height: 150px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      loading: lazy;
+    }
+    #hot-product-popup h3 {
+      color: var(--primary-green);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    #hot-product-popup p {
+      font-size: 1rem;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+    }
+    #hot-product-popup .views {
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      margin-bottom: 1rem;
+    }
+    #hot-product-popup button {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    #hot-product-popup button:hover {
+      background: var(--secondary-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    #hot-product-popup .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted-color);
     }
 
     /* Loading Spinner */
@@ -620,6 +706,43 @@
       margin: 0.5rem;
       padding: 0.75rem 1.5rem;
     }
+
+    /* Manage Products Modal */
+    #manage-products-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #manage-products-modal .product-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #manage-products-modal .product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #manage-products-modal .product-item-actions button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -735,6 +858,16 @@
     <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
   </div>
 
+  <!-- Hot Product Popup -->
+  <div id="hot-product-popup" class="modal">
+    <button class="close-btn" data-form="hot-product-popup">×</button>
+    <img id="hot-product-img" alt="Product Image">
+    <h3 id="hot-product-name"></h3>
+    <p id="hot-product-desc"></p>
+    <p class="views" id="hot-product-views"></p>
+    <button id="view-store-btn">View Store</button>
+  </div>
+
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
@@ -781,6 +914,7 @@
       const manageProductsModal = document.getElementById('manage-products-modal');
       const manageProductList = document.getElementById('manage-product-list');
       const hotProductGrid = document.querySelector('.hot-product-grid') || hotProducts.querySelector('.hot-product-grid');
+      const hotProductPopup = document.getElementById('hot-product-popup');
 
       /*** Helper Functions ***/
       function generateDummyBusinesses(count) {
@@ -915,7 +1049,8 @@
       
       const displayHotProducts = () => {
         if (!hotProductGrid) return; // Safety check
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 6);
+        const hotCount = window.innerWidth >= 1024 ? 6 : 2;
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
         hotProductGrid.innerHTML = '';
         if (hot.length === 0) {
           hotProductGrid.innerHTML = '<p>No hot products available.</p>';
@@ -927,12 +1062,32 @@
             : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
           const item = document.createElement('div');
           item.className = 'hot-product-item';
+          item.setAttribute('data-biz-id', biz.id);
+          item.setAttribute('data-product-name', product.name);
           item.innerHTML = `
             <img src="${product.photo}" alt="${product.name}" loading="lazy">
             <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
           `;
           hotProductGrid.appendChild(item);
         });
+        // Add click event listeners after rendering
+        document.querySelectorAll('.hot-product-item').forEach(item => {
+          item.addEventListener('click', () => showHotProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
+        });
+      };
+
+      const showHotProductPopup = (bizId, productName) => {
+        if (!hotProductPopup) return;
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        const product = business.products.find(p => p.name === productName);
+        if (!product) return;
+        document.getElementById('hot-product-img').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        document.getElementById('hot-product-name').textContent = product.name;
+        document.getElementById('hot-product-desc').textContent = product.desc || 'No description available';
+        document.getElementById('hot-product-views').textContent = `Views: ${business.views}`;
+        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
+        hotProductPopup.style.display = 'block';
       };
       
       const showProfile = () => {
@@ -1238,6 +1393,18 @@
       });
       
       document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
+      
+      document.getElementById('view-store-btn').addEventListener('click', () => {
+        const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
+        if (bizId) {
+          viewStore(bizId);
+          closeModal('hot-product-popup');
+        }
+      });
+
+      document.querySelector('.close-btn[data-form="hot-product-popup"]')?.addEventListener('click', () => {
+        closeModal('hot-product-popup');
+      });
       
       /*** Event Handlers ***/
       document.getElementById('business-btn').addEventListener('click', () => {
