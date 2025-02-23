@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizFinder JA</title>
-  <!-- Chart.js for interactive graph in profile -->
+  <!-- Chart.js for the interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* CSS Variables for easy theming */
@@ -378,6 +378,29 @@
     .profile-details {
       margin-bottom: 1.5rem;
     }
+    /* Ensure the chart is larger and responsive */
+    .profile-container canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+    
+    /* Add Product Modal */
+    #add-product-modal {
+      /* Same style as other modals */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -394,7 +417,7 @@
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products"></div>
-    <!-- Feed is now rendered inside a grid container -->
+    <!-- Feed is rendered inside a grid container -->
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
     <div id="profile-page" class="profile-page" style="display: none;"></div>
@@ -448,12 +471,21 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
+  <!-- Add Product Modal -->
+  <div id="add-product-modal" class="modal">
+    <h2>Add Product</h2>
+    <input type="text" id="prod-name" placeholder="Product Name" required />
+    <input type="text" id="prod-desc" placeholder="Product Description" required />
+    <input type="text" id="prod-photo" placeholder="Product Photo URL" required />
+    <button id="submit-product-btn">Add Product</button>
+    <button class="close-btn" data-form="add-product-modal">Close</button>
+  </div>
+
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
-      // Set default number of feed cards to load as 6
-      let displayedCount = 6;
+      let displayedCount = 6; // Load 6 feed cards by default
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
@@ -525,7 +557,6 @@
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
-        // Render feed inside grid container
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
@@ -577,7 +608,7 @@
         });
       };
       
-      // Modern, future‑proof profile page design with an interactive graph
+      // Modern profile page with interactive graph and "Add Product" button
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
@@ -599,11 +630,9 @@
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views}</p>
             <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
-          `;
-          // Add a canvas for the day-by-day views graph
-          profileContent += `
-            <div style="margin-top: 1.5rem;">
-              <canvas id="viewsChart" width="400" height="200"></canvas>
+            <button id="add-product-btn">Add Product</button>
+            <div style="margin-top: 1rem;">
+              <canvas id="viewsChart"></canvas>
             </div>
           `;
         } else if (currentUser.type === 'customer') {
@@ -620,16 +649,14 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        // If business, initialize the views graph
         if (currentUser.type === 'business') {
           initViewsChart();
         }
       };
       
-      // Initialize the Chart.js graph with dummy data for daily views
+      // Initialize Chart.js graph with a thermal gradient for data points
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart').getContext('2d');
-        // Generate dummy labels and data for the last 7 days
         const labels = [];
         const dataPoints = [];
         for (let i = 6; i >= 0; i--) {
@@ -638,6 +665,14 @@
           labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
           dataPoints.push(Math.floor(Math.random() * 100));
         }
+        const minVal = Math.min(...dataPoints);
+        const maxVal = Math.max(...dataPoints);
+        const pointColors = dataPoints.map(val => {
+          const ratio = (val - minVal) / (maxVal - minVal || 1);
+          const r = Math.round(255 * ratio);
+          const b = Math.round(255 * (1 - ratio));
+          return `rgb(${r},0,${b})`;
+        });
         new Chart(ctx, {
           type: 'line',
           data: {
@@ -648,11 +683,14 @@
               borderColor: '#2ecc71',
               backgroundColor: 'rgba(46, 204, 113, 0.1)',
               fill: true,
-              tension: 0.3
+              tension: 0.3,
+              pointBackgroundColor: pointColors,
+              pointRadius: 6
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
               legend: {
                 display: true,
@@ -678,8 +716,31 @@
         });
       }
       
+      // Open "Add Product" modal
+      const openAddProductModal = () => {
+        document.getElementById('add-product-modal').style.display = 'block';
+      };
+      
+      // Handle adding a product (for business users)
+      document.getElementById('submit-product-btn').addEventListener('click', () => {
+        const prodName = document.getElementById('prod-name').value.trim();
+        const prodDesc = document.getElementById('prod-desc').value.trim();
+        const prodPhoto = document.getElementById('prod-photo').value.trim() || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        if (!prodName || !prodDesc) {
+          alert('Please fill in all product fields!');
+          return;
+        }
+        // Update the business's products array
+        const business = businesses.find(b => b.id === currentUser.id);
+        if (business) {
+          business.products.push({ name: prodName, desc: prodDesc, photo: prodPhoto, views: 0 });
+          updateLocalStorage();
+          closeModal('add-product-modal');
+          showProfile();
+        }
+      });
+      
       /*** Event Handlers ***/
-      // Popup buttons
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         businessForm.style.display = 'block';
@@ -692,8 +753,6 @@
         popup.style.display = 'none';
         displayFeed();
       });
-      
-      // Login, Sign Up, Profile
       loginBtn.addEventListener('click', () => {
         loginForm.style.display = 'block';
       });
@@ -702,14 +761,15 @@
       });
       profileBtn.addEventListener('click', showProfile);
       
-      // Back to Feed button (delegated event)
       document.body.addEventListener('click', event => {
         if (event.target.id === 'back-to-feed') {
           displayFeed();
         }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
+        }
       });
       
-      // Header business name refreshes feed (and shuffles businesses)
       businessName.addEventListener('click', () => {
         if (feed.style.display === 'block') {
           currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
@@ -720,14 +780,12 @@
         }
       });
       
-      // Close modals using common close button
       document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           closeModal(btn.getAttribute('data-form'));
         });
       });
       
-      // Search functionality
       searchBar.addEventListener('keyup', () => {
         const query = searchBar.value.toLowerCase().trim();
         if (query) {
@@ -747,7 +805,6 @@
         displayFeed();
       });
       
-      // Endless scrolling
       window.addEventListener('scroll', () => {
         if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           loading.style.display = 'block';
@@ -759,14 +816,12 @@
         }
       });
       
-      // Delegate "View Store" button clicks
       document.body.addEventListener('click', event => {
         if (event.target.classList.contains('view-store-btn')) {
           viewStore(event.target.getAttribute('data-id'));
         }
       });
       
-      // Submit Business
       document.getElementById('submit-business-btn').addEventListener('click', () => {
         try {
           const name = document.getElementById('biz-name').value.trim();
@@ -821,7 +876,6 @@
         }
       });
       
-      // Submit Customer
       document.getElementById('submit-customer-btn').addEventListener('click', () => {
         try {
           const name = document.getElementById('cust-name').value.trim();
@@ -848,7 +902,6 @@
         }
       });
       
-      // Login
       document.getElementById('login-submit-btn').addEventListener('click', () => {
         try {
           const email = document.getElementById('login-email').value.trim();
@@ -873,7 +926,6 @@
         }
       });
       
-      // View Store with enhanced layout
       const viewStore = bizId => {
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
@@ -922,7 +974,6 @@
         `;
       };
       
-      // Logout
       document.body.addEventListener('click', event => {
         if (event.target.id === 'logout-btn') {
           currentUser = null;
@@ -932,7 +983,6 @@
         }
       });
       
-      /*** Initial UI Setup ***/
       if (!currentUser) {
         popup.style.display = 'block';
       } else {
