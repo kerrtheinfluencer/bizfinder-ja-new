@@ -18,6 +18,8 @@
       --accent-blue: #3498db;
       --accent-blue-hover: #2980b9;
       --white: #fff;
+      --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
+      --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
     
     /* Reset and Base Styles */
@@ -76,7 +78,7 @@
     }
     
     /* Mobile Optimization */
-    @media (max-width: 600px) {
+    @media (max-width: 1024px) {
       .container {
         margin: 1rem auto;
         padding: 0 1rem;
@@ -88,6 +90,13 @@
       .header-buttons {
         flex-wrap: wrap;
         justify-content: center;
+      }
+      .hot-products {
+        padding: 1rem;
+      }
+      .hot-product-item {
+        margin: 0.25rem 0;
+        padding: 0.5rem;
       }
     }
     
@@ -239,7 +248,8 @@
       font-weight: 600;
     }
     input,
-    select {
+    select,
+    textarea {
       display: block;
       width: 100%;
       margin: 0.75rem 0;
@@ -250,84 +260,98 @@
       transition: border-color 0.3s, box-shadow 0.3s;
     }
     input:focus,
-    select:focus {
+    select:focus,
+    textarea:focus {
       border-color: var(--primary-green);
       outline: none;
       box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
+    .modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
     
-    /* Hot Products Banner */
+    /* Hot Products Banner - Premium Design for PC */
     .hot-products {
-      background: linear-gradient(135deg, var(--white), var(--light-bg));
-      padding: 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-left: 5px solid var(--primary-green);
+      background: var(--premium-bg);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: var(--premium-shadow);
+      border-left: 8px solid var(--primary-green);
       position: relative;
       overflow: hidden;
     }
     .hot-products h3 {
       width: 100%;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       color: var(--primary-green);
-      margin-bottom: 0.75rem;
-      font-weight: 600;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .hot-products .hot-product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+    @media (min-width: 1025px) {
+      .hot-products .hot-product-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
     .hot-product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
-      animation: slideIn 20s infinite;
+      animation: fadeIn 1s ease-in-out;
+    }
+    .hot-product-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     .hot-product-item img {
-      width: 50px;
-      height: 50px;
-      margin-right: 0.75rem;
-      border-radius: 4px;
+      width: 80px;
+      height: 80px;
+      margin-right: 1rem;
+      border-radius: 8px;
       object-fit: cover;
       loading: lazy; /* Lazy loading for performance */
     }
     .hot-product-item span {
-      font-size: 0.9rem;
-      color: #34495e;
+      font-size: 1rem;
+      color: var(--text-color);
+      flex-grow: 1;
+      font-weight: 500;
     }
     .hot-product-item::after {
       content: "🔥";
       position: absolute;
-      right: 10px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       animation: firePulse 1.5s infinite ease-in-out;
     }
 
-    /* Fire Emoji Animation */
+    /* Fire Emoji and Fade Animations */
     @keyframes firePulse {
       0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
       50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
     }
-
-    /* Slideshow Animation for Hot Products */
-    @keyframes slideIn {
-      0% { transform: translateX(-100%); opacity: 0; }
-      10% { transform: translateX(0); opacity: 1; }
-      90% { transform: translateX(0); opacity: 1; }
-      100% { transform: translateX(100%); opacity: 0; }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
-
-    /* Ensure hot products loop smoothly */
-    .hot-products .hot-product-item {
-      animation-delay: calc(var(--order) * 5s);
-    }
-    .hot-products .hot-product-item:nth-child(1) { --order: 0; }
-    .hot-products .hot-product-item:nth-child(2) { --order: 1; }
-    .hot-products .hot-product-item:nth-child(3) { --order: 2; }
 
     /* Loading Spinner */
     .loading {
@@ -424,7 +448,7 @@
       padding: 2rem;
       background: var(--white);
       border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      box-shadow: var(--premium-shadow);
       text-align: center;
     }
     .profile-header {
@@ -436,8 +460,8 @@
     }
     .profile-header img,
     .profile-header .letter-avatar {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       object-fit: cover;
       loading: lazy; /* Lazy loading for performance */
@@ -466,7 +490,7 @@
       font-size: 0.9rem;
     }
     
-    /* Settings Modal */
+    /* Settings Modal - Intuitive and Foolproof */
     #settings-modal {
       position: fixed;
       top: 50%;
@@ -475,12 +499,46 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: var(--premium-shadow);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
       width: 90%;
       display: none;
+    }
+    #settings-modal h2 {
+      color: var(--primary-green);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    #settings-modal input {
+      width: 100%;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #settings-modal input:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #settings-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #settings-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
+    #settings-modal .tooltip {
+      font-size: 0.8rem;
+      color: var(--muted-color);
+      margin-top: 0.25rem;
     }
     
     /* Add Product Modal */
@@ -492,16 +550,39 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: var(--premium-shadow);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
       width: 90%;
       display: none;
     }
+    #add-product-modal input, #add-product-modal textarea {
+      width: 100%;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #add-product-modal input:focus, #add-product-modal textarea:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #add-product-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #add-product-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
 
-    /* Manage Products Modal */
-    #manage-products-modal {
+    /* Edit Product Modal */
+    #edit-product-modal {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -509,31 +590,35 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: var(--premium-shadow);
       z-index: 1000;
       text-align: center;
-      max-width: 600px;
+      max-width: 500px;
       width: 90%;
       display: none;
     }
-    #manage-products-modal .product-list {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    #manage-products-modal .product-item {
-      margin-bottom: 0.5rem;
-    }
-    #manage-products-modal input, #manage-products-modal textarea {
+    #edit-product-modal input, #edit-product-modal textarea {
       width: 100%;
-      margin: 0.5rem 0;
-      padding: 0.75rem;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
       border: 2px solid #ddd;
       border-radius: 8px;
       font-size: 1rem;
     }
-    #manage-products-modal button {
-      margin: 0.25rem;
-      padding: 0.5rem 1rem;
+    #edit-product-modal input:focus, #edit-product-modal textarea:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #edit-product-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #edit-product-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
     }
   </style>
 </head>
@@ -552,7 +637,9 @@
       <input type="text" id="search-bar" placeholder="Search businesses..." />
       <div id="search-results-info"></div>
     </div>
-    <div id="hot-products" class="hot-products"></div>
+    <div id="hot-products" class="hot-products">
+      <div class="hot-product-grid"></div>
+    </div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
     <div id="profile-page" class="profile-page" style="display: none;"></div>
@@ -609,9 +696,12 @@
   <!-- Settings Modal -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name" />
-    <input type="text" id="settings-photo" placeholder="Profile Photo URL (leave empty for letter avatar)" />
+    <input type="text" id="settings-name" placeholder="Your Name (e.g., John Doe)" required />
+    <input type="url" id="settings-photo" placeholder="Profile Photo URL (e.g., https://example.com/photo.jpg)" />
+    <div class="tooltip">Enter a valid URL starting with http:// or https://, or leave blank for letter avatar.</div>
     <button id="save-settings-btn">Save Settings</button>
+    <button id="reset-settings-btn">Reset to Default</button>
+    <div id="settings-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
 
@@ -619,18 +709,23 @@
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
-    <input type="text" id="prod-desc" placeholder="Product Description" required />
+    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
     <input type="file" id="prod-media" accept="image/*,video/*" />
     <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
     <button id="submit-product-btn">Add Product</button>
+    <div id="add-product-error" class="error">Please fill in all required fields!</div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
 
-  <!-- Manage Products Modal -->
-  <div id="manage-products-modal" class="modal">
-    <h2>Manage Products</h2>
-    <div class="product-list" id="manage-product-list"></div>
-    <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
+  <!-- Edit Product Modal -->
+  <div id="edit-product-modal" class="modal">
+    <h2>Edit Product</h2>
+    <input type="text" id="edit-prod-name" placeholder="Product Name" required />
+    <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <input type="url" id="edit-prod-photo" placeholder="Photo URL (e.g., https://example.com/photo.jpg)" />
+    <button id="save-product-btn">Save Changes</button>
+    <div id="edit-product-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
+    <button class="close-btn" data-form="edit-product-modal">Close</button>
   </div>
 
   <script>
@@ -673,8 +768,10 @@
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
-      const manageProductsModal = document.getElementById('manage-products-modal');
-      const manageProductList = document.getElementById('manage-product-list');
+      const settingsModal = document.getElementById('settings-modal');
+      const addProductModal = document.getElementById('add-product-modal');
+      const editProductModal = document.getElementById('edit-product-modal');
+      const hotProductGrid = document.querySelector('.hot-product-grid');
 
       /*** Helper Functions ***/
       function generateDummyBusinesses(count) {
@@ -726,6 +823,7 @@
       
       function closeModal(formId) {
         document.getElementById(formId).style.display = 'none';
+        document.getElementById(`${formId}-error`)?.style.display = 'none';
       }
       
       function getLetterAvatar(name) {
@@ -747,6 +845,15 @@
         return now >= openDate && now <= closeDate;
       }
       
+      function isValidUrl(url) {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
       /*** UI Rendering Functions ***/
       const displayFeed = () => {
         console.time('displayFeed');
@@ -755,14 +862,14 @@
         profilePage.style.display = 'none';
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
-        const businessesToShow = currentBusinesses.slice(0, displayedCount);
+        const businessesToShow = currentBusinesses;
         const totalResults = currentBusinesses.length;
         const info = document.getElementById('search-results-info');
         if (totalResults === 0) {
           info.textContent = 'No results found.';
           gridContainer.innerHTML = '';
         } else {
-          info.textContent = `Found ${totalResults} results, showing first ${businessesToShow.length}`;
+          info.textContent = `Found ${totalResults} results, showing all ${businessesToShow.length}`;
           businessesToShow.forEach(business => {
             const featuredProduct = business.products && business.products.length > 0 
               ? business.products[0] 
@@ -794,22 +901,23 @@
       };
       
       const displayHotProducts = () => {
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
-        hotProducts.innerHTML = '<h3>Hot Products</h3>';
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 6);
+        hotProductGrid.innerHTML = '';
         if (hot.length === 0) {
-          hotProducts.innerHTML += '<p>No hot products available.</p>';
+          hotProductGrid.innerHTML = '<p>No hot products available.</p>';
           return;
         }
         hot.forEach((biz, index) => {
           const product = biz.products && biz.products.length > 0 
             ? biz.products[0] 
             : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
-          hotProducts.innerHTML += `
-            <div class="hot-product-item" style="--order: ${index};">
-              <img src="${product.photo}" alt="${product.name}" loading="lazy">
-              <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
-            </div>
+          const item = document.createElement('div');
+          item.className = 'hot-product-item';
+          item.innerHTML = `
+            <img src="${product.photo}" alt="${product.name}" loading="lazy">
+            <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
           `;
+          hotProductGrid.appendChild(item);
         });
       };
       
@@ -876,11 +984,7 @@
         // Attach settings and product management event listeners after rendering the profile
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
-          settingsBtn.addEventListener('click', () => {
-            document.getElementById('settings-modal').style.display = 'block';
-            document.getElementById('settings-name').value = currentUser.name || "";
-            document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
-          });
+          settingsBtn.addEventListener('click', openSettingsModal);
         }
         if (currentUser.type === 'business') {
           initViewsChart();
@@ -941,50 +1045,87 @@
       }
       
       const openAddProductModal = () => {
-        document.getElementById('add-product-modal').style.display = 'block';
+        addProductModal.style.display = 'block';
+        document.getElementById('add-product-error').style.display = 'none';
+      };
+
+      const openSettingsModal = () => {
+        settingsModal.style.display = 'block';
+        document.getElementById('settings-name').value = currentUser.name || "";
+        document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
+        document.getElementById('settings-error').style.display = 'none';
       };
 
       const openManageProductsModal = () => {
         const business = businesses.find(b => b.id === currentUser.id);
-        manageProductList.innerHTML = business.products.map(p => `
-          <div class="product-item">
-            <input type="text" class="product-name-input" value="${p.name}" data-id="${p.name}" />
-            <textarea class="product-desc-input" data-id="${p.name}">${p.desc}</textarea>
-            <input type="text" class="product-photo-input" value="${p.photo}" placeholder="Photo URL" data-id="${p.name}" />
-            <button class="save-product-btn" data-id="${p.name}">Save</button>
-            <button class="delete-product-btn" data-id="${p.name}">Delete</button>
-          </div>
-        `).join('');
+        const productList = document.createElement('div');
+        productList.className = 'product-list';
+        business.products.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'product-item';
+          item.innerHTML = `
+            <span>${p.name} - ${p.desc}</span>
+            <div class="product-item-actions">
+              <button class="edit-product-btn" data-id="${p.name}">Edit</button>
+              <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+            </div>
+          `;
+          productList.appendChild(item);
+        });
+        document.getElementById('manage-products-modal').innerHTML = `
+          <h2>Manage Products</h2>
+          ${productList.outerHTML}
+          <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
+        `;
         document.getElementById('manage-products-modal').style.display = 'block';
-
-        document.querySelectorAll('.save-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => saveProduct(btn.getAttribute('data-id')));
+        document.querySelectorAll('.edit-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
         });
         document.querySelectorAll('.delete-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id')));
+          btn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+              deleteProduct(btn.getAttribute('data-id'));
+            }
+          });
         });
-      };
-
-      const saveProduct = productId => {
-        const business = businesses.find(b => b.id === currentUser.id);
-        const product = business.products.find(p => p.name === productId);
-        if (product) {
-          product.name = document.querySelector(`.product-name-input[data-id="${productId}"]`).value.trim();
-          product.desc = document.querySelector(`.product-desc-input[data-id="${productId}"]`).value.trim();
-          product.photo = document.querySelector(`.product-photo-input[data-id="${productId}"]`).value.trim() || '';
-          updateLocalStorage();
-          closeModal('manage-products-modal');
-          showProfile();
-        }
       };
 
       const editProduct = productId => {
-        openManageProductsModal();
-        const product = businesses.find(b => b.id === currentUser.id).products.find(p => p.name === productId);
+        const business = businesses.find(b => b.id === currentUser.id);
+        const product = business.products.find(p => p.name === productId);
         if (product) {
-          document.querySelector(`.product-name-input[data-id="${productId}"]`).value = product.name;
-          document.querySelector(`.product-desc-input[data-id="${productId}"]`).value = product.desc;
-          document.querySelector(`.product-photo-input[data-id="${productId}"]`).value = product.photo;
+          document.getElementById('edit-prod-name').value = product.name;
+          document.getElementById('edit-prod-desc').value = product.desc;
+          document.getElementById('edit-prod-photo').value = product.photo;
+          editProductModal.style.display = 'block';
+          document.getElementById('edit-product-error').style.display = 'none';
+        }
+      };
+
+      const saveEditedProduct = () => {
+        const productId = document.getElementById('edit-prod-name').value.trim();
+        const prodDesc = document.getElementById('edit-prod-desc').value.trim();
+        const prodPhoto = document.getElementById('edit-prod-photo').value.trim();
+        const error = document.getElementById('edit-product-error');
+
+        if (!productId || !prodDesc) {
+          error.style.display = 'block';
+          return;
+        }
+        if (prodPhoto && !isValidUrl(prodPhoto)) {
+          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.style.display = 'block';
+          return;
+        }
+
+        const business = businesses.find(b => b.id === currentUser.id);
+        const oldProduct = business.products.find(p => p.name === productId);
+        if (oldProduct) {
+          oldProduct.desc = prodDesc;
+          oldProduct.photo = prodPhoto || '';
+          updateLocalStorage();
+          closeModal('edit-product-modal');
+          showProfile();
         }
       };
 
@@ -1003,10 +1144,13 @@
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
         const fileInput = document.getElementById('prod-media');
+        const error = document.getElementById('add-product-error');
+
         if (!prodName || !prodDesc) {
-          alert('Please fill in all product fields!');
+          error.style.display = 'block';
           return;
         }
+
         const addProduct = (mediaURL) => {
           const business = businesses.find(b => b.id === currentUser.id);
           if (business) {
@@ -1031,22 +1175,48 @@
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
         const newPhoto = document.getElementById('settings-photo').value.trim();
-        if (newName) {
-          currentUser.name = newName;
-          if (currentUser.type === 'business') {
-            const business = businesses.find(b => b.id === currentUser.id);
-            if (business) business.name = newName;
-          }
+        const error = document.getElementById('settings-error');
+
+        if (!newName) {
+          error.style.display = 'block';
+          return;
         }
-        currentUser.profilePhoto = newPhoto;
+        if (newPhoto && !isValidUrl(newPhoto)) {
+          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.style.display = 'block';
+          return;
+        }
+
+        currentUser.name = newName;
+        currentUser.profilePhoto = newPhoto || '';
         if (currentUser.type === 'business') {
           const business = businesses.find(b => b.id === currentUser.id);
-          if (business) business.displayPhoto = newPhoto;
+          if (business) {
+            business.name = newName;
+            business.displayPhoto = newPhoto || '';
+          }
         }
         updateLocalStorage();
         closeModal('settings-modal');
         showProfile();
       });
+
+      document.getElementById('reset-settings-btn').addEventListener('click', () => {
+        currentUser.name = `User_${Date.now()}`; // Default name
+        currentUser.profilePhoto = '';
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.name = currentUser.name;
+            business.displayPhoto = '';
+          }
+        }
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
+      });
+      
+      document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
       
       /*** Event Handlers ***/
       document.getElementById('business-btn').addEventListener('click', () => {
@@ -1087,8 +1257,8 @@
           updateUIForUser();
           displayFeed();
         }
-        if (event.target.id === 'close-manage-products-btn') {
-          closeModal('manage-products-modal');
+        if (event.target.classList.contains('close-btn')) {
+          closeModal(event.target.getAttribute('data-form'));
         }
       });
       
@@ -1100,12 +1270,6 @@
         } else {
           displayFeed();
         }
-      });
-      
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          closeModal(btn.getAttribute('data-form'));
-        });
       });
       
       // Debounce search input
