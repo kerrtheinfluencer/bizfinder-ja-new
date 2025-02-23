@@ -94,43 +94,6 @@
             text-align: center;
         }
 
-        /* Grid Layout for Feed and Store Products */
-        #feed, .store-products, #product-modal .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .product-card {
-            background: #fff;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        .product-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-        .product-card h4 {
-            color: #2ecc71;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        .product-card p {
-            font-size: 0.9rem;
-            color: #34495e;
-            margin-bottom: 0.5rem;
-        }
-
         /* Business Cards, Store, and Profile Pages */
         .business-card, .store-page, .profile-page {
             background: #fff;
@@ -199,7 +162,7 @@
         }
 
         /* Popup and Forms */
-        #popup, #business-form, #customer-form, #login-form, #product-modal, #add-product-form {
+        #popup, #business-form, #customer-form, #login-form {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -214,8 +177,8 @@
             width: 90%;
             display: none;
         }
-        #business-form, #customer-form, #login-form, #add-product-form { max-width: 650px; }
-        #popup h2, #business-form h2, #customer-form h2, #login-form h2, #product-modal h2, #add-product-form h2 {
+        #business-form, #customer-form, #login-form { max-width: 650px; }
+        #popup h2, #business-form h2, #customer-form h2, #login-form h2 {
             color: #2ecc71;
             margin-bottom: 1.5rem;
             font-size: 1.8rem;
@@ -299,7 +262,7 @@
     </header>
 
     <div class="container" id="main-content">
-        <input type="text" id="search-bar" placeholder="Search businesses or products..." onkeyup="searchBusinesses()">
+        <input type="text" id="search-bar" placeholder="Search businesses..." onkeyup="searchBusinesses()">
         <div id="search-results-info" style="text-align: center; margin-bottom: 10px; color: #7f8c8d;"></div>
         <div id="hot-products" class="hot-products"></div>
         <div id="feed"></div>
@@ -310,7 +273,7 @@
 
     <div id="popup">
         <h2>Welcome to BizFinder JA!</h2>
-        <p>Sign up to join our vibrant community and discover Jamaican businesses.</p>
+        <p>Sign up to join our vibrant community.</p>
         <button id="business-btn">Sign Up as Business</button>
         <button id="customer-btn">Sign Up as Customer</button>
         <button id="feed-btn">Continue to Feed</button>
@@ -328,8 +291,8 @@
             <option value="Home & Kitchen">Home & Kitchen</option>
             <option value="Beauty & Personal Care">Beauty & Personal Care</option>
         </select>
-        <input type="text" id="biz-product" placeholder="Product Name" required>
-        <input type="text" id="biz-product-desc" placeholder="Product Description" required>
+        <input type="text" id="biz-product" placeholder="Featured Product Name" required>
+        <input type="text" id="biz-desc" placeholder="Short Description" required>
         <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
         <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
         <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
@@ -354,28 +317,12 @@
         <button onclick="closeForm('login-form')">Close</button>
     </div>
 
-    <!-- View Product Modal -->
-    <div id="product-modal" class="modal">
-        <h2>Product Details</h2>
-        <div id="product-details" class="product-details"></div>
-        <button onclick="closeForm('product-modal')">Close</button>
-    </div>
-
-    <!-- Add Product Modal for Businesses -->
-    <div id="add-product-form" class="modal">
-        <h2>Add New Product</h2>
-        <input type="text" id="new-product-name" placeholder="Product Name" required>
-        <input type="text" id="new-product-desc" placeholder="Product Description" required>
-        <button onclick="addProduct()">Submit</button>
-        <button onclick="closeForm('add-product-form')">Close</button>
-    </div>
-
     <script>
         // Data initialization
         let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
         let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let displayedCount = 10; // Auto-load first 10 products
+        let displayedCount = 5;
         let currentBusinesses = businesses;
 
         // DOM elements
@@ -393,8 +340,6 @@
         const signupBtn = document.getElementById('signup-btn');
         const searchBar = document.getElementById('search-bar');
         const businessName = document.getElementById('businessName');
-        const productModal = document.getElementById('product-modal');
-        const addProductForm = document.getElementById('add-product-form');
 
         // Generate dummy businesses
         function generateDummyBusinesses(count) {
@@ -409,7 +354,7 @@
                     name: `Business ${i + 1}`,
                     category,
                     products: [
-                        { id: Date.now() + i + 'p1', name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
+                        { name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }
                     ],
                     desc: `Description for business ${i + 1}.`,
                     whatsapp: `876555${String(i).padStart(4, '0')}`,
@@ -449,43 +394,49 @@
         businessName.addEventListener('click', function() {
             if (feed.style.display === 'block') {
                 currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-                displayedCount = 10;
+                displayedCount = 5;
                 displayFeed();
             } else {
                 displayFeed();
             }
         });
 
-        // Display feed with product grid (first 10 products)
+        // Display feed
         function displayFeed() {
             feed.style.display = 'block';
             storePage.style.display = 'none';
             profilePage.style.display = 'none';
-            const allProducts = currentBusinesses.flatMap(biz => biz.products.map(p => ({ ...p, business: biz })));
-            const productsToShow = allProducts.slice(0, displayedCount);
-            const totalResults = allProducts.length;
-            const showing = productsToShow.length;
+            const businessesToShow = currentBusinesses.slice(0, displayedCount);
+            const totalResults = currentBusinesses.length;
+            const showing = businessesToShow.length;
             const info = document.getElementById('search-results-info');
             if (totalResults === 0) {
-                info.innerHTML = 'No products or businesses found.';
+                info.innerHTML = 'No results found.';
                 feed.innerHTML = '';
             } else {
-                info.innerHTML = `Found ${totalResults} products, showing first ${showing}`;
-                feed.innerHTML = '<h3>Featured Products</h3>';
-                const productGrid = document.createElement('div');
-                productGrid.className = 'store-products';
-                productsToShow.forEach(product => {
+                info.innerHTML = `Found ${totalResults} results, showing first ${showing}`;
+                feed.innerHTML = '';
+                businessesToShow.forEach((business) => {
                     const card = document.createElement('div');
-                    card.className = 'product-card';
+                    card.className = 'business-card';
+                    const featuredProduct = business.products && business.products.length > 0 ? business.products[0] : { name: 'No product', photo: '' };
                     card.innerHTML = `
-                        <img src="${product.photo}" alt="${product.name}">
-                        <h4>${product.name}</h4>
-                        <p>${product.desc}</p>
-                        <button onclick="viewProduct('${product.id}', '${product.business.id}')">View Product</button>
+                        <h3>${business.name}</h3>
+                        <p class="category">${business.category}</p>
+                        <img src="${business.displayPhoto}" alt="${business.name}">
+                        <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+                        ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+                        <p>${business.desc}</p>
+                        <p><strong>Location:</strong> ${business.location}</p>
+                        <div class="contact">
+                            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+                        </div>
+                        <p class="views">Views: ${business.views}</p>
+                        <button onclick="viewStore('${business.id}')">View Store</button>
                     `;
-                    productGrid.appendChild(card);
+                    feed.appendChild(card);
                 });
-                feed.appendChild(productGrid);
             }
             displayHotProducts(currentBusinesses);
         }
@@ -505,12 +456,12 @@
             });
         }
 
-        // Endless scrolling (load more products)
+        // Endless scrolling
         window.addEventListener('scroll', () => {
-            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.flatMap(b => b.products).length) {
+            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
                 loading.style.display = 'block';
                 setTimeout(() => {
-                    displayedCount = Math.min(displayedCount + 10, currentBusinesses.flatMap(b => b.products).length);
+                    displayedCount = Math.min(displayedCount + 5, currentBusinesses.length);
                     displayFeed();
                     loading.style.display = 'none';
                 }, 500);
@@ -533,7 +484,7 @@
             } else {
                 currentBusinesses = businesses;
             }
-            displayedCount = 10;
+            displayedCount = 5;
             displayFeed();
         }
 
@@ -544,13 +495,13 @@
                 const email = document.getElementById('biz-email').value.trim();
                 const password = document.getElementById('biz-password').value.trim();
                 const category = document.getElementById('biz-category').value;
-                const productName = document.getElementById('biz-product').value.trim();
-                const productDesc = document.getElementById('biz-product-desc').value.trim();
+                const product = document.getElementById('biz-product').value.trim();
+                const desc = document.getElementById('biz-desc').value.trim();
                 const whatsapp = document.getElementById('biz-whatsapp').value.trim();
                 const instagram = document.getElementById('biz-instagram').value.trim();
                 const location = document.getElementById('biz-location').value.trim();
 
-                if (!name || !email || !password || !category || !productName || !productDesc || !whatsapp || !instagram || !location) {
+                if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
                     throw new Error('Please fill in all fields!');
                 }
                 if (!/\S+@\S+\.\S+/.test(email)) {
@@ -564,8 +515,8 @@
                     id: Date.now(),
                     name,
                     category,
-                    products: [{ id: Date.now() + 'p1', name: productName, desc: productDesc, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }],
-                    desc: `Description for ${name}.`, // Default business description
+                    products: [{ name: product, desc, photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo', views: 0 }],
+                    desc,
                     whatsapp,
                     instagram,
                     location,
@@ -652,7 +603,7 @@
             }
         };
 
-        // View store with grid layout for products
+        // View store
         window.viewStore = function(bizId) {
             const business = businesses.find(b => b.id == bizId);
             if (!business) return;
@@ -679,20 +630,18 @@
                 </div>
                 <p class="views">Views: ${business.views}</p>
                 <h4>Products</h4>
-                <div class="store-products">
-                    ${business.products.map(p => `
-                        <div class="product-card" onclick="viewProduct('${p.id}', '${business.id}')">
-                            <img src="${p.photo}" alt="${p.name}">
-                            <h4>${p.name}</h4>
-                            <p>${p.desc}</p>
-                        </div>
-                    `).join('')}
-                </div>
-                ${currentUser && currentUser.type === 'business' && currentUser.id === business.id ? '<button onclick="openAddProductForm(\'' + bizId + '\')">Add Product</button>' : ''}
+                ${business.products.map(p => `
+                    <div>
+                        <p><strong>${p.name}</strong></p>
+                        <img src="${p.photo}" alt="${p.name}">
+                        <p>${p.desc}</p>
+                        <p class="views">Views: ${p.views}</p>
+                    </div>
+                `).join('')}
             `;
         };
 
-        // Show profile with option to add products for businesses
+        // Show profile
         function showProfile() {
             if (!currentUser) return;
             feed.style.display = 'none';
@@ -709,7 +658,6 @@
                     <h4>Business Metrics</h4>
                     <p>Total Views: ${business.views}</p>
                     <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
-                    <button onclick="openAddProductForm('${business.id}')">Add Product</button>
                 `;
             } else if (currentUser.type === 'customer') {
                 profilePage.innerHTML += `
@@ -739,49 +687,6 @@
             loginBtn.style.display = currentUser ? 'none' : 'block';
             signupBtn.style.display = currentUser ? 'none' : 'block';
         }
-
-        // View product details in modal
-        window.viewProduct = function(productId, bizId) {
-            const business = businesses.find(b => b.id == bizId);
-            const product = business.products.find(p => p.id == productId);
-            if (!product) return;
-            document.getElementById('product-details').innerHTML = `
-                <img src="${product.photo}" alt="${product.name}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
-                <h4>${product.name}</h4>
-                <p>${product.desc}</p>
-                <p class="views">Views: ${product.views || 0}</p>
-            `;
-            productModal.style.display = 'block';
-        };
-
-        // Add product functionality
-        function openAddProductForm(bizId) {
-            document.getElementById('add-product-form').style.display = 'block';
-        }
-
-        window.addProduct = function() {
-            const bizId = addProductForm.getAttribute('data-biz-id'); // Store bizId when opening the form
-            const business = businesses.find(b => b.id == bizId);
-            if (!business) return;
-            const name = document.getElementById('new-product-name').value.trim();
-            const desc = document.getElementById('new-product-desc').value.trim();
-            if (!name || !desc) return alert('Please fill in all fields');
-
-            business.products.push({
-                id: Date.now() + 'p' + business.products.length,
-                name,
-                desc,
-                photo: 'https://via.placeholder.com/300x200.png?text=Product+Photo',
-                views: 0
-            });
-            localStorage.setItem('businesses', JSON.stringify(businesses));
-            closeForm('add-product-form');
-            if (storePage.style.display === 'block') {
-                viewStore(bizId); // Refresh store page
-            } else if (profilePage.style.display === 'block') {
-                showProfile(); // Refresh profile page
-            }
-        };
 
         // Initial load
         displayFeed();
