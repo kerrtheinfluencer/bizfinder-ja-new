@@ -274,6 +274,13 @@
       font-size: 1rem;
     }
     
+    /* Feed Layout Enhancements */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
     /* Store (Product) Page Layout Enhancements */
     .store-container {
       display: flex;
@@ -358,7 +365,8 @@
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products"></div>
-    <div id="feed"></div>
+    <!-- Feed is now rendered inside a grid container -->
+    <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
     <div id="profile-page" class="profile-page" style="display: none;"></div>
     <div id="loading" class="loading">Loading...</div>
@@ -487,15 +495,17 @@
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
+        // Create a grid container for feed items
+        feed.innerHTML = '<div class="feed-grid"></div>';
+        const gridContainer = feed.querySelector('.feed-grid');
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
         const totalResults = currentBusinesses.length;
         const info = document.getElementById('search-results-info');
         if (totalResults === 0) {
           info.textContent = 'No results found.';
-          feed.innerHTML = '';
+          gridContainer.innerHTML = '';
         } else {
           info.textContent = `Found ${totalResults} results, showing first ${businessesToShow.length}`;
-          feed.innerHTML = '';
           businessesToShow.forEach(business => {
             const featuredProduct = business.products && business.products.length > 0 
               ? business.products[0] 
@@ -517,7 +527,7 @@
               <p class="views">Views: ${business.views}</p>
               <button class="view-store-btn" data-id="${business.id}">View Store</button>
             `;
-            feed.appendChild(card);
+            gridContainer.appendChild(card);
           });
         }
         displayHotProducts();
