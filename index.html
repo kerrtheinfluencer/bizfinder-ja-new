@@ -37,13 +37,14 @@
       justify-content: space-between;
       padding: 1rem 2rem;
       font-size: 1.5rem;
+      position: relative;
     }
     #businessName { cursor: pointer; }
     .header-buttons {
       display: flex;
       gap: 1rem;
     }
-    /* Fixed profile button for logged-in users */
+    /* Fixed Profile Button – remains visible while scrolling */
     #profile-btn {
       position: fixed;
       top: 10px;
@@ -63,7 +64,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Other header buttons */
+    /* Other Header Buttons */
     .header-buttons button:not(#profile-btn) {
       background: var(--white);
       color: var(--primary-green);
@@ -80,7 +81,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Header Avatar styling */
+    /* Header Avatar styling (40px on mobile, 60px on PC) */
     .header-avatar {
       width: 40px;
       height: 40px;
@@ -91,7 +92,6 @@
       font-size: 20px;
       color: var(--white);
     }
-    /* Increase header avatar size on larger screens */
     @media (min-width: 800px) {
       .header-avatar {
         width: 60px;
@@ -110,16 +110,17 @@
       header { flex-direction: column; gap: 1rem; }
       .header-buttons { flex-wrap: wrap; justify-content: center; }
     }
-    /* Search Bar */
-    .search-container { margin-bottom: 1.5rem; position: relative; }
+    /* Search Bar & Filters */
+    .search-container { margin-bottom: 1.5rem; position: relative; text-align: center; }
     #search-bar {
-      width: 100%;
+      width: 90%;
       padding: 0.875rem 1.5rem;
       border: 2px solid #ddd;
       border-radius: 25px;
       font-size: 1rem;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       transition: border-color 0.3s, box-shadow 0.3s;
+      margin: 0 auto;
     }
     #search-bar:focus {
       border-color: var(--primary-green);
@@ -132,6 +133,14 @@
       color: var(--muted-color);
       text-align: center;
       margin-bottom: 10px;
+    }
+    /* New filter dropdowns */
+    .filter-select {
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
     }
     /* Cards & Pages */
     .business-card, .store-page, .profile-page {
@@ -270,7 +279,6 @@
     }
     .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
     .profile-details { margin-bottom: 1.5rem; }
-    /* End of UI Rendering */
   </style>
 </head>
 <body>
@@ -284,8 +292,16 @@
   </header>
   
   <div class="container" id="main-content">
+    <!-- Search and Filters -->
     <div class="search-container">
       <input type="text" id="search-bar" placeholder="Search businesses..." />
+      <!-- Additional filters -->
+      <select id="filter-category" class="filter-select">
+        <option value="all">All Categories</option>
+      </select>
+      <select id="filter-location" class="filter-select">
+        <option value="all">All Locations</option>
+      </select>
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products"></div>
@@ -392,7 +408,8 @@
       // --- Data Initialization ---
       let displayedCount = 6;
       let isLoading = false;
-      let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+      // Increase dummy businesses count to 100 for more variety
+      let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(100);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
@@ -419,6 +436,8 @@
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
+      const filterCategory = document.getElementById('filter-category');
+      const filterLocation = document.getElementById('filter-location');
       
       // --- Helper Functions ---
       function generateDummyBusinesses(count) {
@@ -452,13 +471,35 @@
         return dummyBusinesses;
       }
       
+      // Populate filter selects with unique categories and locations from businesses
+      function populateFilters() {
+        const categories = new Set();
+        const locations = new Set();
+        businesses.forEach(biz => {
+          categories.add(biz.category);
+          locations.add(biz.location);
+        });
+        // Populate category select
+        filterCategory.innerHTML = '<option value="all">All Categories</option>';
+        Array.from(categories).forEach(cat => {
+          filterCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+        // Populate location select
+        filterLocation.innerHTML = '<option value="all">All Locations</option>';
+        Array.from(locations).forEach(loc => {
+          filterLocation.innerHTML += `<option value="${loc}">${loc}</option>`;
+        });
+      }
+      
+      populateFilters();
+      
       function updateLocalStorage() {
         localStorage.setItem('businesses', JSON.stringify(businesses));
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
       
-      // Header avatar for logged-in user (40px on mobile, 60px on PC via media query)
+      // Returns a header avatar (40px on mobile, 60px on PC)
       function getHeaderAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -488,7 +529,7 @@
         document.getElementById(formId).style.display = 'none';
       }
       
-      // Generates a letter avatar (for business cards, 100px)
+      // Generates a letter avatar for business cards (100px)
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -513,6 +554,18 @@
         profilePage.style.display = 'none';
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
+        // Apply filters from search bar, category, and location
+        let query = searchBar.value.toLowerCase().trim();
+        let selectedCat = filterCategory.value;
+        let selectedLoc = filterLocation.value;
+        let filtered = businesses.filter(biz => {
+          let matchQuery = query === "" || biz.name.toLowerCase().includes(query) || biz.category.toLowerCase().includes(query) || biz.location.toLowerCase().includes(query) ||
+                           (biz.products && biz.products.some(product => product.name.toLowerCase().includes(query) || product.desc.toLowerCase().includes(query));
+          let matchCat = selectedCat === "all" || biz.category === selectedCat;
+          let matchLoc = selectedLoc === "all" || biz.location === selectedLoc;
+          return matchQuery && matchCat && matchLoc;
+        });
+        currentBusinesses = filtered;
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
         const totalResults = currentBusinesses.length;
         const info = document.getElementById('search-results-info');
@@ -520,10 +573,17 @@
         gridContainer.innerHTML = '';
         businessesToShow.forEach(business => {
           const featuredProduct = (business.products && business.products.length > 0) ? business.products[0] : { name: 'No product', photo: '', price: '0.00' };
+          // Include a favorite button on each card
+          let favIcon = '';
+          if (currentUser) {
+            if (!currentUser.favorites) currentUser.favorites = [];
+            const isFav = currentUser.favorites.includes(business.id);
+            favIcon = `<button class="favorite-btn" data-id="${business.id}" style="background:none; border:none; font-size:1.5rem; color:${isFav ? 'red' : 'gray'};">♥</button>`;
+          }
           const card = document.createElement('div');
           card.className = 'business-card';
           card.innerHTML = `
-            <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+            <h3>${business.name} ${favIcon} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
             <p class="category">${business.category}</p>
             ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
             <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
@@ -540,10 +600,10 @@
           `;
           gridContainer.appendChild(card);
         });
-        displayHotProducts(); // Hot products in feed
+        displayHotProducts(); // Show hot products on feed as well
       };
       
-      // Hot products now include a fire emoji and live view count
+      // Hot products box with fire emoji and live view count
       const displayHotProducts = () => {
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
@@ -609,7 +669,7 @@
             document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
           });
         }
-        // Logout button
+        // Logout button with alert feedback
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
           logoutBtn.addEventListener('click', () => {
@@ -699,7 +759,6 @@
         // Append one hot products box at the bottom only
         const storeHot = document.createElement('div');
         storeHot.className = 'hot-products';
-        // Generate hot products HTML with fire emoji
         storeHot.innerHTML = '<h3>Hot Products</h3>' + generateHotProductsHTML();
         storePage.appendChild(storeHot);
         // Wire up product detail triggers
@@ -956,7 +1015,74 @@
         }
       });
       
-      // Initial load
+      // Filter change events – update feed on filter change
+      filterCategory.addEventListener('change', () => {
+        displayedCount = 6;
+        displayFeed();
+      });
+      filterLocation.addEventListener('change', () => {
+        displayedCount = 6;
+        displayFeed();
+      });
+      
+      // Search event
+      searchBar.addEventListener('keyup', () => {
+        displayedCount = 6;
+        displayFeed();
+      });
+      
+      window.addEventListener('scroll', () => {
+        if (feed.style.display === 'block' && !isLoading && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
+          isLoading = true;
+          loading.style.display = 'block';
+          setTimeout(() => {
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
+            displayFeed();
+            loading.style.display = 'none';
+            isLoading = false;
+          }, 500);
+        }
+      });
+      
+      // Delegate view store button click
+      document.body.addEventListener('click', event => {
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
+        // Delegate favorite button click
+        if (event.target.classList.contains('favorite-btn')) {
+          if (!currentUser) {
+            alert("Please log in to favorite stores.");
+            return;
+          }
+          const bizId = event.target.getAttribute('data-id');
+          if (!currentUser.favorites) currentUser.favorites = [];
+          if (currentUser.favorites.includes(bizId)) {
+            // Remove favorite
+            currentUser.favorites = currentUser.favorites.filter(id => id !== bizId);
+            event.target.style.color = 'gray';
+          } else {
+            // Add favorite
+            currentUser.favorites.push(bizId);
+            event.target.style.color = 'red';
+          }
+          updateLocalStorage();
+        }
+      });
+      
+      businessName.addEventListener('click', () => {
+        if (feed.style.display === 'block') {
+          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+          displayedCount = 6;
+          displayFeed();
+        } else { displayFeed(); }
+      });
+      
+      document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => { closeModal(btn.getAttribute('data-form')); });
+      });
+      
+      // Initial load: display feed and update UI
       displayFeed();
       loading.style.display = 'none';
       updateUIForUser();
