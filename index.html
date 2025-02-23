@@ -355,27 +355,27 @@
     </div>
 
     <script>
-        // Data initialization
+        // Data initialization with error handling
         let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
         let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let displayedCount = 10; // Auto-load first 10 products
         let currentBusinesses = businesses;
 
-        // DOM elements
+        // DOM elements with fallback checks
         const popup = document.getElementById('popup');
         const businessForm = document.getElementById('business-form');
         const customerForm = document.getElementById('customer-form');
         const loginForm = document.getElementById('login-form');
-        const feed = document.getElementById('feed');
-        const storePage = document.getElementById('store-page');
-        const profilePage = document.getElementById('profile-page');
-        const hotProducts = document.getElementById('hot-products');
-        const loading = document.getElementById('loading');
+        const feed = document.getElementById('feed') || document.createElement('div'); // Fallback if ID is missing
+        const storePage = document.getElementById('store-page') || document.createElement('div');
+        const profilePage = document.getElementById('profile-page') || document.createElement('div');
+        const hotProducts = document.getElementById('hot-products') || document.createElement('div');
+        const loading = document.getElementById('loading') || document.createElement('div');
         const profileBtn = document.getElementById('profile-btn');
         const loginBtn = document.getElementById('login-btn');
         const signupBtn = document.getElementById('signup-btn');
-        const searchBar = document.getElementById('search-bar');
+        const searchBar = document.getElementById('search-bar') || document.createElement('input');
         const businessName = document.getElementById('businessName');
 
         // Generate dummy businesses
@@ -405,74 +405,86 @@
         }
 
         // Show initial popup if no user
-        if (!currentUser) popup.style.display = 'block';
+        if (!currentUser && popup) popup.style.display = 'block';
         else updateUIForUser();
 
         // Popup button actions
-        document.getElementById('business-btn').addEventListener('click', () => {
-            popup.style.display = 'none';
-            businessForm.style.display = 'block';
-        });
-        document.getElementById('customer-btn').addEventListener('click', () => {
-            popup.style.display = 'none';
-            customerForm.style.display = 'block';
-        });
-        document.getElementById('feed-btn').addEventListener('click', () => {
-            popup.style.display = 'none';
-            displayFeed();
-        });
+        if (document.getElementById('business-btn')) {
+            document.getElementById('business-btn').addEventListener('click', () => {
+                if (popup) popup.style.display = 'none';
+                if (businessForm) businessForm.style.display = 'block';
+            });
+        }
+        if (document.getElementById('customer-btn')) {
+            document.getElementById('customer-btn').addEventListener('click', () => {
+                if (popup) popup.style.display = 'none';
+                if (customerForm) customerForm.style.display = 'block';
+            });
+        }
+        if (document.getElementById('feed-btn')) {
+            document.getElementById('feed-btn').addEventListener('click', () => {
+                if (popup) popup.style.display = 'none';
+                displayFeed();
+            });
+        }
 
         // Login, Sign Up, and Profile button actions
-        loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
-        signupBtn.addEventListener('click', () => popup.style.display = 'block');
-        profileBtn.addEventListener('click', () => showProfile());
+        if (loginBtn) loginBtn.addEventListener('click', () => { if (loginForm) loginForm.style.display = 'block'; });
+        if (signupBtn) signupBtn.addEventListener('click', () => { if (popup) popup.style.display = 'block'; });
+        if (profileBtn) profileBtn.addEventListener('click', () => showProfile());
 
         // Make header business name clickable
-        businessName.addEventListener('click', function() {
-            if (feed.style.display === 'block') {
-                currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-                displayedCount = 10;
-                displayFeed();
-            } else {
-                displayFeed();
-            }
-        });
+        if (businessName) {
+            businessName.addEventListener('click', function() {
+                if (feed && feed.style.display === 'block') {
+                    currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+                    displayedCount = 10;
+                    displayFeed();
+                } else {
+                    displayFeed();
+                }
+            });
+        }
 
         // Display feed with product grid (first 10 products)
         function displayFeed() {
+            if (!feed) return console.error('Feed element not found');
             feed.style.display = 'block';
-            storePage.style.display = 'none';
-            profilePage.style.display = 'none';
+            if (storePage) storePage.style.display = 'none';
+            if (profilePage) profilePage.style.display = 'none';
             const allProducts = currentBusinesses.flatMap(biz => biz.products.map(p => ({ ...p, business: biz })));
             const productsToShow = allProducts.slice(0, displayedCount);
             const totalResults = allProducts.length;
             const showing = productsToShow.length;
             const info = document.getElementById('search-results-info');
-            if (totalResults === 0) {
-                info.innerHTML = 'No products or businesses found.';
-                feed.innerHTML = '';
-            } else {
-                info.innerHTML = `Found ${totalResults} products, showing first ${showing}`;
-                feed.innerHTML = '<h3>Featured Products</h3>';
-                const productGrid = document.createElement('div');
-                productGrid.id = 'feed-products';
-                productsToShow.forEach(product => {
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    card.innerHTML = `
-                        <img src="${product.photo}" alt="${product.name}">
-                        <h4>${product.name}</h4>
-                        <p>${product.desc}</p>
-                    `;
-                    productGrid.appendChild(card);
-                });
-                feed.appendChild(productGrid);
+            if (info) {
+                if (totalResults === 0) {
+                    info.innerHTML = 'No products or businesses found.';
+                    feed.innerHTML = '';
+                } else {
+                    info.innerHTML = `Found ${totalResults} products, showing first ${showing}`;
+                    feed.innerHTML = '<h3>Featured Products</h3>';
+                    const productGrid = document.createElement('div');
+                    productGrid.id = 'feed-products';
+                    productsToShow.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'product-card';
+                        card.innerHTML = `
+                            <img src="${product.photo}" alt="${product.name}">
+                            <h4>${product.name}</h4>
+                            <p>${product.desc}</p>
+                        `;
+                        productGrid.appendChild(card);
+                    });
+                    feed.appendChild(productGrid);
+                }
             }
             displayHotProducts(currentBusinesses);
         }
 
         // Display hot products as a banner
         function displayHotProducts(filteredBusinesses = currentBusinesses) {
+            if (!hotProducts) return console.error('Hot products element not found');
             const hot = filteredBusinesses.sort((a, b) => b.views - a.views).slice(0, 3);
             hotProducts.innerHTML = '<h3>Hot Products</h3>';
             hot.forEach(biz => {
@@ -488,18 +500,19 @@
 
         // Endless scrolling (load more products)
         window.addEventListener('scroll', () => {
-            if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.flatMap(b => b.products).length) {
-                loading.style.display = 'block';
+            if (feed && feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.flatMap(b => b.products).length) {
+                if (loading) loading.style.display = 'block';
                 setTimeout(() => {
                     displayedCount = Math.min(displayedCount + 10, currentBusinesses.flatMap(b => b.products).length);
                     displayFeed();
-                    loading.style.display = 'none';
+                    if (loading) loading.style.display = 'none';
                 }, 500);
             }
         });
 
         // Search functionality
         function searchBusinesses() {
+            if (!searchBar) return console.error('Search bar element not found');
             const query = searchBar.value.toLowerCase().trim();
             if (query) {
                 currentBusinesses = businesses.filter(biz => 
@@ -521,15 +534,15 @@
         // Submit business
         window.submitBusiness = function() {
             try {
-                const name = document.getElementById('biz-name').value.trim();
-                const email = document.getElementById('biz-email').value.trim();
-                const password = document.getElementById('biz-password').value.trim();
-                const category = document.getElementById('biz-category').value;
-                const product = document.getElementById('biz-product').value.trim();
-                const desc = document.getElementById('biz-desc').value.trim();
-                const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-                const instagram = document.getElementById('biz-instagram').value.trim();
-                const location = document.getElementById('biz-location').value.trim();
+                const name = document.getElementById('biz-name')?.value.trim() || '';
+                const email = document.getElementById('biz-email')?.value.trim() || '';
+                const password = document.getElementById('biz-password')?.value.trim() || '';
+                const category = document.getElementById('biz-category')?.value || '';
+                const product = document.getElementById('biz-product')?.value.trim() || '';
+                const desc = document.getElementById('biz-desc')?.value.trim() || '';
+                const whatsapp = document.getElementById('biz-whatsapp')?.value.trim() || '';
+                const instagram = document.getElementById('biz-instagram')?.value.trim() || '';
+                const location = document.getElementById('biz-location')?.value.trim() || '';
 
                 if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
                     throw new Error('Please fill in all fields!');
@@ -565,7 +578,7 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                closeForm('business-form');
+                if (businessForm) closeForm('business-form');
                 updateUIForUser();
                 displayFeed();
             } catch (error) {
@@ -576,9 +589,9 @@
         // Submit customer
         window.submitCustomer = function() {
             try {
-                const name = document.getElementById('cust-name').value.trim();
-                const email = document.getElementById('cust-email').value.trim();
-                const password = document.getElementById('cust-password').value.trim();
+                const name = document.getElementById('cust-name')?.value.trim() || '';
+                const email = document.getElementById('cust-email')?.value.trim() || '';
+                const password = document.getElementById('cust-password')?.value.trim() || '';
 
                 if (!name || !email || !password) {
                     throw new Error('Please fill in all fields!');
@@ -596,7 +609,7 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-                closeForm('customer-form');
+                if (customerForm) closeForm('customer-form');
                 updateUIForUser();
                 displayFeed();
             } catch (error) {
@@ -607,8 +620,8 @@
         // Login
         window.login = function() {
             try {
-                const email = document.getElementById('login-email').value.trim();
-                const password = document.getElementById('login-password').value.trim();
+                const email = document.getElementById('login-email')?.value.trim() || '';
+                const password = document.getElementById('login-password')?.value.trim() || '';
 
                 if (!email || !password) {
                     throw new Error('Please enter both email and password!');
@@ -622,7 +635,7 @@
                 if (user) {
                     currentUser = user;
                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    closeForm('login-form');
+                    if (loginForm) closeForm('login-form');
                     updateUIForUser();
                     displayFeed();
                 } else {
@@ -636,7 +649,7 @@
         // View store
         window.viewStore = function(bizId) {
             const business = businesses.find(b => b.id == bizId);
-            if (!business) return;
+            if (!business || !storePage) return;
             business.views++;
             if (currentUser && currentUser.type === 'customer') {
                 currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
@@ -673,7 +686,7 @@
 
         // Show profile
         function showProfile() {
-            if (!currentUser) return;
+            if (!currentUser || !profilePage) return;
             feed.style.display = 'none';
             storePage.style.display = 'none';
             profilePage.style.display = 'block';
@@ -708,18 +721,24 @@
 
         // Close form
         window.closeForm = function(formId) {
-            document.getElementById(formId).style.display = 'none';
+            const form = document.getElementById(formId);
+            if (form) form.style.display = 'none';
         };
 
         // Update UI for logged-in user
         function updateUIForUser() {
-            profileBtn.style.display = currentUser ? 'block' : 'none';
-            loginBtn.style.display = currentUser ? 'none' : 'block';
-            signupBtn.style.display = currentUser ? 'none' : 'block';
+            if (profileBtn) profileBtn.style.display = currentUser ? 'block' : 'none';
+            if (loginBtn) loginBtn.style.display = currentUser ? 'none' : 'block';
+            if (signupBtn) signupBtn.style.display = currentUser ? 'none' : 'block';
         }
 
         // Initial load
-        displayFeed();
+        try {
+            displayFeed();
+        } catch (error) {
+            console.error('Error loading feed:', error);
+            alert('An error occurred while loading the page. Please check the console for details.');
+        }
     </script>
 </body>
 </html>
