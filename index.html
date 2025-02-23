@@ -43,7 +43,7 @@
       display: flex;
       gap: 1rem;
     }
-    /* Fixed Profile Button for easy access when scrolling */
+    /* Fixed header profile icon */
     #profile-btn {
       position: fixed;
       top: 10px;
@@ -51,9 +51,8 @@
       z-index: 1000;
       display: none;
       background: var(--white);
-      color: var(--primary-green);
       border: none;
-      padding: 0.75rem;
+      padding: 0.5rem;
       border-radius: 50%;
       cursor: pointer;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -79,6 +78,17 @@
       background: #f8f9fa;
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    /* Header Avatar styling (for small avatar in header) */
+    .header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--white);
     }
     /* Main Container */
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
@@ -203,7 +213,7 @@
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
-    /* Store Page Layout */
+    /* Store Page */
     .store-container { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; }
     .business-info { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
     .business-info h3 { margin-bottom: 0.5rem; }
@@ -247,49 +257,6 @@
     }
     .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
     .profile-details { margin-bottom: 1.5rem; }
-    /* Modals */
-    .modal {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--white); padding: 2rem; border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 1000;
-      text-align: center; max-width: 500px; width: 90%; display: none;
-    }
-    .modal h2 { color: var(--primary-green); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 600; }
-    input, select {
-      display: block; width: 100%; margin: 0.75rem 0; padding: 0.875rem;
-      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    input:focus, select:focus {
-      border-color: var(--primary-green); outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
-    }
-    /* Hot Products Banner */
-    .hot-products {
-      background: linear-gradient(135deg, var(--white), var(--light-bg));
-      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
-      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
-    }
-    .hot-products h3 {
-      width: 100%; font-size: 1.2rem; color: var(--primary-green);
-      margin-bottom: 0.75rem; font-weight: 600;
-    }
-    .hot-product-item {
-      display: flex; align-items: center; margin: 0.5rem; padding: 0.5rem;
-      background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .hot-product-item img {
-      width: 50px; height: 50px; margin-right: 0.75rem; border-radius: 4px; object-fit: cover;
-    }
-    .hot-product-item span { font-size: 0.9rem; color: #34495e; }
-    /* Feed Grid */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
     /* End of UI Rendering */
   </style>
 </head>
@@ -315,7 +282,7 @@
     <div id="loading" class="loading" style="display:none;">Loading...</div>
   </div>
   
-  <!-- --- Modals --- -->
+  <!-- Modals -->
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
     <p>Sign up to join our vibrant community.</p>
@@ -478,6 +445,7 @@
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
       
+      // Returns a header avatar (40px) for logged in user
       function getHeaderAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -512,7 +480,8 @@
         const letter = firstName.charAt(0).toUpperCase();
         const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
+        // Use inline style with fixed dimensions to ensure consistency in feed
+        return `<div class="letter-avatar" style="background:${color}; width:100px; height:100px; border-radius:50%; display:inline-block; font-size:2.5rem; line-height:100px; text-align:center; color:#fff;">${letter}</div>`;
       }
       
       function isStoreOpen(business) {
@@ -626,6 +595,17 @@
             document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
           });
         }
+        // Add explicit logout handler here for immediate feedback
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUIForUser();
+            displayFeed();
+            alert("Logged out successfully!");
+          });
+        }
         if (currentUser.type === 'business') { initViewsChart(); }
       };
       
@@ -702,9 +682,8 @@
           </div>
         `;
         storePage.innerHTML = storeContent;
-        // Append hot products at the bottom of store page
-        const hotHTML = hotProducts.innerHTML;
-        storePage.innerHTML += hotHTML;
+        // Append hot products at bottom of store page
+        storePage.innerHTML += hotProducts.innerHTML;
         // Wire up product detail triggers
         storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
           img.addEventListener('click', (e) => {
@@ -858,109 +837,6 @@
         } else { addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo'); }
       });
       
-      document.getElementById('save-settings-btn').addEventListener('click', () => {
-        if (!currentUser) { alert("You must be signed in."); return; }
-        const newName = document.getElementById('settings-name').value.trim();
-        const newPhoto = document.getElementById('settings-photo').value.trim();
-        if (newName) {
-          currentUser.name = newName;
-          if (currentUser.type === 'business') {
-            const biz = businesses.find(b => b.id === currentUser.id);
-            if (biz) biz.name = newName;
-          }
-        }
-        currentUser.profilePhoto = newPhoto;
-        if (currentUser.type === 'business') {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          if (biz) biz.displayPhoto = newPhoto;
-        }
-        updateLocalStorage();
-        closeModal('settings-modal');
-        showProfile();
-      });
-      
-      document.getElementById('delete-all-posts-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to delete posts.");
-          return;
-        }
-        if (confirm("Are you sure you want to delete all your posts?")) {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          if (biz) { biz.products = []; updateLocalStorage(); alert("All posts deleted."); showStore(biz); }
-        }
-      });
-      
-      // --- Event Handlers ---
-      document.getElementById('business-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        businessForm.style.display = 'block';
-      });
-      document.getElementById('customer-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        customerForm.style.display = 'block';
-      });
-      document.getElementById('feed-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        displayFeed();
-      });
-      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
-      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
-      profileBtn.addEventListener('click', showProfile);
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.id === 'back-to-feed') { displayFeed(); }
-        if (event.target.id === 'back-to-store') { viewStore(currentUser.id); }
-        if (event.target.id === 'add-product-btn') { openAddProductModal(); }
-      });
-      
-      businessName.addEventListener('click', () => {
-        if (feed.style.display === 'block') {
-          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 6;
-          displayFeed();
-        } else { displayFeed(); }
-      });
-      
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => { closeModal(btn.getAttribute('data-form')); });
-      });
-      
-      searchBar.addEventListener('keyup', () => {
-        const query = searchBar.value.toLowerCase().trim();
-        if (query) {
-          currentBusinesses = businesses.filter(biz => 
-            biz.name.toLowerCase().includes(query) ||
-            biz.category.toLowerCase().includes(query) ||
-            biz.location.toLowerCase().includes(query) ||
-            (biz.products && biz.products.some(product => 
-              product.name.toLowerCase().includes(query) ||
-              product.desc.toLowerCase().includes(query)
-            ))
-          );
-        } else { currentBusinesses = businesses; }
-        displayedCount = 6;
-        displayFeed();
-      });
-      
-      window.addEventListener('scroll', () => {
-        if (feed.style.display === 'block' && !isLoading && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
-          isLoading = true;
-          loading.style.display = 'block';
-          setTimeout(() => {
-            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
-            displayFeed();
-            loading.style.display = 'none';
-            isLoading = false;
-          }, 500);
-        }
-      });
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
-        }
-      });
-      
       document.getElementById('submit-business-btn').addEventListener('click', () => {
         try {
           const name = document.getElementById('biz-name').value.trim();
@@ -1047,7 +923,7 @@
         }
       });
       
-      // On initial load, display feed and hide loading indicator.
+      // Initial load
       displayFeed();
       loading.style.display = 'none';
       updateUIForUser();
