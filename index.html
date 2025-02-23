@@ -99,12 +99,13 @@
       .hot-product-grid {
         display: flex;
         flex-direction: row;
-        gap: 0.5rem;
+        gap: 1rem;
         animation: mobileSlide 15s infinite ease-in-out;
+        padding: 0.5rem 0; /* Additional padding for better spacing */
       }
       .hot-product-item {
         flex: 0 0 auto;
-        width: 45%; /* Two items per row on mobile */
+        width: 80%; /* Single row, one product wide on mobile */
         margin: 0.25rem 0;
         padding: 1rem; /* Increased padding for better spacing */
         background: var(--white);
@@ -392,7 +393,7 @@
     }
     @keyframes mobileSlide {
       0%, 25% { transform: translateX(0); }
-      50%, 75% { transform: translateX(-50%); }
+      50%, 75% { transform: translateX(-100%); } /* Updated for single row */
       100% { transform: translateX(0); }
     }
 
@@ -1072,7 +1073,7 @@
       
       const displayHotProducts = () => {
         if (!hotProductGrid) return; // Safety check
-        const hotCount = window.innerWidth >= 1024 ? 6 : 2;
+        const hotCount = window.innerWidth >= 1024 ? 6 : Infinity; // Use Infinity for unlimited on mobile
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
         hotProductGrid.innerHTML = '';
         if (hot.length === 0) {
