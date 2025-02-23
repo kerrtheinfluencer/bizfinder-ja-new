@@ -291,6 +291,7 @@
       margin-right: 0.75rem;
       border-radius: 4px;
       object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
     }
     .hot-product-item span {
       font-size: 0.9rem;
@@ -364,6 +365,7 @@
       height: 150px;
       border-radius: 50%;
       margin-bottom: 0.5rem;
+      loading: lazy; /* Lazy loading for performance */
     }
     .products-section {
       width: 100%;
@@ -394,6 +396,7 @@
       width: 100%;
       object-fit: cover;
       height: 150px;
+      loading: lazy; /* Lazy loading for performance */
     }
     .product-info {
       padding: 1rem;
@@ -437,9 +440,30 @@
       height: 100px;
       border-radius: 50%;
       object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
     }
     .profile-details {
       margin-bottom: 1.5rem;
+    }
+    .product-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-item-actions button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
     }
     
     /* Settings Modal */
@@ -474,6 +498,42 @@
       max-width: 500px;
       width: 90%;
       display: none;
+    }
+
+    /* Manage Products Modal */
+    #manage-products-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+      display: none;
+    }
+    #manage-products-modal .product-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #manage-products-modal .product-item {
+      margin-bottom: 0.5rem;
+    }
+    #manage-products-modal input, #manage-products-modal textarea {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #manage-products-modal button {
+      margin: 0.25rem;
+      padding: 0.5rem 1rem;
     }
   </style>
 </head>
@@ -566,6 +626,13 @@
     <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
 
+  <!-- Manage Products Modal -->
+  <div id="manage-products-modal" class="modal">
+    <h2>Manage Products</h2>
+    <div class="product-list" id="manage-product-list"></div>
+    <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
+  </div>
+
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
@@ -576,10 +643,18 @@
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
       
-      // Ensure dummy businesses have opening/closing hours
+      // Ensure dummy businesses have opening/closing hours and products
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
+        if (!b.products || b.products.length === 0) {
+          b.products = [{
+            name: `Default Product`,
+            desc: `Default description`,
+            photo: '',
+            views: 0
+          }];
+        }
         return b;
       });
 
@@ -598,7 +673,9 @@
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
-      
+      const manageProductsModal = document.getElementById('manage-products-modal');
+      const manageProductList = document.getElementById('manage-product-list');
+
       /*** Helper Functions ***/
       function generateDummyBusinesses(count) {
         const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
@@ -631,9 +708,14 @@
       }
       
       function updateLocalStorage() {
-        localStorage.setItem('businesses', JSON.stringify(businesses));
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        try {
+          localStorage.setItem('businesses', JSON.stringify(businesses));
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        } catch (e) {
+          console.error('LocalStorage error:', e);
+          alert('Storage limit reached or unavailable. Some data may not be saved.');
+        }
       }
       
       function updateUIForUser() {
@@ -667,6 +749,7 @@
       
       /*** UI Rendering Functions ***/
       const displayFeed = () => {
+        console.time('displayFeed');
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
@@ -690,10 +773,10 @@
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
               ${business.displayPhoto 
-                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">`
                 : getLetterAvatar(business.name)}
               <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}" loading="lazy">` : ''}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
               <div class="contact">
@@ -707,6 +790,7 @@
           });
         }
         displayHotProducts();
+        console.timeEnd('displayFeed');
       };
       
       const displayHotProducts = () => {
@@ -722,7 +806,7 @@
             : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
           hotProducts.innerHTML += `
             <div class="hot-product-item" style="--order: ${index};">
-              <img src="${product.photo}" alt="${product.name}">
+              <img src="${product.photo}" alt="${product.name}" loading="lazy">
               <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
             </div>
           `;
@@ -741,7 +825,7 @@
             <div class="profile-header">
         `;
         if (currentUser.profilePhoto) {
-          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />`;
+          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy" />`;
         } else {
           profileContent += getLetterAvatar(currentUser.name);
         }
@@ -758,6 +842,18 @@
             <p>Total Views: ${business.views}</p>
             <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
             <button id="add-product-btn">Add Product</button>
+            <button id="manage-products-btn">Manage Products</button>
+            <div class="product-list" id="profile-product-list">
+              ${business.products.map(p => `
+                <div class="product-item">
+                  <span>${p.name} - ${p.desc}</span>
+                  <div class="product-item-actions">
+                    <button class="edit-product-btn" data-id="${p.name}">Edit</button>
+                    <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
             <div style="margin-top: 1rem; height:300px;">
               <canvas id="viewsChart"></canvas>
             </div>
@@ -777,7 +873,7 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        // Attach settings event listener after rendering the profile
+        // Attach settings and product management event listeners after rendering the profile
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
           settingsBtn.addEventListener('click', () => {
@@ -788,6 +884,14 @@
         }
         if (currentUser.type === 'business') {
           initViewsChart();
+          document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
+          document.getElementById('manage-products-btn').addEventListener('click', openManageProductsModal);
+          document.querySelectorAll('.edit-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+          });
+          document.querySelectorAll('.delete-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id')));
+          });
         }
       };
       
@@ -838,6 +942,61 @@
       
       const openAddProductModal = () => {
         document.getElementById('add-product-modal').style.display = 'block';
+      };
+
+      const openManageProductsModal = () => {
+        const business = businesses.find(b => b.id === currentUser.id);
+        manageProductList.innerHTML = business.products.map(p => `
+          <div class="product-item">
+            <input type="text" class="product-name-input" value="${p.name}" data-id="${p.name}" />
+            <textarea class="product-desc-input" data-id="${p.name}">${p.desc}</textarea>
+            <input type="text" class="product-photo-input" value="${p.photo}" placeholder="Photo URL" data-id="${p.name}" />
+            <button class="save-product-btn" data-id="${p.name}">Save</button>
+            <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+          </div>
+        `).join('');
+        document.getElementById('manage-products-modal').style.display = 'block';
+
+        document.querySelectorAll('.save-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => saveProduct(btn.getAttribute('data-id')));
+        });
+        document.querySelectorAll('.delete-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id')));
+        });
+      };
+
+      const saveProduct = productId => {
+        const business = businesses.find(b => b.id === currentUser.id);
+        const product = business.products.find(p => p.name === productId);
+        if (product) {
+          product.name = document.querySelector(`.product-name-input[data-id="${productId}"]`).value.trim();
+          product.desc = document.querySelector(`.product-desc-input[data-id="${productId}"]`).value.trim();
+          product.photo = document.querySelector(`.product-photo-input[data-id="${productId}"]`).value.trim() || '';
+          updateLocalStorage();
+          closeModal('manage-products-modal');
+          showProfile();
+        }
+      };
+
+      const editProduct = productId => {
+        openManageProductsModal();
+        const product = businesses.find(b => b.id === currentUser.id).products.find(p => p.name === productId);
+        if (product) {
+          document.querySelector(`.product-name-input[data-id="${productId}"]`).value = product.name;
+          document.querySelector(`.product-desc-input[data-id="${productId}"]`).value = product.desc;
+          document.querySelector(`.product-photo-input[data-id="${productId}"]`).value = product.photo;
+        }
+      };
+
+      const deleteProduct = productId => {
+        const business = businesses.find(b => b.id === currentUser.id);
+        business.products = business.products.filter(p => p.name !== productId);
+        updateLocalStorage();
+        if (document.getElementById('manage-products-modal').style.display === 'block') {
+          openManageProductsModal();
+        } else {
+          showProfile();
+        }
       };
       
       document.getElementById('submit-product-btn').addEventListener('click', () => {
@@ -928,6 +1087,9 @@
           updateUIForUser();
           displayFeed();
         }
+        if (event.target.id === 'close-manage-products-btn') {
+          closeModal('manage-products-modal');
+        }
       });
       
       businessName.addEventListener('click', () => {
@@ -946,30 +1108,35 @@
         });
       });
       
+      // Debounce search input
+      let searchTimeout;
       searchBar.addEventListener('keyup', () => {
-        const query = searchBar.value.toLowerCase().trim();
-        if (query) {
-          currentBusinesses = businesses.filter(biz => 
-            biz.name.toLowerCase().includes(query) ||
-            biz.category.toLowerCase().includes(query) ||
-            biz.location.toLowerCase().includes(query) ||
-            (biz.products && biz.products.some(product => 
-              product.name.toLowerCase().includes(query) ||
-              product.desc.toLowerCase().includes(query)
-            ))
-          );
-        } else {
-          currentBusinesses = businesses;
-        }
-        displayedCount = 6;
-        displayFeed();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const query = searchBar.value.toLowerCase().trim();
+          if (query) {
+            currentBusinesses = businesses.filter(biz => 
+              biz.name.toLowerCase().includes(query) ||
+              biz.category.toLowerCase().includes(query) ||
+              biz.location.toLowerCase().includes(query) ||
+              (biz.products && biz.products.some(product => 
+                product.name.toLowerCase().includes(query) ||
+                product.desc.toLowerCase().includes(query)
+              ))
+            );
+          } else {
+            currentBusinesses = businesses;
+          }
+          displayedCount = 6;
+          displayFeed();
+        }, 300); // 300ms debounce delay
       });
       
       window.addEventListener('scroll', () => {
         if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           loading.style.display = 'block';
           setTimeout(() => {
-            displayedCount = Math.min(displayCount + 6, currentBusinesses.length);
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
             displayFeed();
             loading.style.display = 'none';
           }, 500);
@@ -1083,6 +1250,7 @@
       });
       
       const viewStore = bizId => {
+        console.time('viewStore');
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
         business.views++;
@@ -1103,7 +1271,7 @@
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
               ${business.displayPhoto 
-                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">`
                 : getLetterAvatar(business.name)}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
@@ -1118,7 +1286,7 @@
               <div class="products-grid">
                 ${business.products.map(p => `
                   <div class="product-card">
-                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
+                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" loading="lazy">
                     <div class="product-info">
                       <p class="product-name">${p.name}</p>
                       <p class="product-desc">${p.desc}</p>
@@ -1130,6 +1298,7 @@
             </div>
           </div>
         `;
+        console.timeEnd('viewStore');
       };
       
       if (!currentUser) {
