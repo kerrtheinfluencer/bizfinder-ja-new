@@ -876,8 +876,20 @@
         if (event.target.id === 'back-to-store') {
           viewStore(currentUser.id);
         }
+        if (event.target.classList.contains('back-to-feed-btn')) {
+          displayFeed();
+        }
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
         if (event.target.id === 'add-product-btn') {
           openAddProductModal();
+        }
+        if (event.target.id === 'logout-btn') {
+          currentUser = null;
+          localStorage.removeItem('currentUser');
+          updateUIForUser();
+          displayFeed();
         }
       });
       
@@ -924,12 +936,6 @@
             displayFeed();
             loading.style.display = 'none';
           }, 500);
-        }
-      });
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
         }
       });
       
@@ -1054,7 +1060,7 @@
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
         storePage.innerHTML = `
-          <button onclick="displayFeed()">Back to Feed</button>
+          <button class="back-to-feed-btn">Back to Feed</button>
           <div class="store-container">
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
@@ -1089,209 +1095,12 @@
         `;
       };
       
-      document.body.addEventListener('click', event => {
-        if (event.target.id === 'logout-btn') {
-          currentUser = null;
-          localStorage.removeItem('currentUser');
-          updateUIForUser();
-          displayFeed();
-        }
-        if (event.target.id === 'add-product-btn') {
-          openAddProductModal();
-        }
-      });
-      
       if (!currentUser) {
         popup.style.display = 'block';
       } else {
         updateUIForUser();
       }
       displayFeed();
-      
-      // Event Listeners for dynamic elements
-      
-      document.getElementById('business-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        businessForm.style.display = 'block';
-      });
-      document.getElementById('customer-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        customerForm.style.display = 'block';
-      });
-      document.getElementById('feed-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        displayFeed();
-      });
-      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
-      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
-      profileBtn.addEventListener('click', showProfile);
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.id === 'back-to-feed') {
-          displayFeed();
-        }
-        if (event.target.id === 'back-to-store') {
-          viewStore(currentUser.id);
-        }
-      });
-      
-      businessName.addEventListener('click', () => {
-        if (feed.style.display === 'block') {
-          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 6;
-          displayFeed();
-        } else {
-          displayFeed();
-        }
-      });
-      
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          closeModal(btn.getAttribute('data-form'));
-        });
-      });
-      
-      searchBar.addEventListener('keyup', () => {
-        const query = searchBar.value.toLowerCase().trim();
-        if (query) {
-          currentBusinesses = businesses.filter(biz => 
-            biz.name.toLowerCase().includes(query) ||
-            biz.category.toLowerCase().includes(query) ||
-            biz.location.toLowerCase().includes(query) ||
-            (biz.products && biz.products.some(product => 
-              product.name.toLowerCase().includes(query) ||
-              product.desc.toLowerCase().includes(query)
-            ))
-          );
-        } else {
-          currentBusinesses = businesses;
-        }
-        displayedCount = 6;
-        displayFeed();
-      });
-      
-      window.addEventListener('scroll', () => {
-        if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
-          loading.style.display = 'block';
-          setTimeout(() => {
-            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
-            displayFeed();
-            loading.style.display = 'none';
-          }, 500);
-        }
-      });
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
-        }
-      });
-      
-      document.getElementById('submit-business-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('biz-name').value.trim();
-          const email = document.getElementById('biz-email').value.trim();
-          const password = document.getElementById('biz-password').value.trim();
-          const category = document.getElementById('biz-category').value;
-          const product = document.getElementById('biz-product').value.trim();
-          const desc = document.getElementById('biz-desc').value.trim();
-          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-          const instagram = document.getElementById('biz-instagram').value.trim();
-          const location = document.getElementById('biz-location').value.trim();
-    
-          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('Please fill in all fields!');
-          }
-          if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
-          }
-          if (!/^(876)\d{7}$/.test(whatsapp)) {
-            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
-          }
-    
-          const business = {
-            id: Date.now(),
-            name,
-            category,
-            products: [{
-              name: product,
-              desc,
-              photo: '',
-              views: 0
-            }],
-            desc,
-            whatsapp,
-            instagram,
-            location,
-            displayPhoto: '',
-            views: 0,
-            openingHour: "09:00",
-            closingHour: "18:00"
-          };
-          const user = { id: business.id, type: 'business', name, email, password };
-    
-          businesses.push(business);
-          users.push(user);
-          currentUser = user;
-          updateLocalStorage();
-    
-          closeModal('business-form');
-          updateUIForUser();
-          displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
-        }
-      });
-      
-      document.getElementById('submit-customer-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('cust-name').value.trim();
-          const email = document.getElementById('cust-email').value.trim();
-          const password = document.getElementById('cust-password').value.trim();
-    
-          if (!name || !email || !password) {
-            throw new Error('Please fill in all fields!');
-          }
-          if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
-          }
-    
-          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
-          users.push(user);
-          currentUser = user;
-          updateLocalStorage();
-    
-          closeModal('customer-form');
-          updateUIForUser();
-          displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
-        }
-      });
-      
-      document.getElementById('login-submit-btn').addEventListener('click', () => {
-        try {
-          const email = document.getElementById('login-email').value.trim();
-          const password = document.getElementById('login-password').value.trim();
-    
-          if (!email || !password) {
-            throw new Error('Please enter both email and password!');
-          }
-    
-          const foundUser = users.find(u => u.email === email && u.password === password);
-          if (foundUser) {
-            currentUser = foundUser;
-            updateLocalStorage();
-            closeModal('login-form');
-            updateUIForUser();
-            displayFeed();
-          } else {
-            throw new Error('Invalid email or password!');
-          }
-        } catch (error) {
-          alert(`An error occurred while logging in: ${error.message}`);
-        }
-      });
     });
   </script>
 </body>
