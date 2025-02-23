@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizFinder JA</title>
-  <!-- Chart.js for the interactive graph -->
+  <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* CSS Variables for easy theming */
@@ -43,7 +43,7 @@
       font-size: 2rem;
       font-weight: 600;
       text-transform: uppercase;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       position: relative;
     }
     #businessName {
@@ -65,7 +65,7 @@
       cursor: pointer;
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
       font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     #profile-btn { right: 1rem; display: none; }
     #login-btn { right: 8rem; }
@@ -73,7 +73,7 @@
     header button:hover {
       background: #f8f9fa;
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     
     /* Container */
@@ -95,12 +95,12 @@
       border-radius: 25px;
       font-size: 1rem;
       transition: border-color 0.3s, box-shadow 0.3s;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     #search-bar:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     #search-results-info {
       margin-top: 0.5rem;
@@ -118,14 +118,14 @@
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       transition: transform 0.3s, box-shadow 0.3s;
     }
     .business-card:hover,
     .store-page:hover,
     .profile-page:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
     .business-card h3,
     .store-page h3,
@@ -149,7 +149,7 @@
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .contact a {
       margin-right: 1rem;
@@ -177,15 +177,15 @@
       cursor: pointer;
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
       font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     button:hover {
       background: var(--secondary-green);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     
-    /* Popup and Form Modals */
+    /* Modal Styles */
     .modal {
       position: fixed;
       top: 50%;
@@ -194,7 +194,7 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
@@ -223,7 +223,7 @@
     select:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     
     /* Hot Products Banner */
@@ -232,7 +232,7 @@
       padding: 1.25rem;
       border-radius: 12px;
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       border-left: 5px solid var(--primary-green);
       display: flex;
       flex-wrap: wrap;
@@ -253,7 +253,7 @@
       padding: 0.5rem;
       background: var(--white);
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     .hot-product-item img {
       width: 50px;
@@ -369,24 +369,28 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
-    .profile-header img {
+    /* If no profile photo, show generated letter avatar */
+    .letter-avatar {
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      object-fit: cover;
+      background: #3498db;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
     }
     .profile-details {
       margin-bottom: 1.5rem;
     }
-    /* Ensure the chart is larger and responsive */
     .profile-container canvas {
       width: 100% !important;
       height: 300px !important;
     }
     
-    /* Add Product Modal */
-    #add-product-modal {
-      /* Same style as other modals */
+    /* Settings Modal */
+    #settings-modal {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -394,7 +398,24 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    
+    /* Add Product Modal (supports file upload for image/video) */
+    #add-product-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
@@ -417,7 +438,6 @@
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products"></div>
-    <!-- Feed is rendered inside a grid container -->
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
     <div id="profile-page" class="profile-page" style="display: none;"></div>
@@ -471,12 +491,23 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal">
+    <h2>Settings</h2>
+    <input type="text" id="settings-name" placeholder="Your Name" />
+    <input type="text" id="settings-photo" placeholder="Profile Photo URL (leave empty for letter avatar)" />
+    <button id="save-settings-btn">Save Settings</button>
+    <button class="close-btn" data-form="settings-modal">Close</button>
+  </div>
+
   <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
     <input type="text" id="prod-desc" placeholder="Product Description" required />
-    <input type="text" id="prod-photo" placeholder="Product Photo URL" required />
+    <!-- File input to upload an image or up to 1 minute video -->
+    <input type="file" id="prod-media" accept="image/*,video/*" />
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
     <button id="submit-product-btn">Add Product</button>
     <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
@@ -485,11 +516,11 @@
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
-      let displayedCount = 6; // Load 6 feed cards by default
+      let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-      let currentBusinesses = businesses; // Holds the current list (filtered or full)
+      let currentBusinesses = businesses; // Holds current list
 
       /*** DOM Elements ***/
       const popup = document.getElementById('popup');
@@ -552,6 +583,15 @@
         document.getElementById(formId).style.display = 'none';
       }
       
+      // Generate a letter avatar if no profile photo is provided
+      function getLetterAvatar(name) {
+        const firstName = name.split(" ")[0];
+        const letter = firstName.charAt(0).toUpperCase();
+        const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
+      }
+      
       /*** UI Rendering Functions ***/
       const displayFeed = () => {
         feed.style.display = 'block';
@@ -608,7 +648,7 @@
         });
       };
       
-      // Modern profile page with interactive graph and "Add Product" button
+      // Modern profile page with interactive graph, settings, and "Back to Store" button (for business users)
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
@@ -616,9 +656,16 @@
         profilePage.style.display = 'block';
         let profileContent = `
           <div class="profile-container">
-            <button id="back-to-feed">Back to Feed</button>
+            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">Back to ${currentUser.type === 'business' ? 'Store' : 'Feed'}</button>
             <div class="profile-header">
-              <img src="https://via.placeholder.com/100.png?text=Profile" alt="${currentUser.name}" />
+        `;
+        // If currentUser has a profilePhoto property, use it; otherwise generate a letter avatar.
+        if (currentUser.profilePhoto) {
+          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />`;
+        } else {
+          profileContent += getLetterAvatar(currentUser.name);
+        }
+        profileContent += `
               <h3>${currentUser.name}</h3>
               <p>${currentUser.email}</p>
             </div>
@@ -643,8 +690,10 @@
               : '<p>No recent views.</p>'}
           `;
         }
+        // Add settings and logout buttons
         profileContent += `
             </div>
+            <button id="settings-btn">Settings</button>
             <button id="logout-btn">Logout</button>
           </div>
         `;
@@ -654,7 +703,7 @@
         }
       };
       
-      // Initialize Chart.js graph with a thermal gradient for data points
+      // Initialize Chart.js graph with a thermal gradient (red = highest, blue = lowest)
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart').getContext('2d');
         const labels = [];
@@ -681,7 +730,7 @@
               label: 'Daily Views',
               data: dataPoints,
               borderColor: '#2ecc71',
-              backgroundColor: 'rgba(46, 204, 113, 0.1)',
+              backgroundColor: 'rgba(46,204,113,0.1)',
               fill: true,
               tension: 0.3,
               pointBackgroundColor: pointColors,
@@ -692,25 +741,11 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: true,
-                position: 'top'
-              }
+              legend: { display: true, position: 'top' }
             },
             scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: 'Date'
-                }
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: 'Views'
-                },
-                beginAtZero: true
-              }
+              x: { title: { display: true, text: 'Date' } },
+              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
             }
           }
         });
@@ -721,23 +756,61 @@
         document.getElementById('add-product-modal').style.display = 'block';
       };
       
-      // Handle adding a product (for business users)
+      // Handle adding a product with file upload support
       document.getElementById('submit-product-btn').addEventListener('click', () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
-        const prodPhoto = document.getElementById('prod-photo').value.trim() || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        const fileInput = document.getElementById('prod-media');
         if (!prodName || !prodDesc) {
           alert('Please fill in all product fields!');
           return;
         }
-        // Update the business's products array
-        const business = businesses.find(b => b.id === currentUser.id);
-        if (business) {
-          business.products.push({ name: prodName, desc: prodDesc, photo: prodPhoto, views: 0 });
-          updateLocalStorage();
-          closeModal('add-product-modal');
-          showProfile();
+        const addProduct = (mediaURL) => {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
+            updateLocalStorage();
+            closeModal('add-product-modal');
+            showProfile();
+          }
+        };
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            addProduct(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // Fallback to placeholder image if no file uploaded
+          addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
         }
+      });
+      
+      // Open Settings Modal
+      document.getElementById('settings-btn')?.addEventListener('click', () => {
+        document.getElementById('settings-modal').style.display = 'block';
+        // Pre-fill settings fields
+        document.getElementById('settings-name').value = currentUser.name || "";
+        document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
+      });
+      
+      // Save Settings
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        const newName = document.getElementById('settings-name').value.trim();
+        const newPhoto = document.getElementById('settings-photo').value.trim();
+        if (newName) {
+          currentUser.name = newName;
+          // If business user, update business name as well
+          if (currentUser.type === 'business') {
+            const business = businesses.find(b => b.id === currentUser.id);
+            if (business) business.name = newName;
+          }
+        }
+        currentUser.profilePhoto = newPhoto; // If empty, getLetterAvatar will be used in profile
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
       });
       
       /*** Event Handlers ***/
@@ -753,20 +826,16 @@
         popup.style.display = 'none';
         displayFeed();
       });
-      loginBtn.addEventListener('click', () => {
-        loginForm.style.display = 'block';
-      });
-      signupBtn.addEventListener('click', () => {
-        popup.style.display = 'block';
-      });
+      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
+      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
       profileBtn.addEventListener('click', showProfile);
       
       document.body.addEventListener('click', event => {
         if (event.target.id === 'back-to-feed') {
           displayFeed();
         }
-        if (event.target.id === 'add-product-btn') {
-          openAddProductModal();
+        if (event.target.id === 'back-to-store') {
+          viewStore(currentUser.id);
         }
       });
       
