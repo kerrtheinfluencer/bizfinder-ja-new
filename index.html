@@ -65,16 +65,9 @@
       font-weight: 500;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    #profile-btn {
-      right: 1rem;
-      display: none;
-    }
-    #login-btn {
-      right: 8rem;
-    }
-    #signup-btn {
-      right: 15rem;
-    }
+    #profile-btn { right: 1rem; display: none; }
+    #login-btn { right: 8rem; }
+    #signup-btn { right: 15rem; }
     header button:hover {
       background: #f8f9fa;
       transform: translateY(-2px);
@@ -279,6 +272,75 @@
       display: none;
       color: var(--muted-color);
       font-size: 1rem;
+    }
+    
+    /* Store (Product) Page Layout Enhancements */
+    .store-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 1rem;
+    }
+    .business-info {
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 1rem;
+    }
+    .business-info h3 {
+      margin-bottom: 0.5rem;
+    }
+    .business-info img {
+      width: 150px; /* Smaller profile photo */
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+    }
+    .products-section {
+      width: 100%;
+    }
+    .products-section h4 {
+      margin-bottom: 1rem;
+      color: var(--primary-green);
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .product-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product-card img {
+      width: 100%;
+      object-fit: cover;
+      height: 150px;
+    }
+    .product-info {
+      padding: 1rem;
+      text-align: center;
+    }
+    .product-name {
+      font-size: 1.1rem;
+      color: var(--primary-green);
+      margin-bottom: 0.5rem;
+    }
+    .product-desc {
+      font-size: 0.95rem;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+    .product-views {
+      font-size: 0.85rem;
+      color: var(--muted-color);
     }
   </style>
 </head>
@@ -699,7 +761,7 @@
         }
       });
       
-      // View Store
+      // View Store with enhanced, professional layout
       const viewStore = bizId => {
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
@@ -715,26 +777,36 @@
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
         storePage.innerHTML = `
-          <button id="back-to-feed">Back to Feed</button>
-          <h3>${business.name}</h3>
-          <p class="category">${business.category}</p>
-          <img src="${business.displayPhoto}" alt="${business.name}">
-          <p>${business.desc}</p>
-          <p><strong>Location:</strong> ${business.location}</p>
-          <div class="contact">
-            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-          </div>
-          <p class="views">Views: ${business.views}</p>
-          <h4>Products</h4>
-          ${business.products.map(p => `
-            <div>
-              <p><strong>${p.name}</strong></p>
-              <img src="${p.photo}" alt="${p.name}">
-              <p>${p.desc}</p>
-              <p class="views">Views: ${p.views}</p>
+          <button onclick="displayFeed()">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${business.name}</h3>
+              <p class="category">${business.category}</p>
+              <img src="${business.displayPhoto}" alt="${business.name}">
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+              </div>
+              <p class="views">Views: ${business.views}</p>
             </div>
-          `).join('')}
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${business.products.map(p => `
+                  <div class="product-card">
+                    <img src="${p.photo}" alt="${p.name}">
+                    <div class="product-info">
+                      <p class="product-name">${p.name}</p>
+                      <p class="product-desc">${p.desc}</p>
+                      <p class="product-views">Views: ${p.views}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
         `;
       };
       
