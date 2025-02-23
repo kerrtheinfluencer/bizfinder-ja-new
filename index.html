@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizFinder JA</title>
-  <!-- Chart.js for the interactive graph -->
+  <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* CSS Variables */
@@ -37,6 +37,9 @@
       justify-content: space-between;
       padding: 1rem 2rem;
       font-size: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     #businessName { cursor: pointer; }
     .header-buttons {
@@ -59,7 +62,13 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Header Avatar (small, 40px) */
+    /* Profile Button Styling */
+    #profile-btn {
+      position: sticky;
+      top: 1rem;
+      z-index: 101;
+    }
+    /* Header Avatar */
     .header-avatar {
       width: 40px;
       height: 40px;
@@ -98,7 +107,6 @@
       font-size: 0.9rem;
       color: var(--muted-color);
       text-align: center;
-      margin-bottom: 10px;
     }
     /* Cards & Pages */
     .business-card, .store-page, .profile-page {
@@ -170,7 +178,7 @@
     /* Hot Products Banner */
     .hot-products {
       background: linear-gradient(135deg, var(--white), var(--light-bg));
-      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
+      padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
       display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
     }
@@ -195,8 +203,6 @@
     /* Store Page */
     .store-container { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; }
     .business-info { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
-    .business-info h3 { margin-bottom: 0.5rem; }
-    .business-info img, .business-info .letter-avatar { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 0.5rem; }
     .products-section { width: 100%; }
     .products-section h4 {
       margin-bottom: 1rem; color: var(--primary-green); font-size: 1.5rem; text-align: center;
@@ -208,7 +214,7 @@
     }
     .product-card {
       background: var(--white); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; position: relative;
+      overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;
     }
     .product-card:hover {
       transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -236,50 +242,6 @@
     }
     .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
     .profile-details { margin-bottom: 1.5rem; }
-    /* Modals */
-    .modal {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--white); padding: 2rem; border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 1000;
-      text-align: center; max-width: 500px; width: 90%; display: none;
-    }
-    .modal h2 { color: var(--primary-green); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 600; }
-    input, select {
-      display: block; width: 100%; margin: 0.75rem 0; padding: 0.875rem;
-      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    input:focus, select:focus {
-      border-color: var(--primary-green); outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
-    }
-    /* Hot Products Banner */
-    .hot-products {
-      background: linear-gradient(135deg, var(--white), var(--light-bg));
-      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
-      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
-    }
-    .hot-products h3 {
-      width: 100%; font-size: 1.2rem; color: var(--primary-green);
-      margin-bottom: 0.75rem; font-weight: 600;
-    }
-    .hot-product-item {
-      display: flex; align-items: center; margin: 0.5rem; padding: 0.5rem;
-      background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .hot-product-item img {
-      width: 50px; height: 50px; margin-right: 0.75rem; border-radius: 4px; object-fit: cover;
-    }
-    .hot-product-item span { font-size: 0.9rem; color: #34495e; }
-    /* Feed Grid */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    /* End of UI Rendering */
   </style>
 </head>
 <body>
@@ -291,19 +253,19 @@
       <button id="signup-btn">Sign Up</button>
     </div>
   </header>
-  
+
   <div class="container" id="main-content">
-    <div class="search-container">
+    <divコンサル class="search-container">
       <input type="text" id="search-bar" placeholder="Search businesses..." />
       <div id="search-results-info"></div>
     </div>
-    <div id="hot-products" class="hot-products"></div>
     <div id="feed" class="feed-grid"></div>
+    <div id="hot-products" class="hot-products" style="display:none;"></div>
     <div id="store-page" class="store-page" style="display:none;"></div>
     <div id="profile-page" class="profile-page" style="display:none;"></div>
-    <div id="loading" class="loading">Loading...</div>
+    <div id="loading" class="loading" style="display:none;">Loading...</div>
   </div>
-  
+
   <!-- Modals -->
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
@@ -312,7 +274,7 @@
     <button id="customer-btn">Sign Up as Customer</button>
     <button id="feed-btn">Continue to Feed</button>
   </div>
-  
+
   <div id="business-form" class="modal">
     <h2>Business Sign-Up</h2>
     <input type="text" id="biz-name" placeholder="Business Name" required />
@@ -333,7 +295,7 @@
     <button id="submit-business-btn">Submit</button>
     <button class="close-btn" data-form="business-form">Close</button>
   </div>
-  
+
   <div id="customer-form" class="modal">
     <h2>Customer Sign-Up</h2>
     <input type="text" id="cust-name" placeholder="Name" required />
@@ -342,7 +304,7 @@
     <button id="submit-customer-btn">Submit</button>
     <button class="close-btn" data-form="customer-form">Close</button>
   </div>
-  
+
   <div id="login-form" class="modal">
     <h2>Login</h2>
     <input type="email" id="login-email" placeholder="Email" required />
@@ -350,7 +312,7 @@
     <button id="login-submit-btn">Login</button>
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
-  
+
   <!-- Settings Modal -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
@@ -360,7 +322,7 @@
     <button id="delete-all-posts-btn">Delete All Posts</button>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
-  
+
   <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
@@ -372,7 +334,7 @@
     <button id="submit-product-btn">Add Product</button>
     <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
-  
+
   <!-- Edit Product Modal -->
   <div id="edit-product-modal" class="modal">
     <h2>Edit Product</h2>
@@ -384,7 +346,7 @@
     <button id="save-product-btn">Save Changes</button>
     <button class="close-btn" data-form="edit-product-modal">Close</button>
   </div>
-  
+
   <!-- Product Detail Modal -->
   <div id="product-detail-modal" class="modal">
     <h2>Product Details</h2>
@@ -394,26 +356,26 @@
     <p id="detail-prod-price"></p>
     <button class="close-btn" data-form="product-detail-modal">Close</button>
   </div>
-  
+
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
-      // --- Data Initialization ---
+      // Data Initialization
       let displayedCount = 6;
-      let isLoading = false;  // Prevent multiple scroll triggers
+      let isLoading = false;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
-      let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+      let users = JSON.parse(localStorage.getItem('users')) || [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
-      
-      // Ensure dummy businesses have opening/closing hours
+
+      // Ensure dummy businesses have hours
       businesses = businesses.map(b => {
-        if (!b.openingHour) b.openingHour = "09:00";
-        if (!b.closingHour) b.closingHour = "18:00";
+        b.openingHour = b.openingHour || "09:00";
+        b.closingHour = b.closingHour || "18:00";
         return b;
       });
-      
-      // --- DOM Elements ---
+
+      // DOM Elements
       const popup = document.getElementById('popup');
       const businessForm = document.getElementById('business-form');
       const customerForm = document.getElementById('customer-form');
@@ -428,8 +390,8 @@
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
-      
-      // --- Helper Functions ---
+
+      // Helper Functions
       function generateDummyBusinesses(count) {
         const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
         const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
@@ -460,14 +422,13 @@
         }
         return dummyBusinesses;
       }
-      
+
       function updateLocalStorage() {
         localStorage.setItem('businesses', JSON.stringify(businesses));
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
-      
-      // Update header: if logged in, show a small circular avatar; else hide profile button.
+
       function getHeaderAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -475,16 +436,14 @@
         const color = colors[Math.floor(Math.random() * colors.length)];
         return `<div class="header-avatar" style="background:${color};">${letter}</div>`;
       }
-      
+
       function updateUIForUser() {
         if (currentUser) {
           loginBtn.style.display = 'none';
           signupBtn.style.display = 'none';
-          if (currentUser.profilePhoto) {
-            profileBtn.innerHTML = `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`;
-          } else {
-            profileBtn.innerHTML = getHeaderAvatar(currentUser.name);
-          }
+          profileBtn.innerHTML = currentUser.profilePhoto ?
+            `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">` :
+            getHeaderAvatar(currentUser.name);
           profileBtn.style.display = 'block';
         } else {
           profileBtn.style.display = 'none';
@@ -492,11 +451,11 @@
           signupBtn.style.display = 'block';
         }
       }
-      
+
       function closeModal(formId) {
         document.getElementById(formId).style.display = 'none';
       }
-      
+
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -504,7 +463,7 @@
         const color = colors[Math.floor(Math.random() * colors.length)];
         return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
       }
-      
+
       function isStoreOpen(business) {
         const now = new Date();
         const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
@@ -513,21 +472,23 @@
         const closeDate = new Date(now); closeDate.setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
-      
-      // --- UI Rendering Functions ---
+
+      // UI Rendering Functions
       const displayFeed = () => {
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
+        hotProducts.style.display = 'block';
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
         const totalResults = currentBusinesses.length;
-        const info = document.getElementById('search-results-info');
-        info.textContent = totalResults === 0 ? 'No results found.' : `Found ${totalResults} results, showing first ${businessesToShow.length}`;
+        document.getElementById('search-results-info').textContent = totalResults === 0 ?
+          'No results found.' : `Found ${totalResults} results, showing first ${businessesToShow.length}`;
         gridContainer.innerHTML = '';
         businessesToShow.forEach(business => {
-          const featuredProduct = (business.products && business.products.length > 0) ? business.products[0] : { name: 'No product', photo: '', price: '0.00' };
+          const featuredProduct = business.products && business.products.length > 0 ?
+            business.products[0] : { name: 'No product', photo: '', price: '0.00' };
           const card = document.createElement('div');
           card.className = 'business-card';
           card.innerHTML = `
@@ -550,7 +511,7 @@
         });
         displayHotProducts();
       };
-      
+
       const displayHotProducts = () => {
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
@@ -558,26 +519,25 @@
           const product = biz.products[0];
           hotProducts.innerHTML += `
             <div class="hot-product-item">
-              <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
+              <img src="${product.photo || 'https://via.placeholder.com/50'}" alt="${product.name}">
               <span>${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
             </div>
           `;
         });
       };
-      
+
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
+        hotProducts.style.display = 'none';
         let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
         let profileContent = `
           <div class="profile-container">
             <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
             <div class="profile-header">
-        `;
-        profileContent += currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />` : getLetterAvatar(currentUser.name);
-        profileContent += `
+              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />` : getLetterAvatar(currentUser.name)}
               <h3>${currentUser.name}</h3>
               <p>${currentUser.email}</p>
             </div>
@@ -607,7 +567,6 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        // Wire up Settings button
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
           settingsBtn.addEventListener('click', () => {
@@ -616,12 +575,12 @@
             document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
           });
         }
-        if (currentUser.type === 'business') { initViewsChart(); }
+        if (currentUser.type === 'business') initViewsChart();
       };
-      
+
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart').getContext('2d');
-        const labels = [];
+       	const labels = [];
         const dataPoints = [];
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
@@ -629,14 +588,6 @@
           labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
           dataPoints.push(Math.floor(Math.random() * 100));
         }
-        const minVal = Math.min(...dataPoints);
-        const maxVal = Math.max(...dataPoints);
-        const pointColors = dataPoints.map(val => {
-          const ratio = (val - minVal) / (maxVal - minVal || 1);
-          const r = Math.round(255 * ratio);
-          const b = Math.round(255 * (1 - ratio));
-          return `rgb(${r},0,${b})`;
-        });
         new Chart(ctx, {
           type: 'line',
           data: {
@@ -647,30 +598,25 @@
               borderColor: '#2ecc71',
               backgroundColor: 'rgba(46,204,113,0.1)',
               fill: true,
-              tension: 0.3,
-              pointBackgroundColor: pointColors,
-              pointRadius: 8
+              tension: 0.3
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top' } },
-            scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
-            }
+            scales: { y: { beginAtZero: true } }
           }
         });
       }
-      
+
       const showStore = (business) => {
         feed.style.display = 'none';
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
+        hotProducts.style.display = 'none';
         let storeContent = `
-          <button onclick="displayFeed()">Back to Feed</button>
           <div class="store-container">
+            <button onclick="displayFeed()">Back to Feed</button>
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
@@ -689,69 +635,51 @@
                 ${renderStoreProducts(business)}
               </div>
             </div>
+            <div id="store-hot-products" class="hot-products"></div>
           </div>
         `;
         storePage.innerHTML = storeContent;
-        // Wire up product detail triggers
-        storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
-          img.addEventListener('click', (e) => {
-            const idx = e.target.getAttribute('data-index');
-            const biz = businesses.find(b => b.id == currentUser.id);
-            openProductDetailModal(biz.products[idx]);
-          });
-        });
-        // Wire up edit buttons (only for business owner)
-        storePage.querySelectorAll('.edit-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const idx = e.target.getAttribute('data-index');
-            openEditProductModal(idx);
-          });
-        });
-        // Wire up delete buttons (only for business owner)
-        storePage.querySelectorAll('.delete-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!currentUser || currentUser.type !== 'business') {
-              alert("You must be signed in as a business to delete products.");
-              return;
-            }
-            const idx = e.target.getAttribute('data-index');
-            if (confirm("Are you sure you want to delete this product?")) {
-              const biz = businesses.find(b => b.id == currentUser.id);
-              biz.products.splice(idx, 1);
-              updateLocalStorage();
-              showStore(biz);
-            }
-          });
-        });
+        displayHotProductsForStore(business);
       };
-      
+
+      function displayHotProductsForStore(business) {
+        const storeHotProducts = document.getElementById('store-hot-products');
+        const hot = [...businesses].sort((a, b) => b.views - a.views).slice(0, 3);
+        storeHotProducts.innerHTML = '<h3>Hot Products</h3>';
+        hot.forEach(biz => {
+          const product = biz.products[0];
+          storeHotProducts.innerHTML += `
+            <div class="hot-product-item">
+              <img src="${product.photo || 'https://via.placeholder.com/50'}" alt="${product.name}">
+              <span>${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
+            </div>
+          `;
+        });
+      }
+
       function renderStoreProducts(business) {
         let html = '';
         business.products.forEach((p, index) => {
           html += `
             <div class="product-card">
-              <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" data-index="${index}" class="product-detail-trigger">
+              <img src="${p.photo || 'https://via.placeholder.com/300x200'}" alt="${p.name}" data-index="${index}" class="product-detail-trigger">
               <div class="product-info">
                 <p class="product-name">${p.name}</p>
                 <p class="product-desc">${p.desc}</p>
                 <p class="product-price">Price: $${p.price}</p>
                 <p class="product-views">Views: ${p.views}</p>
+                ${currentUser && currentUser.type === 'business' && currentUser.id === business.id ? `
+                  <div class="edit-delete-buttons">
+                    <button class="edit-prod-btn" data-index="${index}">Edit</button>
+                    <button class="delete-prod-btn" data-index="${index}">Delete</button>
+                  </div>` : ''}
+              </div>
+            </div>
           `;
-          if (currentUser && currentUser.type === 'business' && currentUser.id === business.id) {
-            html += `
-                <div class="edit-delete-buttons">
-                  <button class="edit-prod-btn" data-index="${index}">Edit</button>
-                  <button class="delete-prod-btn" data-index="${index}">Delete</button>
-                </div>
-            `;
-          }
-          html += `</div></div>`;
         });
         return html;
       }
-      
+
       const viewStore = bizId => {
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
@@ -760,92 +688,12 @@
           currentUser.recentlyViewed = currentUser.recentlyViewed || [];
           currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
           currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-          updateLocalStorage();
         }
         updateLocalStorage();
         showStore(business);
       };
-      
-      const openProductDetailModal = (product) => {
-        document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('detail-prod-name').textContent = product.name;
-        document.getElementById('detail-prod-desc').textContent = product.desc;
-        document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
-        document.getElementById('product-detail-modal').style.display = 'block';
-      };
-      
-      let productToEditIndex = null;
-      const openEditProductModal = (index) => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to edit products.");
-          return;
-        }
-        productToEditIndex = index;
-        const biz = businesses.find(b => b.id === currentUser.id);
-        const product = biz.products[index];
-        document.getElementById('edit-prod-name').value = product.name;
-        document.getElementById('edit-prod-desc').value = product.desc;
-        document.getElementById('edit-prod-price').value = product.price;
-        document.getElementById('edit-product-modal').style.display = 'block';
-      };
-      
-      document.getElementById('save-product-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to edit products.");
-          return;
-        }
-        const newName = document.getElementById('edit-prod-name').value.trim();
-        const newDesc = document.getElementById('edit-prod-desc').value.trim();
-        const newPrice = document.getElementById('edit-prod-price').value.trim();
-        const fileInput = document.getElementById('edit-prod-media');
-        if (!newName || !newDesc || !newPrice) { alert('Please fill in all product fields!'); return; }
-        const updateProduct = (mediaURL) => {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          biz.products[productToEditIndex] = {
-            ...biz.products[productToEditIndex],
-            name: newName,
-            desc: newDesc,
-            price: newPrice,
-            photo: mediaURL || biz.products[productToEditIndex].photo
-          };
-          updateLocalStorage();
-          closeModal('edit-product-modal');
-          viewStore(currentUser.id);
-        };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) { updateProduct(e.target.result); };
-          reader.readAsDataURL(file);
-        } else { updateProduct(); }
-      });
-      
-      document.getElementById('submit-product-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to add products.");
-          return;
-        }
-        const prodName = document.getElementById('prod-name').value.trim();
-        const prodDesc = document.getElementById('prod-desc').value.trim();
-        const prodPrice = document.getElementById('prod-price').value.trim();
-        const fileInput = document.getElementById('prod-media');
-        if (!prodName || !prodDesc || !prodPrice) { alert('Please fill in all product fields!'); return; }
-        const addProduct = (mediaURL) => {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          biz.products.unshift({ name: prodName, desc: prodDesc, price: prodPrice, photo: mediaURL, views: 0 });
-          updateLocalStorage();
-          closeModal('add-product-modal');
-          showProfile();
-        };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) { addProduct(e.target.result); };
-          reader.readAsDataURL(file);
-        } else { addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo'); }
-      });
-      
-      // --- Event Handlers ---
+
+      // Event Handlers
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         businessForm.style.display = 'block';
@@ -858,45 +706,58 @@
         popup.style.display = 'none';
         displayFeed();
       });
-      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
-      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
+      loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
+      signupBtn.addEventListener('click', () => popup.style.display = 'block');
       profileBtn.addEventListener('click', showProfile);
-      
+
       document.body.addEventListener('click', event => {
-        if (event.target.id === 'back-to-feed') { displayFeed(); }
-        if (event.target.id === 'back-to-store') { viewStore(currentUser.id); }
-        if (event.target.id === 'add-product-btn') { openAddProductModal(); }
+        if (event.target.id === 'back-to-feed') displayFeed();
+        if (event.target.id === 'back-to-store') viewStore(currentUser.id);
+        if (event.target.id === 'add-product-btn') document.getElementById('add-product-modal').style.display = 'block';
+        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
+        if (event.target.classList.contains('edit-prod-btn')) openEditProductModal(event.target.getAttribute('data-index'));
+        if (event.target.classList.contains('delete-prod-btn')) {
+          const index = event.target.getAttribute('data-index');
+          const biz = businesses.find(b => b.id === currentUser.id);
+          biz.products.splice(index, 1);
+          updateLocalStorage();
+          viewStore(currentUser.id);
+        }
+        if (event.target.classList.contains('product-detail-trigger')) {
+          const biz = businesses.find(b => b.id == event.target.closest('.view-store-btn')?.getAttribute('data-id'));
+          if (biz) {
+            const product = biz.products[event.target.getAttribute('data-index')];
+            document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200';
+            document.getElementById('detail-prod-name').textContent = product.name;
+            document.getElementById('detail-prod-desc').textContent = product.desc;
+            document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
+            document.getElementById('product-detail-modal').style.display = 'block';
+          }
+        }
       });
-      
+
       businessName.addEventListener('click', () => {
-        if (feed.style.display === 'block') {
-          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 6;
-          displayFeed();
-        } else { displayFeed(); }
-      });
-      
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => { closeModal(btn.getAttribute('data-form')); });
-      });
-      
-      searchBar.addEventListener('keyup', () => {
-        const query = searchBar.value.toLowerCase().trim();
-        if (query) {
-          currentBusinesses = businesses.filter(biz => 
-            biz.name.toLowerCase().includes(query) ||
-            biz.category.toLowerCase().includes(query) ||
-            biz.location.toLowerCase().includes(query) ||
-            (biz.products && biz.products.some(product => 
-              product.name.toLowerCase().includes(query) ||
-              product.desc.toLowerCase().includes(query)
-            ))
-          );
-        } else { currentBusinesses = businesses; }
+        currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
         displayedCount = 6;
         displayFeed();
       });
-      
+
+      document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(btn.getAttribute('data-form')));
+      });
+
+      searchBar.addEventListener('keyup', () => {
+        const query = searchBar.value.toLowerCase().trim();
+        currentBusinesses = query ? businesses.filter(biz =>
+          biz.name.toLowerCase().includes(query) ||
+          biz.category.toLowerCase().includes(query) ||
+          biz.location.toLowerCase().includes(query) ||
+          (biz.products && biz.products.some(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)))
+        ) : businesses;
+        displayedCount = 6;
+        displayFeed();
+      });
+
       window.addEventListener('scroll', () => {
         if (feed.style.display === 'block' && !isLoading && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           isLoading = true;
@@ -909,101 +770,194 @@
           }, 500);
         }
       });
-      
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
-        }
-      });
-      
+
       document.getElementById('submit-business-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('biz-name').value.trim();
-          const email = document.getElementById('biz-email').value.trim();
-          const password = document.getElementById('biz-password').value.trim();
-          const category = document.getElementById('biz-category').value;
-          const product = document.getElementById('biz-product').value.trim();
-          const desc = document.getElementById('biz-desc').value.trim();
-          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-          const instagram = document.getElementById('biz-instagram').value.trim();
-          const location = document.getElementById('biz-location').value.trim();
-          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('Please fill in all fields!');
-          }
-          if (!/\S+@\S+\.\S+/.test(email)) { throw new Error('Please enter a valid email address!'); }
-          if (!/^(876)\d{7}$/.test(whatsapp)) { throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)'); }
-          const business = {
-            id: Date.now(),
-            name,
-            category,
-            products: [{
-              name: product,
-              desc,
-              photo: '',
-              views: 0,
-              price: (Math.random() * 45 + 5).toFixed(2)
-            }],
-            desc,
-            whatsapp,
-            instagram,
-            location,
-            displayPhoto: '',
-            views: 0,
-            openingHour: "09:00",
-            closingHour: "18:00"
-          };
-          const user = { id: business.id, type: 'business', name, email, password };
-          businesses.push(business);
-          users.push(user);
-          currentUser = user;
-          updateLocalStorage();
-          closeModal('business-form');
-          updateUIForUser();
-          displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
+        const name = document.getElementById('biz-name').value.trim();
+        const email = document.getElementById('biz-email').value.trim();
+        const password = document.getElementById('biz-password').value.trim();
+        const category = document.getElementById('biz-category').value;
+        const product = document.getElementById('biz-product').value.trim();
+        const desc = document.getElementById('biz-desc').value.trim();
+        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+        const instagram = document.getElementById('biz-instagram').value.trim();
+        const location = document.getElementById('biz-location').value.trim();
+        if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+          alert('Please fill in all fields!');
+          return;
         }
+        if (!/\S+@\S+\.\S+/.test(email)) {
+          alert('Please enter a valid email address!');
+          return;
+        }
+        if (!/^(876)\d{7}$/.test(whatsapp)) {
+          alert('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+          return;
+        }
+        const business = {
+          id: Date.now(),
+          name,
+          category,
+          products: [{ name: product, desc, photo: '', views: 0, price: (Math.random() * 45 + 5).toFixed(2) }],
+          desc,
+          whatsapp,
+          instagram,
+          location,
+          displayPhoto: '',
+          views: 0,
+          openingHour: "09:00",
+          closingHour: "18:00"
+        };
+        const user = { id: business.id, type: 'business', name, email, password };
+        businesses.push(business);
+        users.push(user);
+        currentUser = user;
+        updateLocalStorage();
+        closeModal('business-form');
+        updateUIForUser();
+        displayFeed();
       });
-      
+
       document.getElementById('submit-customer-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('cust-name').value.trim();
-          const email = document.getElementById('cust-email').value.trim();
-          const password = document.getElementById('cust-password').value.trim();
-          if (!name || !email || !password) { throw new Error('Please fill in all fields!'); }
-          if (!/\S+@\S+\.\S+/.test(email)) { throw new Error('Please enter a valid email address!'); }
-          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
-          users.push(user);
-          currentUser = user;
+        const name = document.getElementById('cust-name').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const password = document.getElementById('cust-password').value.trim();
+        if (!name || !email || !password) {
+          alert('Please fill in all fields!');
+          return;
+        }
+        if (!/\S+@\S+\.\S+/.test(email)) {
+          alert('Please enter a valid email address!');
+          return;
+        }
+        const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+        users.push(user);
+        currentUser = user;
+        updateLocalStorage();
+        closeModal('customer-form');
+        updateUIForUser();
+        displayFeed();
+      });
+
+      document.getElementById('login-submit-btn').addEventListener('click', () => {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        if (!email || !password) {
+          alert('Please enter both email and password!');
+          return;
+        }
+        const foundUser = users.find(u => u.email === email && u.password === password);
+        if (foundUser) {
+          currentUser = foundUser;
           updateLocalStorage();
-          closeModal('customer-form');
+          closeModal('login-form');
           updateUIForUser();
           displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
+        } else {
+          alert('Invalid email or password!');
         }
       });
-      
-      document.getElementById('login-submit-btn').addEventListener('click', () => {
-        try {
-          const email = document.getElementById('login-email').value.trim();
-          const password = document.getElementById('login-password').value.trim();
-          if (!email || !password) { throw new Error('Please enter both email and password!'); }
-          const foundUser = users.find(u => u.email === email && u.password === password);
-          if (foundUser) {
-            currentUser = foundUser;
+
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        currentUser.name = document.getElementById('settings-name').value.trim() || currentUser.name;
+        currentUser.profilePhoto = document.getElementById('settings-photo').value.trim();
+        updateLocalStorage();
+        closeModal('settings-modal');
+        updateUIForUser();
+        showProfile();
+      });
+
+      document.getElementById('delete-all-posts-btn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete all posts?')) {
+          const biz = businesses.find(b => b.id === currentUser.id);
+          if (biz) biz.products = [];
+          updateLocalStorage();
+          showProfile();
+        }
+      });
+
+      document.getElementById('submit-product-btn').addEventListener('click', () => {
+        if (!currentUser || currentUser.type !== 'business') return;
+        const prodName = document.getElementById('prod-name').value.trim();
+        const prodDesc = document.getElementById('prod-desc').value.trim();
+        const prodPrice = document.getElementById('prod-price').value.trim();
+        const fileInput = document.getElementById('prod-media');
+        if (!prodName || !prodDesc || !prodPrice) {
+          alert('Please fill in all product fields!');
+          return;
+        }
+        const biz = businesses.find(b => b.id === currentUser.id);
+        const newProduct = { name: prodName, desc: prodDesc, price: prodPrice, photo: '', views: 0 };
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            newProduct.photo = e.target.result;
+            biz.products.unshift(newProduct);
             updateLocalStorage();
-            closeModal('login-form');
-            updateUIForUser();
-            displayFeed();
-          } else { throw new Error('Invalid email or password!'); }
-        } catch (error) {
-          alert(`An error occurred while logging in: ${error.message}`);
+            closeModal('add-product-modal');
+            viewStore(currentUser.id);
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        } else {
+          newProduct.photo = 'https://via.placeholder.com/300x200';
+          biz.products.unshift(newProduct);
+          updateLocalStorage();
+          closeModal('add-product-modal');
+          viewStore(currentUser.id);
         }
       });
-      
-      // Initial UI update
+
+      let productToEditIndex = null;
+      function openEditProductModal(index) {
+        if (!currentUser || currentUser.type !== 'business') return;
+        productToEditIndex = index;
+        const biz = businesses.find(b => b.id === currentUser.id);
+        const product = biz.products[index];
+        document.getElementById('edit-prod-name').value = product.name;
+        document.getElementById('edit-prod-desc').value = product.desc;
+        document.getElementById('edit-prod-price').value = product.price;
+        document.getElementById('edit-product-modal').style.display = 'block';
+      }
+
+      document.getElementById('save-product-btn').addEventListener('click', () => {
+        if (!currentUser || currentUser.type !== 'business') return;
+        const newName = document.getElementById('edit-prod-name').value.trim();
+        const newDesc = document.getElementById('edit-prod-desc').value.trim();
+        const newPrice = document.getElementById('edit-prod-price').value.trim();
+        const fileInput = document.getElementById('edit-prod-media');
+        if (!newName || !newDesc || !newPrice) {
+          alert('Please fill in all product fields!');
+          return;
+        }
+        const biz = businesses.find(b => b.id === currentUser.id);
+        const updatedProduct = { ...biz.products[productToEditIndex], name: newName, desc: newDesc, price: newPrice };
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            updatedProduct.photo = e.target.result;
+            biz.products[productToEditIndex] = updatedProduct;
+            updateLocalStorage();
+            closeModal('edit-product-modal');
+            viewStore(currentUser.id);
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        } else {
+          biz.products[productToEditIndex] = updatedProduct;
+          updateLocalStorage();
+          closeModal('edit-product-modal');
+          viewStore(currentUser.id);
+        }
+      });
+
+      document.getElementById('logout-btn')?.addEventListener('click', () => {
+        currentUser = null;
+        updateLocalStorage();
+        updateUIForUser();
+        displayFeed();
+      });
+
+      // Initial Setup
       updateUIForUser();
+      popup.style.display = 'block';
     });
   </script>
 </body>
