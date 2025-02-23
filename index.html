@@ -264,10 +264,8 @@
       margin-bottom: 1.5rem;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       border-left: 5px solid var(--primary-green);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
+      position: relative;
+      overflow: hidden;
     }
     .hot-products h3 {
       width: 100%;
@@ -279,11 +277,13 @@
     .hot-product-item {
       display: flex;
       align-items: center;
-      margin: 0.5rem;
+      margin: 0.5rem 0;
       padding: 0.5rem;
       background: var(--white);
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: relative;
+      animation: slideIn 20s infinite;
     }
     .hot-product-item img {
       width: 50px;
@@ -296,7 +296,38 @@
       font-size: 0.9rem;
       color: #34495e;
     }
-    
+    .hot-product-item::after {
+      content: "🔥";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      animation: firePulse 1.5s infinite ease-in-out;
+    }
+
+    /* Fire Emoji Animation */
+    @keyframes firePulse {
+      0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+      50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+
+    /* Slideshow Animation for Hot Products */
+    @keyframes slideIn {
+      0% { transform: translateX(-100%); opacity: 0; }
+      10% { transform: translateX(0); opacity: 1; }
+      90% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* Ensure hot products loop smoothly */
+    .hot-products .hot-product-item {
+      animation-delay: calc(var(--order) * 5s);
+    }
+    .hot-products .hot-product-item:nth-child(1) { --order: 0; }
+    .hot-products .hot-product-item:nth-child(2) { --order: 1; }
+    .hot-products .hot-product-item:nth-child(3) { --order: 2; }
+
     /* Loading Spinner */
     .loading {
       text-align: center;
@@ -681,11 +712,17 @@
       const displayHotProducts = () => {
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
-        hot.forEach(biz => {
-          const product = biz.products[0];
+        if (hot.length === 0) {
+          hotProducts.innerHTML += '<p>No hot products available.</p>';
+          return;
+        }
+        hot.forEach((biz, index) => {
+          const product = biz.products && biz.products.length > 0 
+            ? biz.products[0] 
+            : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
           hotProducts.innerHTML += `
-            <div class="hot-product-item">
-              <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
+            <div class="hot-product-item" style="--order: ${index};">
+              <img src="${product.photo}" alt="${product.name}">
               <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
             </div>
           `;
@@ -932,7 +969,7 @@
         if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           loading.style.display = 'block';
           setTimeout(() => {
-            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
+            displayedCount = Math.min(displayCount + 6, currentBusinesses.length);
             displayFeed();
             loading.style.display = 'none';
           }, 500);
