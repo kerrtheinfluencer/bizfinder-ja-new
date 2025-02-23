@@ -349,6 +349,33 @@
       font-size: 0.85rem;
       color: var(--muted-color);
     }
+    
+    /* Profile Page Enhancements */
+    .profile-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .profile-header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profile-details {
+      margin-bottom: 1.5rem;
+    }
   </style>
 </head>
 <body>
@@ -423,10 +450,11 @@
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
+      // Set default number of feed cards to load as 6 (instead of 5)
+      let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-      let displayedCount = 5;
       let currentBusinesses = businesses; // Holds the current list (filtered or full)
 
       /*** DOM Elements ***/
@@ -495,7 +523,7 @@
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
-        // Create a grid container for feed items
+        // Render feed inside grid container
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
@@ -534,7 +562,6 @@
       };
       
       const displayHotProducts = () => {
-        // Sort by views and take top 3
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
         hot.forEach(biz => {
@@ -548,32 +575,44 @@
         });
       };
       
+      // Modern, future‑proof profile page design
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
-        profilePage.innerHTML = `
-          <button id="back-to-feed">Back to Feed</button>
-          <h3>${currentUser.name}'s Profile</h3>
-          <p>Email: ${currentUser.email}</p>
+        // Build a modern profile container with header, details, and logout button
+        let profileContent = `
+          <div class="profile-container">
+            <button id="back-to-feed">Back to Feed</button>
+            <div class="profile-header">
+              <img src="https://via.placeholder.com/100.png?text=Profile" alt="${currentUser.name}" />
+              <h3>${currentUser.name}</h3>
+              <p>${currentUser.email}</p>
+            </div>
+            <div class="profile-details">
         `;
         if (currentUser.type === 'business') {
           const business = businesses.find(b => b.id === currentUser.id);
-          profilePage.innerHTML += `
+          profileContent += `
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views}</p>
             <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
           `;
         } else if (currentUser.type === 'customer') {
-          profilePage.innerHTML += `
-            <h4>Recently Viewed</h4>
+          profileContent += `
+            <h4>Recent Activity</h4>
             ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
               ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') 
-              : '<p>Nothing viewed yet!</p>'}
+              : '<p>No recent views.</p>'}
           `;
         }
-        profilePage.innerHTML += `<button id="logout-btn">Logout</button>`;
+        profileContent += `
+            </div>
+            <button id="logout-btn">Logout</button>
+          </div>
+        `;
+        profilePage.innerHTML = profileContent;
       };
       
       /*** Event Handlers ***/
@@ -611,7 +650,7 @@
       businessName.addEventListener('click', () => {
         if (feed.style.display === 'block') {
           currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 5;
+          displayedCount = 6;
           displayFeed();
         } else {
           displayFeed();
@@ -641,7 +680,7 @@
         } else {
           currentBusinesses = businesses;
         }
-        displayedCount = 5;
+        displayedCount = 6;
         displayFeed();
       });
       
@@ -650,7 +689,7 @@
         if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           loading.style.display = 'block';
           setTimeout(() => {
-            displayedCount = Math.min(displayedCount + 5, currentBusinesses.length);
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
             displayFeed();
             loading.style.display = 'none';
           }, 500);
@@ -771,7 +810,7 @@
         }
       });
       
-      // View Store with enhanced, professional layout
+      // View Store with enhanced layout
       const viewStore = bizId => {
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
