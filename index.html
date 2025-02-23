@@ -34,7 +34,7 @@
       min-height: 100vh;
     }
     
-    /* Header using flexbox for clean layout */
+    /* Header */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
       color: var(--white);
@@ -73,6 +73,22 @@
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1.5rem;
+    }
+    
+    /* Mobile Optimization */
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+      }
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
     }
     
     /* Search Bar */
@@ -134,17 +150,16 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
-    /* For business images, show letter avatar if no photo available */
+    /* Use circular display for business images */
     .business-image {
       width: 100%;
       max-height: 250px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 50%;
       margin-bottom: 1rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    
-    /* Letter Avatar Style */
+    /* Letter avatar for when no image provided */
     .letter-avatar {
       width: 100%;
       max-height: 250px;
@@ -153,7 +168,7 @@
       justify-content: center;
       font-size: 4rem;
       color: var(--white);
-      border-radius: 8px;
+      border-radius: 50%;
       margin-bottom: 1rem;
     }
     
@@ -166,7 +181,7 @@
       margin-left: 5px;
     }
     
-    /* Contact links */
+    /* Contact Links */
     .contact a {
       margin-right: 1rem;
       text-decoration: none;
@@ -528,7 +543,7 @@
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
       
-      // For dummy businesses, add opening and closing hours if not present
+      // Ensure dummy businesses have opening/closing hours
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
@@ -573,7 +588,7 @@
             whatsapp: `876555${String(i).padStart(4, '0')}`,
             instagram: `business${i + 1}`,
             location,
-            displayPhoto: '', // Initially empty so letter avatar is shown
+            displayPhoto: '', // empty so letter avatar is used
             views: 0,
             openingHour: "09:00",
             closingHour: "18:00"
@@ -641,7 +656,9 @@
             card.innerHTML = `
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                : getLetterAvatar(business.name)}
               <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
               ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
               <p>${business.desc}</p>
@@ -673,7 +690,6 @@
         });
       };
       
-      // Profile page for both business and customer users
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
@@ -727,7 +743,6 @@
         }
       };
       
-      // Initialize the Chart.js graph with thermal gradient
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart').getContext('2d');
         const labels = [];
@@ -773,12 +788,10 @@
         });
       }
       
-      // Open "Add Product" modal
       const openAddProductModal = () => {
         document.getElementById('add-product-modal').style.display = 'block';
       };
       
-      // Handle adding a product with file upload (image/video)
       document.getElementById('submit-product-btn').addEventListener('click', () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
@@ -808,14 +821,12 @@
         }
       });
       
-      // Open Settings Modal
       document.getElementById('settings-btn')?.addEventListener('click', () => {
         document.getElementById('settings-modal').style.display = 'block';
         document.getElementById('settings-name').value = currentUser.name || "";
         document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
       });
       
-      // Save Settings and update business display photo if applicable
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
         const newPhoto = document.getElementById('settings-photo').value.trim();
@@ -859,6 +870,9 @@
         }
         if (event.target.id === 'back-to-store') {
           viewStore(currentUser.id);
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
         }
       });
       
@@ -950,7 +964,7 @@
             whatsapp,
             instagram,
             location,
-            displayPhoto: '', // start with empty so letter avatar shows
+            displayPhoto: '', // start empty to generate letter avatar
             views: 0,
             openingHour: "09:00",
             closingHour: "18:00"
@@ -1040,7 +1054,9 @@
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                : getLetterAvatar(business.name)}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
               <div class="contact">
@@ -1074,6 +1090,9 @@
           localStorage.removeItem('currentUser');
           updateUIForUser();
           displayFeed();
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
         }
       });
       
