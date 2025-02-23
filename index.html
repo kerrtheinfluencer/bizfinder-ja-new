@@ -44,7 +44,7 @@
       display: flex;
       gap: 1rem;
     }
-    /* Fixed Profile Button – remains visible while scrolling */
+    /* Fixed Profile Button */
     #profile-btn {
       position: fixed;
       top: 10px;
@@ -64,7 +64,6 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Other Header Buttons */
     .header-buttons button:not(#profile-btn) {
       background: var(--white);
       color: var(--primary-green);
@@ -81,7 +80,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Header Avatar styling (40px on mobile, 60px on PC) */
+    /* Header Avatar styling */
     .header-avatar {
       width: 40px;
       height: 40px;
@@ -110,7 +109,7 @@
       header { flex-direction: column; gap: 1rem; }
       .header-buttons { flex-wrap: wrap; justify-content: center; }
     }
-    /* Search Bar & Filters */
+    /* Search Bar */
     .search-container { margin-bottom: 1.5rem; position: relative; text-align: center; }
     #search-bar {
       width: 90%;
@@ -133,14 +132,6 @@
       color: var(--muted-color);
       text-align: center;
       margin-bottom: 10px;
-    }
-    /* New filter dropdowns */
-    .filter-select {
-      padding: 0.5rem;
-      margin: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
     }
     /* Cards & Pages */
     .business-card, .store-page, .profile-page {
@@ -279,6 +270,7 @@
     }
     .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
     .profile-details { margin-bottom: 1.5rem; }
+    /* End of UI Rendering */
   </style>
 </head>
 <body>
@@ -292,16 +284,9 @@
   </header>
   
   <div class="container" id="main-content">
-    <!-- Search and Filters -->
+    <!-- Search Container (no extra filters now) -->
     <div class="search-container">
       <input type="text" id="search-bar" placeholder="Search businesses..." />
-      <!-- Additional filters -->
-      <select id="filter-category" class="filter-select">
-        <option value="all">All Categories</option>
-      </select>
-      <select id="filter-location" class="filter-select">
-        <option value="all">All Locations</option>
-      </select>
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products"></div>
@@ -311,7 +296,7 @@
     <div id="loading" class="loading" style="display:none;">Loading...</div>
   </div>
   
-  <!-- --- Modals --- -->
+  <!-- Modals -->
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
     <p>Sign up to join our vibrant community.</p>
@@ -408,13 +393,13 @@
       // --- Data Initialization ---
       let displayedCount = 6;
       let isLoading = false;
-      // Increase dummy businesses count to 100 for more variety
+      // Increase dummy businesses to 100 for more variety
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(100);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
       
-      // Ensure dummy businesses have opening/closing hours
+      // Ensure each dummy business has opening/closing hours
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
@@ -436,8 +421,6 @@
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
-      const filterCategory = document.getElementById('filter-category');
-      const filterLocation = document.getElementById('filter-location');
       
       // --- Helper Functions ---
       function generateDummyBusinesses(count) {
@@ -471,35 +454,13 @@
         return dummyBusinesses;
       }
       
-      // Populate filter selects with unique categories and locations from businesses
-      function populateFilters() {
-        const categories = new Set();
-        const locations = new Set();
-        businesses.forEach(biz => {
-          categories.add(biz.category);
-          locations.add(biz.location);
-        });
-        // Populate category select
-        filterCategory.innerHTML = '<option value="all">All Categories</option>';
-        Array.from(categories).forEach(cat => {
-          filterCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
-        });
-        // Populate location select
-        filterLocation.innerHTML = '<option value="all">All Locations</option>';
-        Array.from(locations).forEach(loc => {
-          filterLocation.innerHTML += `<option value="${loc}">${loc}</option>`;
-        });
-      }
-      
-      populateFilters();
-      
       function updateLocalStorage() {
         localStorage.setItem('businesses', JSON.stringify(businesses));
         localStorage.setItem('users', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
       
-      // Returns a header avatar (40px on mobile, 60px on PC)
+      // Returns a header avatar for logged-in user
       function getHeaderAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -529,7 +490,7 @@
         document.getElementById(formId).style.display = 'none';
       }
       
-      // Generates a letter avatar for business cards (100px)
+      // Generate a letter avatar for business cards (100px)
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -554,18 +515,21 @@
         profilePage.style.display = 'none';
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
-        // Apply filters from search bar, category, and location
-        let query = searchBar.value.toLowerCase().trim();
-        let selectedCat = filterCategory.value;
-        let selectedLoc = filterLocation.value;
-        let filtered = businesses.filter(biz => {
-          let matchQuery = query === "" || biz.name.toLowerCase().includes(query) || biz.category.toLowerCase().includes(query) || biz.location.toLowerCase().includes(query) ||
-                           (biz.products && biz.products.some(product => product.name.toLowerCase().includes(query) || product.desc.toLowerCase().includes(query));
-          let matchCat = selectedCat === "all" || biz.category === selectedCat;
-          let matchLoc = selectedLoc === "all" || biz.location === selectedLoc;
-          return matchQuery && matchCat && matchLoc;
-        });
-        currentBusinesses = filtered;
+        // Simple search filtering: check if query is in business name, category, location, or product details
+        const query = searchBar.value.toLowerCase().trim();
+        if(query) {
+          currentBusinesses = businesses.filter(biz =>
+            biz.name.toLowerCase().includes(query) ||
+            biz.category.toLowerCase().includes(query) ||
+            biz.location.toLowerCase().includes(query) ||
+            (biz.products && biz.products.some(product =>
+              product.name.toLowerCase().includes(query) ||
+              product.desc.toLowerCase().includes(query)
+            ))
+          );
+        } else {
+          currentBusinesses = businesses;
+        }
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
         const totalResults = currentBusinesses.length;
         const info = document.getElementById('search-results-info');
@@ -573,17 +537,10 @@
         gridContainer.innerHTML = '';
         businessesToShow.forEach(business => {
           const featuredProduct = (business.products && business.products.length > 0) ? business.products[0] : { name: 'No product', photo: '', price: '0.00' };
-          // Include a favorite button on each card
-          let favIcon = '';
-          if (currentUser) {
-            if (!currentUser.favorites) currentUser.favorites = [];
-            const isFav = currentUser.favorites.includes(business.id);
-            favIcon = `<button class="favorite-btn" data-id="${business.id}" style="background:none; border:none; font-size:1.5rem; color:${isFav ? 'red' : 'gray'};">♥</button>`;
-          }
           const card = document.createElement('div');
           card.className = 'business-card';
           card.innerHTML = `
-            <h3>${business.name} ${favIcon} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+            <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
             <p class="category">${business.category}</p>
             ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
             <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
@@ -600,10 +557,10 @@
           `;
           gridContainer.appendChild(card);
         });
-        displayHotProducts(); // Show hot products on feed as well
+        displayHotProducts(); // Display hot products in feed
       };
       
-      // Hot products box with fire emoji and live view count
+      // Hot products with fire emoji and live view count
       const displayHotProducts = () => {
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
@@ -644,449 +601,4 @@
             <p>Hot Product: ${(biz.products && biz.products.length > 0) ? biz.products.sort((a, b) => b.views - a.views)[0].name : 'N/A'}</p>
             <button id="add-product-btn">Add Product</button>
             <div style="margin-top: 1rem; height:300px;">
-              <canvas id="viewsChart"></canvas>
-            </div>
-          `;
-        } else {
-          profileContent += `
-            <h4>Recent Activity</h4>
-            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>No recent views.</p>'}
-          `;
-        }
-        profileContent += `
-            </div>
-            <button id="settings-btn">Settings</button>
-            <button id="logout-btn">Logout</button>
-          </div>
-        `;
-        profilePage.innerHTML = profileContent;
-        // Wire up Settings button
-        const settingsBtn = document.getElementById('settings-btn');
-        if (settingsBtn) {
-          settingsBtn.addEventListener('click', () => {
-            document.getElementById('settings-modal').style.display = 'block';
-            document.getElementById('settings-name').value = currentUser.name || "";
-            document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
-          });
-        }
-        // Logout button with alert feedback
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-          logoutBtn.addEventListener('click', () => {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            updateUIForUser();
-            displayFeed();
-            alert("Logged out successfully!");
-          });
-        }
-        if (currentUser.type === 'business') { initViewsChart(); }
-      };
-      
-      function initViewsChart() {
-        const ctx = document.getElementById('viewsChart').getContext('2d');
-        const labels = [];
-        const dataPoints = [];
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
-          dataPoints.push(Math.floor(Math.random() * 100));
-        }
-        const minVal = Math.min(...dataPoints);
-        const maxVal = Math.max(...dataPoints);
-        const pointColors = dataPoints.map(val => {
-          const ratio = (val - minVal) / (maxVal - minVal || 1);
-          const r = Math.round(255 * ratio);
-          const b = Math.round(255 * (1 - ratio));
-          return `rgb(${r},0,${b})`;
-        });
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Daily Views',
-              data: dataPoints,
-              borderColor: '#2ecc71',
-              backgroundColor: 'rgba(46,204,113,0.1)',
-              fill: true,
-              tension: 0.3,
-              pointBackgroundColor: pointColors,
-              pointRadius: 8
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top' } },
-            scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
-            }
-          }
-        });
-      }
-      
-      const showStore = (business) => {
-        feed.style.display = 'none';
-        storePage.style.display = 'block';
-        profilePage.style.display = 'none';
-        let storeContent = `
-          <button onclick="displayFeed()">Back to Feed</button>
-          <div class="store-container">
-            <div class="business-info">
-              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
-              <p>${business.desc}</p>
-              <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
-            </div>
-            <div class="products-section">
-              <h4>Products</h4>
-              <div class="products-grid">
-                ${renderStoreProducts(business)}
-              </div>
-            </div>
-          </div>
-        `;
-        storePage.innerHTML = storeContent;
-        // Append one hot products box at the bottom only
-        const storeHot = document.createElement('div');
-        storeHot.className = 'hot-products';
-        storeHot.innerHTML = '<h3>Hot Products</h3>' + generateHotProductsHTML();
-        storePage.appendChild(storeHot);
-        // Wire up product detail triggers
-        storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
-          img.addEventListener('click', (e) => {
-            const idx = e.target.getAttribute('data-index');
-            const biz = businesses.find(b => b.id == currentUser.id);
-            openProductDetailModal(biz.products[idx]);
-          });
-        });
-        // Wire up edit buttons
-        storePage.querySelectorAll('.edit-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const idx = e.target.getAttribute('data-index');
-            openEditProductModal(idx);
-          });
-        });
-        // Wire up delete buttons
-        storePage.querySelectorAll('.delete-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!currentUser || currentUser.type !== 'business') {
-              alert("You must be signed in as a business to delete products.");
-              return;
-            }
-            const idx = e.target.getAttribute('data-index');
-            if (confirm("Are you sure you want to delete this product?")) {
-              const biz = businesses.find(b => b.id === currentUser.id);
-              biz.products.splice(idx, 1);
-              updateLocalStorage();
-              showStore(biz);
-            }
-          });
-        });
-      };
-      
-      function generateHotProductsHTML() {
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
-        let html = '';
-        hot.forEach(biz => {
-          const product = biz.products[0];
-          html += `
-            <div class="hot-product-item">
-              <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
-              <span>🔥 ${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
-            </div>
-          `;
-        });
-        return html;
-      }
-      
-      function renderStoreProducts(business) {
-        let html = '';
-        business.products.forEach((p, index) => {
-          html += `
-            <div class="product-card">
-              <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" data-index="${index}" class="product-detail-trigger">
-              <div class="product-info">
-                <p class="product-name">${p.name}</p>
-                <p class="product-desc">${p.desc}</p>
-                <p class="product-price">Price: $${p.price}</p>
-                <p class="product-views">Views: ${p.views}</p>
-          `;
-          if (currentUser && currentUser.type === 'business' && currentUser.id === business.id) {
-            html += `
-                <div class="edit-delete-buttons">
-                  <button class="edit-prod-btn" data-index="${index}">Edit</button>
-                  <button class="delete-prod-btn" data-index="${index}">Delete</button>
-                </div>
-            `;
-          }
-          html += `</div></div>`;
-        });
-        return html;
-      }
-      
-      const viewStore = bizId => {
-        const business = businesses.find(b => b.id == bizId);
-        if (!business) return;
-        business.views++;
-        if (currentUser && currentUser.type === 'customer') {
-          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
-          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
-          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-          updateLocalStorage();
-        }
-        updateLocalStorage();
-        showStore(business);
-      };
-      
-      const openProductDetailModal = (product) => {
-        document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('detail-prod-name').textContent = product.name;
-        document.getElementById('detail-prod-desc').textContent = product.desc;
-        document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
-        document.getElementById('product-detail-modal').style.display = 'block';
-      };
-      
-      let productToEditIndex = null;
-      const openEditProductModal = (index) => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to edit products.");
-          return;
-        }
-        productToEditIndex = index;
-        const biz = businesses.find(b => b.id === currentUser.id);
-        const product = biz.products[index];
-        document.getElementById('edit-prod-name').value = product.name;
-        document.getElementById('edit-prod-desc').value = product.desc;
-        document.getElementById('edit-prod-price').value = product.price;
-        document.getElementById('edit-product-modal').style.display = 'block';
-      };
-      
-      document.getElementById('save-product-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to edit products.");
-          return;
-        }
-        const newName = document.getElementById('edit-prod-name').value.trim();
-        const newDesc = document.getElementById('edit-prod-desc').value.trim();
-        const newPrice = document.getElementById('edit-prod-price').value.trim();
-        const fileInput = document.getElementById('edit-prod-media');
-        if (!newName || !newDesc || !newPrice) { alert('Please fill in all product fields!'); return; }
-        const updateProduct = (mediaURL) => {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          biz.products[productToEditIndex] = {
-            ...biz.products[productToEditIndex],
-            name: newName,
-            desc: newDesc,
-            price: newPrice,
-            photo: mediaURL || biz.products[productToEditIndex].photo
-          };
-          updateLocalStorage();
-          closeModal('edit-product-modal');
-          viewStore(currentUser.id);
-        };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) { updateProduct(e.target.result); };
-          reader.readAsDataURL(file);
-        } else { updateProduct(); }
-      });
-      
-      document.getElementById('submit-product-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to add products.");
-          return;
-        }
-        const prodName = document.getElementById('prod-name').value.trim();
-        const prodDesc = document.getElementById('prod-desc').value.trim();
-        const prodPrice = document.getElementById('prod-price').value.trim();
-        const fileInput = document.getElementById('prod-media');
-        if (!prodName || !prodDesc || !prodPrice) { alert('Please fill in all product fields!'); return; }
-        const addProduct = (mediaURL) => {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          biz.products.unshift({ name: prodName, desc: prodDesc, price: prodPrice, photo: mediaURL, views: 0 });
-          updateLocalStorage();
-          closeModal('add-product-modal');
-          showProfile();
-        };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) { addProduct(e.target.result); };
-          reader.readAsDataURL(file);
-        } else { addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo'); }
-      });
-      
-      document.getElementById('submit-business-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('biz-name').value.trim();
-          const email = document.getElementById('biz-email').value.trim();
-          const password = document.getElementById('biz-password').value.trim();
-          const category = document.getElementById('biz-category').value;
-          const product = document.getElementById('biz-product').value.trim();
-          const desc = document.getElementById('biz-desc').value.trim();
-          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-          const instagram = document.getElementById('biz-instagram').value.trim();
-          const location = document.getElementById('biz-location').value.trim();
-          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('Please fill in all fields!');
-          }
-          if (!/\S+@\S+\.\S+/.test(email)) { throw new Error('Please enter a valid email address!'); }
-          if (!/^(876)\d{7}$/.test(whatsapp)) { throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)'); }
-          const business = {
-            id: Date.now(),
-            name,
-            category,
-            products: [{
-              name: product,
-              desc,
-              photo: '',
-              views: 0,
-              price: (Math.random() * 45 + 5).toFixed(2)
-            }],
-            desc,
-            whatsapp,
-            instagram,
-            location,
-            displayPhoto: '',
-            views: 0,
-            openingHour: "09:00",
-            closingHour: "18:00"
-          };
-          const user = { id: business.id, type: 'business', name, email, password };
-          businesses.push(business);
-          users.push(user);
-          currentUser = user;
-          updateLocalStorage();
-          closeModal('business-form');
-          updateUIForUser();
-          displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
-        }
-      });
-      
-      document.getElementById('submit-customer-btn').addEventListener('click', () => {
-        try {
-          const name = document.getElementById('cust-name').value.trim();
-          const email = document.getElementById('cust-email').value.trim();
-          const password = document.getElementById('cust-password').value.trim();
-          if (!name || !email || !password) { throw new Error('Please fill in all fields!'); }
-          if (!/\S+@\S+\.\S+/.test(email)) { throw new Error('Please enter a valid email address!'); }
-          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
-          users.push(user);
-          currentUser = user;
-          updateLocalStorage();
-          closeModal('customer-form');
-          updateUIForUser();
-          displayFeed();
-        } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
-        }
-      });
-      
-      document.getElementById('login-submit-btn').addEventListener('click', () => {
-        try {
-          const email = document.getElementById('login-email').value.trim();
-          const password = document.getElementById('login-password').value.trim();
-          if (!email || !password) { throw new Error('Please enter both email and password!'); }
-          const foundUser = users.find(u => u.email === email && u.password === password);
-          if (foundUser) {
-            currentUser = foundUser;
-            updateLocalStorage();
-            closeModal('login-form');
-            updateUIForUser();
-            displayFeed();
-          } else { throw new Error('Invalid email or password!'); }
-        } catch (error) {
-          alert(`An error occurred while logging in: ${error.message}`);
-        }
-      });
-      
-      // Filter change events – update feed on filter change
-      filterCategory.addEventListener('change', () => {
-        displayedCount = 6;
-        displayFeed();
-      });
-      filterLocation.addEventListener('change', () => {
-        displayedCount = 6;
-        displayFeed();
-      });
-      
-      // Search event
-      searchBar.addEventListener('keyup', () => {
-        displayedCount = 6;
-        displayFeed();
-      });
-      
-      window.addEventListener('scroll', () => {
-        if (feed.style.display === 'block' && !isLoading && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
-          isLoading = true;
-          loading.style.display = 'block';
-          setTimeout(() => {
-            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
-            displayFeed();
-            loading.style.display = 'none';
-            isLoading = false;
-          }, 500);
-        }
-      });
-      
-      // Delegate view store button click
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
-        }
-        // Delegate favorite button click
-        if (event.target.classList.contains('favorite-btn')) {
-          if (!currentUser) {
-            alert("Please log in to favorite stores.");
-            return;
-          }
-          const bizId = event.target.getAttribute('data-id');
-          if (!currentUser.favorites) currentUser.favorites = [];
-          if (currentUser.favorites.includes(bizId)) {
-            // Remove favorite
-            currentUser.favorites = currentUser.favorites.filter(id => id !== bizId);
-            event.target.style.color = 'gray';
-          } else {
-            // Add favorite
-            currentUser.favorites.push(bizId);
-            event.target.style.color = 'red';
-          }
-          updateLocalStorage();
-        }
-      });
-      
-      businessName.addEventListener('click', () => {
-        if (feed.style.display === 'block') {
-          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 6;
-          displayFeed();
-        } else { displayFeed(); }
-      });
-      
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => { closeModal(btn.getAttribute('data-form')); });
-      });
-      
-      // Initial load: display feed and update UI
-      displayFeed();
-      loading.style.display = 'none';
-      updateUIForUser();
-    });
-  </script>
-</body>
-</html>
+             
