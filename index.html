@@ -7,7 +7,7 @@
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* CSS Variables */
+    /* --- CSS Variables --- */
     :root {
       --primary-green: #2ecc71;
       --secondary-green: #27ae60;
@@ -20,7 +20,7 @@
       --white: #fff;
     }
     
-    /* Reset and Base Styles */
+    /* --- Reset & Base Styles --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Poppins', Arial, sans-serif;
@@ -30,7 +30,7 @@
       min-height: 100vh;
     }
     
-    /* Header using Flexbox */
+    /* --- Header --- */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
       color: var(--white);
@@ -62,16 +62,15 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
     
-    /* Container */
+    /* --- Main Container --- */
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
-    /* Mobile Optimizations */
     @media (max-width: 600px) {
       .container { margin: 1rem auto; padding: 0 1rem; }
       header { flex-direction: column; gap: 1rem; }
       .header-buttons { flex-wrap: wrap; justify-content: center; }
     }
     
-    /* Search Bar */
+    /* --- Search Bar --- */
     .search-container { margin-bottom: 1.5rem; position: relative; }
     #search-bar {
       width: 100%;
@@ -95,7 +94,7 @@
       margin-bottom: 10px;
     }
     
-    /* Cards and Pages */
+    /* --- Cards & Pages --- */
     .business-card, .store-page, .profile-page {
       background: var(--white);
       padding: 1.5rem;
@@ -122,7 +121,8 @@
       font-size: 0.9rem;
     }
     
-    /* Circular Images & Letter Avatars */
+    /* --- Images & Avatars --- */
+    /* In feed: 100px circular; in store/profile: 150px */
     .feed-grid .business-image, .feed-grid .letter-avatar {
       width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 1rem;
       object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -134,15 +134,18 @@
     }
     .letter-avatar { background: var(--accent-blue); color: var(--white); }
     
-    /* Status Indicator */
+    /* --- Status Indicator --- */
     .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 5px; }
     
-    /* Contact Links */
-    .contact a { margin-right: 1rem; text-decoration: none; color: var(--accent-blue); font-size: 0.9rem; transition: color 0.3s; }
+    /* --- Contact Links --- */
+    .contact a {
+      margin-right: 1rem; text-decoration: none; color: var(--accent-blue);
+      font-size: 0.9rem; transition: color 0.3s;
+    }
     .contact a:hover { color: var(--accent-blue-hover); }
     .views { font-size: 0.875rem; color: var(--muted-color); margin-top: 0.75rem; }
     
-    /* Global Button Styles */
+    /* --- Global Buttons --- */
     button {
       background: var(--primary-green); color: var(--white); border: none; padding: 0.75rem 1.5rem;
       border-radius: 8px; cursor: pointer; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -150,7 +153,7 @@
     }
     button:hover { background: var(--secondary-green); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
     
-    /* Modal Styles */
+    /* --- Modal Styles --- */
     .modal {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
       background: var(--white); padding: 2rem; border-radius: 15px;
@@ -168,7 +171,7 @@
       box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     
-    /* Hot Products Banner */
+    /* --- Hot Products Banner --- */
     .hot-products {
       background: linear-gradient(135deg, var(--white), var(--light-bg));
       padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
@@ -188,14 +191,14 @@
     }
     .hot-product-item span { font-size: 0.9rem; color: #34495e; }
     
-    /* Feed Grid */
+    /* --- Feed Grid --- */
     .feed-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
     
-    /* Store Page Layout */
+    /* --- Store Page Layout --- */
     .store-container { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; }
     .business-info { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
     .business-info h3 { margin-bottom: 0.5rem; }
@@ -229,7 +232,7 @@
     .edit-delete-buttons { margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem; }
     .edit-delete-buttons button { font-size: 0.8rem; padding: 0.5rem; }
     
-    /* Profile Page Enhancements */
+    /* --- Profile Page --- */
     .profile-container {
       max-width: 800px; margin: 2rem auto; padding: 2rem;
       background: var(--white); border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
@@ -241,27 +244,235 @@
     .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
     .profile-details { margin-bottom: 1.5rem; }
     
-    /* Settings Modal */
-    #settings-modal {
+    /* --- Modal Styles --- */
+    .modal {
       position: fixed; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       background: var(--white); padding: 2rem; border-radius: 15px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 1000;
       text-align: center; max-width: 500px; width: 90%; display: none;
+    }
+    .modal h2 { color: var(--primary-green); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 600; }
+    input, select {
+      display: block; width: 100%; margin: 0.75rem 0; padding: 0.875rem;
+      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary-green); outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     
-    /* Add/Edit Product and Product Detail Modals */
-    #add-product-modal, #edit-product-modal, #product-detail-modal {
+    /* --- Hot Products Banner --- */
+    .hot-products {
+      background: linear-gradient(135deg, var(--white), var(--light-bg));
+      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
+      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
+    }
+    .hot-products h3 {
+      width: 100%; font-size: 1.2rem; color: var(--primary-green);
+      margin-bottom: 0.75rem; font-weight: 600;
+    }
+    .hot-product-item {
+      display: flex; align-items: center; margin: 0.5rem; padding: 0.5rem;
+      background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .hot-product-item img {
+      width: 50px; height: 50px; margin-right: 0.75rem; border-radius: 4px; object-fit: cover;
+    }
+    .hot-product-item span { font-size: 0.9rem; color: #34495e; }
+    
+    /* --- Feed Grid --- */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* --- Store Page --- */
+    .store-container { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; }
+    .business-info { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
+    .business-info h3 { margin-bottom: 0.5rem; }
+    .business-info img, .business-info .letter-avatar { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 0.5rem; }
+    .products-section { width: 100%; }
+    .products-section h4 {
+      margin-bottom: 1rem; color: var(--primary-green); font-size: 1.5rem; text-align: center;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .product-card {
+      background: var(--white); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; position: relative;
+    }
+    .product-card:hover {
+      transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product-card img {
+      width: 100%; object-fit: cover; height: 150px; cursor: pointer;
+    }
+    .product-info {
+      padding: 1rem; text-align: center;
+    }
+    .product-name { font-size: 1.1rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    .product-desc { font-size: 0.95rem; color: var(--text-color); margin-bottom: 0.5rem; }
+    .product-price { font-size: 1rem; color: var(--secondary-green); margin-bottom: 0.5rem; }
+    .product-views { font-size: 0.85rem; color: var(--muted-color); }
+    .edit-delete-buttons { margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem; }
+    .edit-delete-buttons button { font-size: 0.8rem; padding: 0.5rem; }
+    
+    /* --- Profile Page --- */
+    .profile-container {
+      max-width: 800px; margin: 2rem auto; padding: 2rem;
+      background: var(--white); border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .profile-header {
+      display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+    .profile-details { margin-bottom: 1.5rem; }
+    
+    /* --- Modal Styles --- */
+    .modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: var(--white); padding: 2rem; border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 1000;
+      text-align: center; max-width: 500px; width: 90%; display: none;
+    }
+    .modal h2 { color: var(--primary-green); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 600; }
+    input, select {
+      display: block; width: 100%; margin: 0.75rem 0; padding: 0.875rem;
+      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary-green); outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    
+    /* --- Hot Products Banner --- */
+    .hot-products {
+      background: linear-gradient(135deg, var(--white), var(--light-bg));
+      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
+      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
+    }
+    .hot-products h3 {
+      width: 100%; font-size: 1.2rem; color: var(--primary-green);
+      margin-bottom: 0.75rem; font-weight: 600;
+    }
+    .hot-product-item {
+      display: flex; align-items: center; margin: 0.5rem; padding: 0.5rem;
+      background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .hot-product-item img {
+      width: 50px; height: 50px; margin-right: 0.75rem; border-radius: 4px; object-fit: cover;
+    }
+    .hot-product-item span { font-size: 0.9rem; color: #34495e; }
+    
+    /* --- Feed Grid --- */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* --- Store Page --- */
+    .store-container { display: flex; flex-direction: column; gap: 2rem; padding: 1rem; }
+    .business-info { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
+    .business-info h3 { margin-bottom: 0.5rem; }
+    .business-info img, .business-info .letter-avatar { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 0.5rem; }
+    .products-section { width: 100%; }
+    .products-section h4 {
+      margin-bottom: 1rem; color: var(--primary-green); font-size: 1.5rem; text-align: center;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .product-card {
+      background: var(--white); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; position: relative;
+    }
+    .product-card:hover {
+      transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product-card img {
+      width: 100%; object-fit: cover; height: 150px; cursor: pointer;
+    }
+    .product-info {
+      padding: 1rem; text-align: center;
+    }
+    .product-name { font-size: 1.1rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    .product-desc { font-size: 0.95rem; color: var(--text-color); margin-bottom: 0.5rem; }
+    .product-price { font-size: 1rem; color: var(--secondary-green); margin-bottom: 0.5rem; }
+    .product-views { font-size: 0.85rem; color: var(--muted-color); }
+    .edit-delete-buttons { margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem; }
+    .edit-delete-buttons button { font-size: 0.8rem; padding: 0.5rem; }
+    
+    /* --- Profile Page --- */
+    .profile-container {
+      max-width: 800px; margin: 2rem auto; padding: 2rem;
+      background: var(--white); border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .profile-header {
+      display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .profile-header img, .profile-header .letter-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+    .profile-details { margin-bottom: 1.5rem; }
+    
+    /* --- Modals --- */
+    .modal {
       position: fixed; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       background: var(--white); padding: 2rem; border-radius: 15px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 1000;
       text-align: center; max-width: 500px; width: 90%; display: none;
     }
-    /* Product Detail Modal */
-    #product-detail-modal img {
-      width: 100%; max-height: 300px; object-fit: contain; margin-bottom: 1rem;
+    .modal h2 { color: var(--primary-green); margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 600; }
+    input, select {
+      display: block; width: 100%; margin: 0.75rem 0; padding: 0.875rem;
+      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
+    input:focus, select:focus {
+      border-color: var(--primary-green); outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    
+    /* --- Hot Products Banner --- */
+    .hot-products {
+      background: linear-gradient(135deg, var(--white), var(--light-bg));
+      padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-green);
+      display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
+    }
+    .hot-products h3 {
+      width: 100%; font-size: 1.2rem; color: var(--primary-green);
+      margin-bottom: 0.75rem; font-weight: 600;
+    }
+    .hot-product-item {
+      display: flex; align-items: center; margin: 0.5rem; padding: 0.5rem;
+      background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .hot-product-item img {
+      width: 50px; height: 50px; margin-right: 0.75rem; border-radius: 4px; object-fit: cover;
+    }
+    .hot-product-item span { font-size: 0.9rem; color: #34495e; }
+    
+    /* --- Feed Grid --- */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
   </style>
 </head>
 <body>
@@ -286,7 +497,7 @@
     <div id="loading" class="loading">Loading...</div>
   </div>
   
-  <!-- Modals -->
+  <!-- --- Modals --- -->
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
     <p>Sign up to join our vibrant community.</p>
@@ -333,7 +544,7 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
   
-  <!-- Settings Modal with Delete Posts Option -->
+  <!-- Settings Modal with "Delete All Posts" Option -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
     <input type="text" id="settings-name" placeholder="Your Name" />
@@ -378,23 +589,24 @@
   </div>
   
   <script>
+    // New, rewritten code to preserve core functions and add security checks
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
-      /*** Data Initialization ***/
+      // --- Data Initialization ---
       let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
       
-      // Ensure each dummy business has opening/closing hours
+      // Ensure dummy businesses have opening/closing hours
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
         return b;
       });
       
-      /*** DOM Elements ***/
+      // --- DOM Elements ---
       const popup = document.getElementById('popup');
       const businessForm = document.getElementById('business-form');
       const customerForm = document.getElementById('customer-form');
@@ -410,7 +622,7 @@
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
       
-      /*** Helper Functions ***/
+      // --- Helper Functions ---
       function generateDummyBusinesses(count) {
         const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
         const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
@@ -458,7 +670,6 @@
         document.getElementById(formId).style.display = 'none';
       }
       
-      // Generate a letter avatar from the first letter of the name
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -467,17 +678,20 @@
         return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
       }
       
-      // Check if store is open
       function isStoreOpen(business) {
         const now = new Date();
         const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
         const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
-        const openDate = new Date(now); openDate.setHours(openH, openM, 0, 0);
-        const closeDate = new Date(now); closeDate.setHours(closeH, closeM, 0, 0);
+        const openDate = new Date(now);
+        openDate.setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now);
+        closeDate.setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
       
-      /*** UI Rendering Functions ***/
+      // --- UI Rendering Functions ---
+      
+      // Display feed with business cards (all text centered)
       const displayFeed = () => {
         feed.style.display = 'block';
         storePage.style.display = 'none';
@@ -487,38 +701,30 @@
         const businessesToShow = currentBusinesses.slice(0, displayedCount);
         const totalResults = currentBusinesses.length;
         const info = document.getElementById('search-results-info');
-        if (totalResults === 0) {
-          info.textContent = 'No results found.';
-          gridContainer.innerHTML = '';
-        } else {
-          info.textContent = `Found ${totalResults} results, showing first ${businessesToShow.length}`;
-          businessesToShow.forEach(business => {
-            const featuredProduct = business.products && business.products.length > 0 
-              ? business.products[0] 
-              : { name: 'No product', photo: '', price: '0.00' };
-            const card = document.createElement('div');
-            card.className = 'business-card';
-            card.innerHTML = `
-              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto 
-                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
-                : getLetterAvatar(business.name)}
-              <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
-              <p><strong>Price:</strong> $${featuredProduct.price}</p>
-              <p>${business.desc}</p>
-              <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
-              <button class="view-store-btn" data-id="${business.id}">View Store</button>
-            `;
-            gridContainer.appendChild(card);
-          });
-        }
+        info.textContent = totalResults === 0 ? 'No results found.' : `Found ${totalResults} results, showing first ${businessesToShow.length}`;
+        gridContainer.innerHTML = '';
+        businessesToShow.forEach(business => {
+          const featuredProduct = (business.products && business.products.length > 0) ? business.products[0] : { name: 'No product', photo: '', price: '0.00' };
+          const card = document.createElement('div');
+          card.className = 'business-card';
+          card.innerHTML = `
+            <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+            <p class="category">${business.category}</p>
+            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+            <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+            ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+            <p><strong>Price:</strong> $${featuredProduct.price}</p>
+            <p>${business.desc}</p>
+            <p><strong>Location:</strong> ${business.location}</p>
+            <div class="contact">
+              <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+              <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+            </div>
+            <p class="views">Views: ${business.views}</p>
+            <button class="view-store-btn" data-id="${business.id}">View Store</button>
+          `;
+          gridContainer.appendChild(card);
+        });
         displayHotProducts();
       };
       
@@ -536,7 +742,7 @@
         });
       };
       
-      // Profile view
+      // Profile view – shows business metrics for business users; for customers, recent activity
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
@@ -548,11 +754,7 @@
             <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
             <div class="profile-header">
         `;
-        if (currentUser.profilePhoto) {
-          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />`;
-        } else {
-          profileContent += getLetterAvatar(currentUser.name);
-        }
+        profileContent += currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />` : getLetterAvatar(currentUser.name);
         profileContent += `
               <h3>${currentUser.name}</h3>
               <p>${currentUser.email}</p>
@@ -564,13 +766,13 @@
           profileContent += `
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views}</p>
-            <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
+            <p>Hot Product: ${(business.products.length > 0) ? business.products.sort((a, b) => b.views - a.views)[0].name : 'N/A'}</p>
             <button id="add-product-btn">Add Product</button>
             <div style="margin-top: 1rem; height:300px;">
               <canvas id="viewsChart"></canvas>
             </div>
           `;
-        } else if (currentUser.type === 'customer') {
+        } else {
           profileContent += `
             <h4>Recent Activity</h4>
             ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
@@ -585,7 +787,7 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        // Wire up Settings button
+        // Wire up Settings button after rendering profile
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
           settingsBtn.addEventListener('click', () => {
@@ -642,16 +844,119 @@
         });
       }
       
-      // Open "Add Product" modal (only if signed in as business)
-      const openAddProductModal = () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to add products.");
-          return;
-        }
-        document.getElementById('add-product-modal').style.display = 'block';
+      // Render Store View: shows business info and products ordered newest-first
+      const showStore = (business) => {
+        feed.style.display = 'none';
+        storePage.style.display = 'block';
+        profilePage.style.display = 'none';
+        let storeContent = `
+          <button onclick="displayFeed()">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+              </div>
+              <p class="views">Views: ${business.views}</p>
+            </div>
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${renderStoreProducts(business)}
+              </div>
+            </div>
+          </div>
+        `;
+        storePage.innerHTML = storeContent;
+        // Wire up product detail triggers
+        storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
+          img.addEventListener('click', (e) => {
+            const idx = e.target.getAttribute('data-index');
+            const biz = businesses.find(b => b.id == currentUser.id);
+            openProductDetailModal(biz.products[idx]);
+          });
+        });
+        // Wire up edit buttons (only for business owner)
+        storePage.querySelectorAll('.edit-prod-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = e.target.getAttribute('data-index');
+            openEditProductModal(idx);
+          });
+        });
+        // Wire up delete buttons (only for business owner)
+        storePage.querySelectorAll('.delete-prod-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!currentUser || currentUser.type !== 'business') {
+              alert("You must be signed in as a business to delete products.");
+              return;
+            }
+            const idx = e.target.getAttribute('data-index');
+            if (confirm("Are you sure you want to delete this product?")) {
+              const biz = businesses.find(b => b.id == currentUser.id);
+              biz.products.splice(idx, 1);
+              updateLocalStorage();
+              showStore(biz);
+            }
+          });
+        });
       };
       
-      // Open Edit Product modal (only if signed in as business)
+      function renderStoreProducts(business) {
+        let html = '';
+        business.products.forEach((p, index) => {
+          html += `
+            <div class="product-card">
+              <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" data-index="${index}" class="product-detail-trigger">
+              <div class="product-info">
+                <p class="product-name">${p.name}</p>
+                <p class="product-desc">${p.desc}</p>
+                <p class="product-price">Price: $${p.price}</p>
+                <p class="product-views">Views: ${p.views}</p>
+          `;
+          if (currentUser && currentUser.type === 'business' && currentUser.id === business.id) {
+            html += `
+                <div class="edit-delete-buttons">
+                  <button class="edit-prod-btn" data-index="${index}">Edit</button>
+                  <button class="delete-prod-btn" data-index="${index}">Delete</button>
+                </div>
+            `;
+          }
+          html += `</div></div>`;
+        });
+        return html;
+      }
+      
+      const viewStore = bizId => {
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        business.views++;
+        if (currentUser && currentUser.type === 'customer') {
+          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
+          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
+          updateLocalStorage();
+        }
+        updateLocalStorage();
+        showStore(business);
+      }
+      
+      // Open Product Detail Modal
+      const openProductDetailModal = (product) => {
+        document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        document.getElementById('detail-prod-name').textContent = product.name;
+        document.getElementById('detail-prod-desc').textContent = product.desc;
+        document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
+        document.getElementById('product-detail-modal').style.display = 'block';
+      };
+      
+      // Edit Product Modal support
       let productToEditIndex = null;
       const openEditProductModal = (index) => {
         if (!currentUser || currentUser.type !== 'business') {
@@ -698,190 +1003,6 @@
         } else { updateProduct(); }
       });
       
-      // Open product detail modal (larger view)
-      const openProductDetailModal = (product) => {
-        document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('detail-prod-name').textContent = product.name;
-        document.getElementById('detail-prod-desc').textContent = product.desc;
-        document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
-        document.getElementById('product-detail-modal').style.display = 'block';
-      };
-      
-      // Render store products (newest first)
-      function renderStoreProducts(business) {
-        let html = '';
-        business.products.forEach((p, index) => {
-          html += `
-            <div class="product-card">
-              <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" data-index="${index}" class="product-detail-trigger">
-              <div class="product-info">
-                <p class="product-name">${p.name}</p>
-                <p class="product-desc">${p.desc}</p>
-                <p class="product-price">Price: $${p.price}</p>
-                <p class="product-views">Views: ${p.views}</p>
-          `;
-          if (currentUser && currentUser.type === 'business' && currentUser.id === business.id) {
-            html += `
-                <div class="edit-delete-buttons">
-                  <button class="edit-prod-btn" data-index="${index}">Edit</button>
-                  <button class="delete-prod-btn" data-index="${index}">Delete</button>
-                </div>
-            `;
-          }
-          html += `</div></div>`;
-        });
-        return html;
-      }
-      
-      const showStore = (business) => {
-        // Prevent non-signed-in users from editing (they can view only)
-        feed.style.display = 'none';
-        storePage.style.display = 'block';
-        profilePage.style.display = 'none';
-        let storeContent = `
-          <button onclick="displayFeed()">Back to Feed</button>
-          <div class="store-container">
-            <div class="business-info">
-              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto 
-                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
-                : getLetterAvatar(business.name)}
-              <p>${business.desc}</p>
-              <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
-            </div>
-            <div class="products-section">
-              <h4>Products</h4>
-              <div class="products-grid">
-                ${renderStoreProducts(business)}
-              </div>
-            </div>
-          </div>
-        `;
-        storePage.innerHTML = storeContent;
-        
-        // Wire up product detail triggers
-        storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
-          img.addEventListener('click', (e) => {
-            const idx = e.target.getAttribute('data-index');
-            const business = businesses.find(b => b.id == currentUser.id);
-            openProductDetailModal(business.products[idx]);
-          });
-        });
-        // Wire up edit buttons
-        storePage.querySelectorAll('.edit-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const idx = e.target.getAttribute('data-index');
-            openEditProductModal(idx);
-          });
-        });
-        // Wire up delete buttons
-        storePage.querySelectorAll('.delete-prod-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!currentUser || currentUser.type !== 'business') {
-              alert("You must be signed in as a business to delete products.");
-              return;
-            }
-            const idx = e.target.getAttribute('data-index');
-            if (confirm("Are you sure you want to delete this product?")) {
-              const business = businesses.find(b => b.id == currentUser.id);
-              business.products.splice(idx, 1);
-              updateLocalStorage();
-              showStore(business);
-            }
-          });
-        });
-      };
-      
-      const viewStore = bizId => {
-        const business = businesses.find(b => b.id == bizId);
-        if (!business) return;
-        business.views++;
-        if (currentUser && currentUser.type === 'customer') {
-          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
-          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
-          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-          updateLocalStorage();
-        }
-        updateLocalStorage();
-        showStore(business);
-      };
-      
-      /*** Event Listeners ***/
-      // Logout
-      document.body.addEventListener('click', event => {
-        if (event.target.id === 'logout-btn') {
-          currentUser = null;
-          localStorage.removeItem('currentUser');
-          updateUIForUser();
-          displayFeed();
-        }
-      });
-      
-      // Settings, Add Product, Delete All Posts
-      document.getElementById('settings-btn')?.addEventListener('click', () => {
-        document.getElementById('settings-modal').style.display = 'block';
-        document.getElementById('settings-name').value = currentUser ? currentUser.name : "";
-        document.getElementById('settings-photo').value = currentUser ? currentUser.profilePhoto : "";
-      });
-      
-      document.getElementById('save-settings-btn').addEventListener('click', () => {
-        if (!currentUser) { alert("You must be signed in."); return; }
-        const newName = document.getElementById('settings-name').value.trim();
-        const newPhoto = document.getElementById('settings-photo').value.trim();
-        if (newName) {
-          currentUser.name = newName;
-          if (currentUser.type === 'business') {
-            const business = businesses.find(b => b.id === currentUser.id);
-            if (business) business.name = newName;
-          }
-        }
-        currentUser.profilePhoto = newPhoto;
-        if (currentUser.type === 'business') {
-          const business = businesses.find(b => b.id === currentUser.id);
-          if (business) business.displayPhoto = newPhoto;
-        }
-        updateLocalStorage();
-        closeModal('settings-modal');
-        showProfile();
-      });
-      
-      document.getElementById('delete-all-posts-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to delete posts.");
-          return;
-        }
-        if (confirm("Are you sure you want to delete all your posts?")) {
-          const business = businesses.find(b => b.id === currentUser.id);
-          if (business) {
-            business.products = [];
-            updateLocalStorage();
-            alert("All posts deleted.");
-            if (storePage.style.display === 'block') {
-              showStore(business);
-            } else if (profilePage.style.display === 'block') {
-              showProfile();
-            }
-          }
-        }
-      });
-      
-      // Add Product Modal
-      const openAddProductModal = () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to add products.");
-          return;
-        }
-        document.getElementById('add-product-modal').style.display = 'block';
-      };
-      
       document.getElementById('submit-product-btn').addEventListener('click', () => {
         if (!currentUser || currentUser.type !== 'business') {
           alert("You must be signed in as a business to add products.");
@@ -907,48 +1028,41 @@
         } else { addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo'); }
       });
       
-      // Edit Product Modal (already defined above)
-      document.getElementById('save-product-btn').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') {
-          alert("You must be signed in as a business to edit products.");
-          return;
+      // Settings Modal: Save settings and update profile photo
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        if (!currentUser) { alert("You must be signed in."); return; }
+        const newName = document.getElementById('settings-name').value.trim();
+        const newPhoto = document.getElementById('settings-photo').value.trim();
+        if (newName) {
+          currentUser.name = newName;
+          if (currentUser.type === 'business') {
+            const biz = businesses.find(b => b.id === currentUser.id);
+            if (biz) biz.name = newName;
+          }
         }
-        const newName = document.getElementById('edit-prod-name').value.trim();
-        const newDesc = document.getElementById('edit-prod-desc').value.trim();
-        const newPrice = document.getElementById('edit-prod-price').value.trim();
-        const fileInput = document.getElementById('edit-prod-media');
-        if (!newName || !newDesc || !newPrice) { alert('Please fill in all product fields!'); return; }
-        const updateProduct = (mediaURL) => {
-          const business = businesses.find(b => b.id === currentUser.id);
-          business.products[productToEditIndex] = {
-            ...business.products[productToEditIndex],
-            name: newName,
-            desc: newDesc,
-            price: newPrice,
-            photo: mediaURL || business.products[productToEditIndex].photo
-          };
-          updateLocalStorage();
-          closeModal('edit-product-modal');
-          viewStore(currentUser.id);
-        };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) { updateProduct(e.target.result); };
-          reader.readAsDataURL(file);
-        } else { updateProduct(); }
+        currentUser.profilePhoto = newPhoto;
+        if (currentUser.type === 'business') {
+          const biz = businesses.find(b => b.id === currentUser.id);
+          if (biz) biz.displayPhoto = newPhoto;
+        }
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
       });
       
-      // Product Detail Modal
-      const openProductDetailModal = (product) => {
-        document.getElementById('detail-prod-media').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('detail-prod-name').textContent = product.name;
-        document.getElementById('detail-prod-desc').textContent = product.desc;
-        document.getElementById('detail-prod-price').textContent = `Price: $${product.price}`;
-        document.getElementById('product-detail-modal').style.display = 'block';
-      };
+      // Settings Modal: Delete All Posts (for business users)
+      document.getElementById('delete-all-posts-btn').addEventListener('click', () => {
+        if (!currentUser || currentUser.type !== 'business') {
+          alert("You must be signed in as a business to delete posts.");
+          return;
+        }
+        if (confirm("Are you sure you want to delete all your posts?")) {
+          const biz = businesses.find(b => b.id === currentUser.id);
+          if (biz) { biz.products = []; updateLocalStorage(); alert("All posts deleted."); showStore(biz); }
+        }
+      });
       
-      /*** Event Handlers ***/
+      // --- Event Handlers ---
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         businessForm.style.display = 'block';
@@ -1056,12 +1170,10 @@
             closingHour: "18:00"
           };
           const user = { id: business.id, type: 'business', name, email, password };
-    
           businesses.push(business);
           users.push(user);
           currentUser = user;
           updateLocalStorage();
-    
           closeModal('business-form');
           updateUIForUser();
           displayFeed();
@@ -1075,15 +1187,12 @@
           const name = document.getElementById('cust-name').value.trim();
           const email = document.getElementById('cust-email').value.trim();
           const password = document.getElementById('cust-password').value.trim();
-    
           if (!name || !email || !password) { throw new Error('Please fill in all fields!'); }
           if (!/\S+@\S+\.\S+/.test(email)) { throw new Error('Please enter a valid email address!'); }
-    
           const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
           users.push(user);
           currentUser = user;
           updateLocalStorage();
-    
           closeModal('customer-form');
           updateUIForUser();
           displayFeed();
@@ -1096,9 +1205,7 @@
         try {
           const email = document.getElementById('login-email').value.trim();
           const password = document.getElementById('login-password').value.trim();
-    
           if (!email || !password) { throw new Error('Please enter both email and password!'); }
-    
           const foundUser = users.find(u => u.email === email && u.password === password);
           if (foundUser) {
             currentUser = foundUser;
