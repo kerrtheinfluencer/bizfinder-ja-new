@@ -43,7 +43,7 @@
       display: flex;
       gap: 1rem;
     }
-    /* Fixed header profile icon */
+    /* Fixed profile button for logged-in users */
     #profile-btn {
       position: fixed;
       top: 10px;
@@ -63,6 +63,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
+    /* Other header buttons */
     .header-buttons button:not(#profile-btn) {
       background: var(--white);
       color: var(--primary-green);
@@ -79,7 +80,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    /* Header Avatar styling (for small avatar in header) */
+    /* Header Avatar styling */
     .header-avatar {
       width: 40px;
       height: 40px;
@@ -89,6 +90,18 @@
       justify-content: center;
       font-size: 20px;
       color: var(--white);
+    }
+    /* Increase header avatar size on larger screens */
+    @media (min-width: 800px) {
+      .header-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+      }
+      #profile-btn img {
+        width: 60px;
+        height: 60px;
+      }
     }
     /* Main Container */
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
@@ -282,7 +295,7 @@
     <div id="loading" class="loading" style="display:none;">Loading...</div>
   </div>
   
-  <!-- Modals -->
+  <!-- --- Modals --- -->
   <div id="popup" class="modal">
     <h2>Welcome to BizFinder JA!</h2>
     <p>Sign up to join our vibrant community.</p>
@@ -445,7 +458,7 @@
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
       
-      // Returns a header avatar (40px) for logged in user
+      // Header avatar for logged-in user (40px on mobile, 60px on PC via media query)
       function getHeaderAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -459,7 +472,7 @@
           loginBtn.style.display = 'none';
           signupBtn.style.display = 'none';
           if (currentUser.profilePhoto) {
-            profileBtn.innerHTML = `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">`;
+            profileBtn.innerHTML = `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
           } else {
             profileBtn.innerHTML = getHeaderAvatar(currentUser.name);
           }
@@ -475,12 +488,12 @@
         document.getElementById(formId).style.display = 'none';
       }
       
+      // Generates a letter avatar (for business cards, 100px)
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
         const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
         const color = colors[Math.floor(Math.random() * colors.length)];
-        // Use inline style with fixed dimensions to ensure consistency in feed
         return `<div class="letter-avatar" style="background:${color}; width:100px; height:100px; border-radius:50%; display:inline-block; font-size:2.5rem; line-height:100px; text-align:center; color:#fff;">${letter}</div>`;
       }
       
@@ -527,9 +540,10 @@
           `;
           gridContainer.appendChild(card);
         });
-        displayHotProducts();
+        displayHotProducts(); // Hot products in feed
       };
       
+      // Hot products now include a fire emoji and live view count
       const displayHotProducts = () => {
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
         hotProducts.innerHTML = '<h3>Hot Products</h3>';
@@ -538,7 +552,7 @@
           hotProducts.innerHTML += `
             <div class="hot-product-item">
               <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
-              <span>${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
+              <span>🔥 ${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
             </div>
           `;
         });
@@ -595,7 +609,7 @@
             document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
           });
         }
-        // Add explicit logout handler here for immediate feedback
+        // Logout button
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
           logoutBtn.addEventListener('click', () => {
@@ -682,8 +696,12 @@
           </div>
         `;
         storePage.innerHTML = storeContent;
-        // Append hot products at bottom of store page
-        storePage.innerHTML += hotProducts.innerHTML;
+        // Append one hot products box at the bottom only
+        const storeHot = document.createElement('div');
+        storeHot.className = 'hot-products';
+        // Generate hot products HTML with fire emoji
+        storeHot.innerHTML = '<h3>Hot Products</h3>' + generateHotProductsHTML();
+        storePage.appendChild(storeHot);
         // Wire up product detail triggers
         storePage.querySelectorAll('.product-detail-trigger').forEach(img => {
           img.addEventListener('click', (e) => {
@@ -718,6 +736,21 @@
           });
         });
       };
+      
+      function generateHotProductsHTML() {
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
+        let html = '';
+        hot.forEach(biz => {
+          const product = biz.products[0];
+          html += `
+            <div class="hot-product-item">
+              <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
+              <span>🔥 ${biz.name} - ${product.name} ($${product.price}) (Views: ${biz.views})</span>
+            </div>
+          `;
+        });
+        return html;
+      }
       
       function renderStoreProducts(business) {
         let html = '';
