@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizFinder JA</title>
+  <!-- Chart.js for interactive graph in profile -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* CSS Variables for easy theming */
     :root {
@@ -450,7 +452,7 @@
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
-      // Set default number of feed cards to load as 6 (instead of 5)
+      // Set default number of feed cards to load as 6
       let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
@@ -575,13 +577,12 @@
         });
       };
       
-      // Modern, future‑proof profile page design
+      // Modern, future‑proof profile page design with an interactive graph
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
-        // Build a modern profile container with header, details, and logout button
         let profileContent = `
           <div class="profile-container">
             <button id="back-to-feed">Back to Feed</button>
@@ -599,6 +600,12 @@
             <p>Total Views: ${business.views}</p>
             <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
           `;
+          // Add a canvas for the day-by-day views graph
+          profileContent += `
+            <div style="margin-top: 1.5rem;">
+              <canvas id="viewsChart" width="400" height="200"></canvas>
+            </div>
+          `;
         } else if (currentUser.type === 'customer') {
           profileContent += `
             <h4>Recent Activity</h4>
@@ -613,7 +620,63 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
+        // If business, initialize the views graph
+        if (currentUser.type === 'business') {
+          initViewsChart();
+        }
       };
+      
+      // Initialize the Chart.js graph with dummy data for daily views
+      function initViewsChart() {
+        const ctx = document.getElementById('viewsChart').getContext('2d');
+        // Generate dummy labels and data for the last 7 days
+        const labels = [];
+        const dataPoints = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
+          dataPoints.push(Math.floor(Math.random() * 100));
+        }
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Daily Views',
+              data: dataPoints,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46, 204, 113, 0.1)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top'
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Views'
+                },
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
       
       /*** Event Handlers ***/
       // Popup buttons
