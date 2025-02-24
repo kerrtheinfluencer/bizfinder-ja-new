@@ -99,18 +99,13 @@
       .hot-product-grid {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap; /* Ensures single row */
         gap: 1rem;
         animation: mobileSlide 15s infinite ease-in-out;
         padding: 0.5rem 0; /* Additional padding for better spacing */
       }
-      /* Pause auto-slide on hover/touch for mobile */
-      .hot-product-grid:hover {
-        animation-play-state: paused;
-      }
       .hot-product-item {
         flex: 0 0 auto;
-        width: calc((100vw - 4rem) / 2); /* Shows ~2 items at a time */
+        width: 80%; /* Single row, one product wide on mobile */
         margin: 0.25rem 0;
         padding: 1rem; /* Increased padding for better spacing */
         background: var(--white);
@@ -1078,8 +1073,8 @@
       
       const displayHotProducts = () => {
         if (!hotProductGrid) return; // Safety check
-        // Remove any limit: show all hot products for both PC and mobile
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views);
+        const hotCount = window.innerWidth >= 1024 ? 6 : Infinity; // Use Infinity for unlimited on mobile
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
         hotProductGrid.innerHTML = '';
         if (hot.length === 0) {
           hotProductGrid.innerHTML = '<p>No hot products available.</p>';
@@ -1103,12 +1098,6 @@
         document.querySelectorAll('.hot-product-item').forEach(item => {
           item.addEventListener('click', () => showHotProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
         });
-        // For mobile, pause auto-slide on touch
-        if (window.innerWidth < 1024 && hotProductGrid) {
-          hotProductGrid.addEventListener('touchstart', () => {
-            hotProductGrid.style.animationPlayState = 'paused';
-          });
-        }
       };
 
       const showHotProductPopup = (bizId, productName) => {
