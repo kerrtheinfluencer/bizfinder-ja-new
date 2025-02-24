@@ -21,7 +21,7 @@
       --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
       --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-    
+
     /* Reset and Base Styles */
     * {
       margin: 0;
@@ -35,7 +35,7 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-    
+
     /* Header */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
@@ -69,30 +69,14 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    
+
     /* Container */
     .container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1.5rem;
     }
-    
-    /* Mobile Optimization */
-    @media (max-width: 1024px) {
-      .container {
-        margin: 1rem auto;
-        padding: 0 1rem;
-      }
-      header {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .header-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-    
+
     /* Search Bar */
     .search-container {
       margin-bottom: 1.5rem;
@@ -118,7 +102,7 @@
       color: var(--muted-color);
       text-align: center;
     }
-    
+
     /* Cards and Pages */
     .business-card,
     .store-page,
@@ -151,8 +135,7 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
-    .business-image,
-    .profile-header img {
+    .business-image {
       width: 150px;
       height: 150px;
       object-fit: cover;
@@ -170,10 +153,7 @@
       color: var(--white);
       border-radius: 50%;
       margin-bottom: 1rem;
-      background: #3498db;
     }
-    
-    /* Status Indicator */
     .status-indicator {
       display: inline-block;
       width: 10px;
@@ -181,8 +161,6 @@
       border-radius: 50%;
       margin-left: 5px;
     }
-    
-    /* Contact Links */
     .contact a {
       margin-right: 1rem;
       text-decoration: none;
@@ -198,7 +176,7 @@
       color: var(--muted-color);
       margin-top: 0.75rem;
     }
-    
+
     /* Global Button Styles */
     button {
       background: var(--primary-green);
@@ -216,7 +194,7 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    
+
     /* Modal Styles */
     .modal {
       position: fixed;
@@ -264,105 +242,104 @@
       margin-top: 0.5rem;
       display: none;
     }
-    
-    /* New Hot Products Section */
+
+    /* Featured Products Carousel */
     .featured-products {
       background: var(--premium-bg);
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 15px;
-      margin-bottom: 2rem;
+      margin: 2rem 0;
       box-shadow: var(--premium-shadow);
+      border-left: 8px solid var(--primary-green);
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(46, 204, 113, 0.2);
     }
     .featured-products h3 {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       color: var(--primary-green);
-      margin-bottom: 1.5rem;
-      text-align: center;
+      margin-bottom: 1rem;
       font-weight: 700;
+      text-align: center;
     }
-    .featured-product-grid {
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .carousel-track {
       display: flex;
-      flex-wrap: nowrap;
-      gap: 1rem;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      padding-bottom: 1rem;
+      transition: transform 0.5s ease;
     }
-    @media (min-width: 1025px) {
-      .featured-product-grid {
-        flex-wrap: wrap;
-        justify-content: center;
-        display: grid;
-        grid-template-rows: repeat(2, auto);
-        grid-auto-flow: column;
-        gap: 1.5rem;
-      }
-    }
-    .featured-product-item {
-      flex: 0 0 250px;
+    .carousel-item {
+      flex: 0 0 100%;
+      min-width: 200px;
+      height: 200px;
       background: var(--white);
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      position: relative;
+      cursor: pointer;
       overflow: hidden;
       transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-      position: relative;
     }
-    .featured-product-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    .carousel-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
-    .featured-product-item img {
+    .carousel-item img {
       width: 100%;
-      height: 150px;
+      height: 100%;
       object-fit: cover;
-      border-radius: 15px 15px 0 0;
+      border-radius: 12px;
     }
-    .featured-product-info {
-      padding: 1rem;
-      text-align: center;
-    }
-    .featured-product-info span {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-color);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-    .featured-product-info .views {
-      font-size: 0.85rem;
-    }
-    .featured-play-btn {
+    .carousel-item .product-info {
       position: absolute;
-      bottom: 1rem;
-      right: 1rem;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--white);
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 1rem;
+    }
+    .carousel-nav button {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--primary-green);
+      padding: 0.5rem;
+      border-radius: 50%;
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 1.2rem;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: background 0.3s;
     }
-    .featured-play-btn.play {
-      background: var(--primary-green);
-      box-shadow: 0 0 10px rgba(46,204,113,0.5);
+    .carousel-nav button:hover {
+      background: var(--white);
     }
-    .featured-play-btn.stop {
-      background: #e74c3c;
-      box-shadow: 0 0 10px rgba(231,76,60,0.5);
+    @media (min-width: 1025px) {
+      .carousel-track {
+        flex-wrap: wrap;
+        justify-content: center;
+        height: 420px; /* Two rows of 200px + spacing */
+      }
+      .carousel-item {
+        flex: 0 0 20%;
+        margin: 10px;
+      }
     }
-    @keyframes slideLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    
-    /* Hot Product Popup */
+
+    /* Featured Product Popup */
     #featured-product-popup {
       position: fixed;
       top: 50%;
@@ -401,7 +378,19 @@
       margin-bottom: 1rem;
     }
     #featured-product-popup button {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
       padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s, transform 0.2s;
+    }
+    #featured-product-popup button:hover {
+      background: var(--secondary-green);
+      transform: translateY(-2px);
     }
     #featured-product-popup .close-btn {
       position: absolute;
@@ -413,15 +402,8 @@
       cursor: pointer;
       color: var(--muted-color);
     }
-    
-    /* Feed Grid */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    
-    /* Store Page */
+
+    /* Store Page Layout */
     .store-container {
       display: flex;
       flex-direction: column;
@@ -460,8 +442,8 @@
     }
     .product-card img {
       width: 100%;
-      height: 150px;
       object-fit: cover;
+      height: 150px;
     }
     .product-info {
       padding: 1rem;
@@ -481,7 +463,7 @@
       font-size: 0.85rem;
       color: var(--muted-color);
     }
-    
+
     /* Profile Page */
     .profile-container {
       max-width: 800px;
@@ -499,13 +481,17 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
-    .profile-details {
-      margin-bottom: 1.5rem;
+    .profile-header img,
+    .profile-header .letter-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
     }
     .product-list {
       margin-top: 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 1rem;
     }
     .product-item {
@@ -514,45 +500,20 @@
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      text-align: center;
-    }
-    .product-item img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
     }
     .product-item-actions button {
-      margin: 0.5rem;
+      margin-left: 0.5rem;
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
     }
-    
-    /* Settings Modal */
-    #settings-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      z-index: 1000;
-      text-align: center;
-      max-width: 500px;
-      width: 90%;
-      display: none;
-    }
-    #settings-modal input[type="file"] {
-      padding: 0.5rem;
-    }
-    
-    /* Add/Edit/Manage Product Modals */
-    #add-product-modal, #edit-product-modal, #manage-products-modal {
+
+    /* Modal Styles (Settings, Add/Edit Product) */
+    #settings-modal,
+    #add-product-modal,
+    #edit-product-modal,
+    #manage-products-modal {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -568,9 +529,7 @@
       display: none;
     }
     #manage-products-modal .product-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
+      margin-top: 1rem;
     }
   </style>
 </head>
@@ -591,8 +550,13 @@
     </div>
     <div id="featured-products" class="featured-products">
       <h3>Featured Products</h3>
-      <div class="featured-product-grid"></div>
-      <button class="featured-play-btn play" id="featured-play-btn">▶</button>
+      <div class="carousel-container">
+        <div class="carousel-track"></div>
+        <div class="carousel-nav">
+          <button class="prev-btn">&lt;</button>
+          <button class="next-btn">&gt;</button>
+        </div>
+      </div>
     </div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
@@ -601,25 +565,102 @@
   </div>
 
   <!-- Modals -->
-  <div id="popup" class="modal"><h2>Welcome to BizFinder JA!</h2><p>Sign up to join our vibrant community.</p><button id="business-btn">Sign Up as Business</button><button id="customer-btn">Sign Up as Customer</button><button id="feed-btn">Continue to Feed</button></div>
-  <div id="business-form" class="modal"><h2>Business Sign-Up</h2><input type="text" id="biz-name" placeholder="Business Name" required /><input type="email" id="biz-email" placeholder="Email" required /><input type="password" id="biz-password" placeholder="Password" required /><select id="biz-category"><option value="Food & Drinks">Food & Drinks</option><option value="Fashion & Accessories">Fashion & Accessories</option><option value="Tech & Electronics">Tech & Electronics</option><option value="Home & Kitchen">Home & Kitchen</option><option value="Beauty & Personal Care">Beauty & Personal Care</option></select><input type="text" id="biz-product" placeholder="Featured Product Name" required /><input type="text" id="biz-desc" placeholder="Short Description" required /><input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required /><input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required /><input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required /><button id="submit-business-btn">Submit</button><button class="close-btn" data-form="business-form">Close</button></div>
-  <div id="customer-form" class="modal"><h2>Customer Sign-Up</h2><input type="text" id="cust-name" placeholder="Name" required /><input type="email" id="cust-email" placeholder="Email" required /><input type="password" id="cust-password" placeholder="Password" required /><button id="submit-customer-btn">Submit</button><button class="close-btn" data-form="customer-form">Close</button></div>
-  <div id="login-form" class="modal"><h2>Login</h2><input type="email" id="login-email" placeholder="Email" required /><input type="password" id="login-password" placeholder="Password" required /><button id="login-submit-btn">Login</button><button class="close-btn" data-form="login-form">Close</button></div>
-  <div id="settings-modal" class="modal"><h2>Settings</h2><input type="text" id="settings-name" placeholder="Your Name" required /><input type="file" id="settings-photo" accept="image/*" /><p style="font-size:0.8rem; color:var(--muted-color);">Upload a profile photo</p><button id="save-settings-btn">Save Settings</button><button id="reset-settings-btn">Reset to Default</button><div id="settings-error" class="error">Please fill in all required fields</div><button class="close-btn" data-form="settings-modal">Close</button></div>
-  <div id="add-product-modal" class="modal"><h2>Add Product</h2><input type="text" id="prod-name" placeholder="Product Name" required /><textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea><input type="file" id="prod-media" accept="image/*" /><button id="submit-product-btn">Add Product</button><div id="add-product-error" class="error">Please fill in all required fields!</div><button class="close-btn" data-form="add-product-modal">Close</button></div>
-  <div id="edit-product-modal" class="modal"><h2>Edit Product</h2><input type="text" id="edit-prod-name" placeholder="Product Name" required /><textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea><input type="file" id="edit-prod-photo" accept="image/*" /><button id="save-product-btn">Save Changes</button><div id="edit-product-error" class="error">Please fill in all required fields</div><button class="close-btn" data-form="edit-product-modal">Close</button></div>
-  <div id="manage-products-modal" class="modal"><h2>Manage Products</h2><div class="product-list" id="manage-product-list"></div><button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button></div>
-  <div id="featured-product-popup" class="modal"><button class="close-btn" data-form="featured-product-popup">×</button><img id="featured-product-img" alt="Product Image"><h3 id="featured-product-name"></h3><p id="featured-product-desc"></p><p class="views" id="featured-product-views"></p><button id="view-store-btn">View Store</button></div>
+  <div id="popup" class="modal">
+    <h2>Welcome to BizFinder JA!</h2>
+    <p>Sign up to join our vibrant community.</p>
+    <button id="business-btn">Sign Up as Business</button>
+    <button id="customer-btn">Sign Up as Customer</button>
+    <button id="feed-btn">Continue to Feed</button>
+  </div>
+
+  <div id="business-form" class="modal">
+    <h2>Business Sign-Up</h2>
+    <input type="text" id="biz-name" placeholder="Business Name" required />
+    <input type="email" id="biz-email" placeholder="Email" required />
+    <input type="password" id="biz-password" placeholder="Password" required />
+    <select id="biz-category">
+      <option value="Food & Drinks">Food & Drinks</option>
+      <option value="Fashion & Accessories">Fashion & Accessories</option>
+      <option value="Tech & Electronics">Tech & Electronics</option>
+      <option value="Home & Kitchen">Home & Kitchen</option>
+      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+    </select>
+    <input type="text" id="biz-product" placeholder="Featured Product Name" required />
+    <input type="text" id="biz-desc" placeholder="Short Description" required />
+    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
+    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
+    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
+    <button id="submit-business-btn">Submit</button>
+    <button class="close-btn" data-form="business-form">Close</button>
+  </div>
+
+  <div id="customer-form" class="modal">
+    <h2>Customer Sign-Up</h2>
+    <input type="text" id="cust-name" placeholder="Name" required />
+    <input type="email" id="cust-email" placeholder="Email" required />
+    <input type="password" id="cust-password" placeholder="Password" required />
+    <button id="submit-customer-btn">Submit</button>
+    <button class="close-btn" data-form="customer-form">Close</button>
+  </div>
+
+  <div id="login-form" class="modal">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Email" required />
+    <input type="password" id="login-password" placeholder="Password" required />
+    <button id="login-submit-btn">Login</button>
+    <button class="close-btn" data-form="login-form">Close</button>
+  </div>
+
+  <div id="settings-modal" class="modal">
+    <h2>Settings</h2>
+    <input type="text" id="settings-name" placeholder="Your Name" required />
+    <input type="url" id="settings-photo" placeholder="Profile Photo URL" />
+    <button id="save-settings-btn">Save Settings</button>
+    <button id="reset-settings-btn">Reset to Default</button>
+    <button class="close-btn" data-form="settings-modal">Close</button>
+  </div>
+
+  <div id="add-product-modal" class="modal">
+    <h2>Add Product</h2>
+    <input type="text" id="prod-name" placeholder="Product Name" required />
+    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <input type="file" id="prod-media" accept="image/*" />
+    <button id="submit-product-btn">Add Product</button>
+    <button class="close-btn" data-form="add-product-modal">Close</button>
+  </div>
+
+  <div id="edit-product-modal" class="modal">
+    <h2>Edit Product</h2>
+    <input type="text" id="edit-prod-name" placeholder="Product Name" required />
+    <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <input type="url" id="edit-prod-photo" placeholder="Photo URL" />
+    <button id="save-product-btn">Save Changes</button>
+    <button class="close-btn" data-form="edit-product-modal">Close</button>
+  </div>
+
+  <div id="manage-products-modal" class="modal">
+    <h2>Manage Products</h2>
+    <div class="product-list" id="manage-product-list"></div>
+    <button class="close-btn" data-form="manage-products-modal">Close</button>
+  </div>
+
+  <div id="featured-product-popup" class="modal">
+    <button class="close-btn" data-form="featured-product-popup">×</button>
+    <img id="featured-product-img" alt="Product Image">
+    <h3 id="featured-product-name"></h3>
+    <p id="featured-product-desc"></p>
+    <p class="views" id="featured-product-views"></p>
+    <button id="view-store-btn">View Store</button>
+  </div>
 
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
-      let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+      let users = JSON.parse(localStorage.getItem('users')) || [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
-      let animationInterval;
 
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
@@ -630,28 +671,17 @@
         return b;
       });
 
-      const popup = document.getElementById('popup');
-      const businessForm = document.getElementById('business-form');
-      const customerForm = document.getElementById('customer-form');
-      const loginForm = document.getElementById('login-form');
       const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
       const profilePage = document.getElementById('profile-page');
       const featuredProducts = document.getElementById('featured-products');
-      const featuredProductGrid = featuredProducts.querySelector('.featured-product-grid');
-      const featuredPlayBtn = document.getElementById('featured-play-btn');
+      const carouselTrack = featuredProducts.querySelector('.carousel-track');
       const loading = document.getElementById('loading');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
       const signupBtn = document.getElementById('signup-btn');
       const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
-      const settingsModal = document.getElementById('settings-modal');
-      const addProductModal = document.getElementById('add-product-modal');
-      const editProductModal = document.getElementById('edit-product-modal');
-      const manageProductsModal = document.getElementById('manage-products-modal');
-      const manageProductList = document.getElementById('manage-product-list');
-      const featuredProductPopup = document.getElementById('featured-product-popup');
 
       function generateDummyBusinesses(count) {
         const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
@@ -679,14 +709,9 @@
       }
 
       function updateLocalStorage() {
-        try {
-          localStorage.setItem('businesses', JSON.stringify(businesses));
-          localStorage.setItem('users', JSON.stringify(users));
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        } catch (e) {
-          console.error('LocalStorage error:', e);
-          alert('Storage limit reached or unavailable.');
-        }
+        localStorage.setItem('businesses', JSON.stringify(businesses));
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
 
       function updateUIForUser() {
@@ -696,21 +721,25 @@
       }
 
       function closeModal(formId) {
-        const modal = document.getElementById(formId);
-        if (modal) modal.style.display = 'none';
+        document.getElementById(formId).style.display = 'none';
       }
 
       function getLetterAvatar(name) {
-        const letter = name.charAt(0).toUpperCase();
-        return `<div class="letter-avatar">${letter}</div>`;
+        const firstName = name.split(" ")[0];
+        const letter = firstName.charAt(0).toUpperCase();
+        const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
       }
 
       function isStoreOpen(business) {
         const now = new Date();
         const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
         const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
-        const openDate = new Date(now); openDate.setHours(openH, openM, 0, 0);
-        const closeDate = new Date(now); closeDate.setHours(closeH, closeM, 0, 0);
+        const openDate = new Date(now);
+        openDate.setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now);
+        closeDate.setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
 
@@ -730,8 +759,9 @@
           card.innerHTML = `
             <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
             <p class="category">${business.category}</p>
-            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
+            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
             <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+            ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
             <p>${business.desc}</p>
             <p><strong>Location:</strong> ${business.location}</p>
             <div class="contact">
@@ -747,21 +777,57 @@
       };
 
       const displayFeaturedProducts = () => {
-        const allProducts = businesses.flatMap(b => b.products.map(p => ({ ...p, bizId: b.id, bizName: b.name, bizViews: b.views }))).sort((a, b) => b.bizViews - a.bizViews);
-        featuredProductGrid.innerHTML = '';
-        allProducts.forEach(product => {
-          const item = document.createElement('div');
-          item.className = 'featured-product-item';
-          item.innerHTML = `
-            <img src="${product.photo || 'https://via.placeholder.com/250x150.png?text=Product'}" alt="${product.name}">
-            <div class="featured-product-info">
-              <span>${product.bizName} - ${product.name}</span>
-              <p class="views">Views: ${product.bizViews}</p>
-            </div>
-          `;
-          item.addEventListener('click', () => showFeaturedProductPopup(product.bizId, product.name));
-          featuredProductGrid.appendChild(item);
+        const allProducts = businesses.flatMap(biz => biz.products.map(p => ({ ...p, bizId: biz.id, category: biz.category })));
+        const sortedProducts = allProducts.sort((a, b) => b.views - a.views);
+        const categories = [...new Set(businesses.map(b => b.category))];
+        const featured = [];
+        categories.forEach(cat => {
+          const catProducts = sortedProducts.filter(p => p.category === cat);
+          featured.push(...catProducts.slice(0, 5)); // Top 5 per category
         });
+
+        carouselTrack.innerHTML = '';
+        featured.forEach(product => {
+          const item = document.createElement('div');
+          item.className = 'carousel-item';
+          item.dataset.bizId = product.bizId;
+          item.dataset.productName = product.name;
+          item.innerHTML = `
+            <img src="${product.photo || 'https://via.placeholder.com/200.png?text=Product'}" alt="${product.name}">
+            <div class="product-info">${product.name} - ${product.category} (Views: ${product.views})</div>
+          `;
+          carouselTrack.appendChild(item);
+        });
+
+        let currentIndex = 0;
+        const items = carouselTrack.querySelectorAll('.carousel-item');
+        const totalItems = items.length;
+        const itemsPerRow = window.innerWidth >= 1025 ? 5 : 1; // 5 items per row on desktop, 1 on mobile
+        const totalRows = window.innerWidth >= 1025 ? 2 : Math.ceil(totalItems / itemsPerRow);
+
+        function updateCarousel() {
+          const offset = -(currentIndex * (100 / itemsPerRow));
+          carouselTrack.style.transform = `translateX(${offset}%)`;
+        }
+
+        document.querySelector('.prev-btn').addEventListener('click', () => {
+          currentIndex = Math.max(0, currentIndex - 1);
+          updateCarousel();
+        });
+
+        document.querySelector('.next-btn').addEventListener('click', () => {
+          currentIndex = Math.min(totalRows - 1, currentIndex + 1);
+          updateCarousel();
+        });
+
+        items.forEach(item => {
+          item.addEventListener('click', () => showFeaturedProductPopup(item.dataset.bizId, item.dataset.productName));
+        });
+
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % totalRows;
+          updateCarousel();
+        }, 5000); // Auto-scroll every 5 seconds
       };
 
       const showFeaturedProductPopup = (bizId, productName) => {
@@ -769,41 +835,23 @@
         const product = business.products.find(p => p.name === productName);
         document.getElementById('featured-product-img').src = product.photo || 'https://via.placeholder.com/150.png?text=Product';
         document.getElementById('featured-product-name').textContent = product.name;
-        document.getElementById('featured-product-desc').textContent = product.desc;
-        document.getElementById('featured-product-views').textContent = `Views: ${business.views}`;
-        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
-        featuredProductPopup.style.display = 'block';
+        document.getElementById('featured-product-desc').textContent = product.desc || 'No description available';
+        document.getElementById('featured-product-views').textContent = `Views: ${product.views}`;
+        document.getElementById('view-store-btn').dataset.id = bizId;
+        document.getElementById('featured-product-popup').style.display = 'block';
       };
-
-      featuredPlayBtn.addEventListener('click', () => {
-        if (featuredPlayBtn.classList.contains('play')) {
-          featuredPlayBtn.classList.remove('play');
-          featuredPlayBtn.classList.add('stop');
-          featuredPlayBtn.textContent = '■';
-          animationInterval = setInterval(() => {
-            featuredProductGrid.scrollLeft += 2;
-            if (featuredProductGrid.scrollLeft >= featuredProductGrid.scrollWidth - featuredProductGrid.clientWidth) {
-              featuredProductGrid.scrollLeft = 0;
-            }
-          }, 20);
-        } else {
-          featuredPlayBtn.classList.remove('stop');
-          featuredPlayBtn.classList.add('play');
-          featuredPlayBtn.textContent = '▶';
-          clearInterval(animationInterval);
-        }
-      });
 
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
+        let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
         let profileContent = `
           <div class="profile-container">
-            <button id="back-to-feed">Back to Feed</button>
+            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
             <div class="profile-header">
-              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy">` : getLetterAvatar(currentUser.name)}
+              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />` : getLetterAvatar(currentUser.name)}
               <h3>${currentUser.name}</h3>
               <p>${currentUser.email}</p>
             </div>
@@ -814,19 +862,19 @@
           profileContent += `
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views}</p>
+            <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0]?.name || 'No products'}</p>
             <button id="add-product-btn">Add Product</button>
             <button id="manage-products-btn">Manage Products</button>
             <div class="product-list" id="profile-product-list">
               ${business.products.map(p => `
                 <div class="product-item">
-                  <img src="${p.photo || 'https://via.placeholder.com/100.png?text=Product'}" alt="${p.name}">
                   <span>${p.name} - ${p.desc}</span>
                   <div class="product-item-actions">
                     <button class="edit-product-btn" data-id="${p.name}">Edit</button>
                     <button class="delete-product-btn" data-id="${p.name}">Delete</button>
                   </div>
                 </div>
-              `).join('')}
+              `).join('') || '<p>No products available.</p>'}
             </div>
             <div style="margin-top: 1rem; height:300px;">
               <canvas id="viewsChart"></canvas>
@@ -840,186 +888,169 @@
         }
         profileContent += `
             </div>
-            <div id="profile-featured-products" class="featured-products">
-              <h3>Featured Products</h3>
-              <div class="featured-product-grid"></div>
-              <button class="featured-play-btn play" id="profile-featured-play-btn">▶</button>
-            </div>
             <button id="settings-btn">Settings</button>
             <button id="logout-btn">Logout</button>
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        document.getElementById('back-to-feed').addEventListener('click', displayFeed);
+
         if (currentUser.type === 'business') {
           initViewsChart();
-          document.getElementById('add-product-btn').addEventListener('click', () => addProductModal.style.display = 'block');
+          document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
           document.getElementById('manage-products-btn').addEventListener('click', openManageProductsModal);
-          document.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id'))));
-          document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => confirm(`Delete "${btn.getAttribute('data-id')}"?`) && deleteProduct(btn.getAttribute('data-id'))));
+          document.querySelectorAll('.edit-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+          });
+          document.querySelectorAll('.delete-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+                deleteProduct(btn.getAttribute('data-id'));
+              }
+            });
+          });
         }
-        document.getElementById('settings-btn').addEventListener('click', () => {
-          settingsModal.style.display = 'block';
-          document.getElementById('settings-name').value = currentUser.name;
-          document.getElementById('settings-error').style.display = 'none';
-        });
-        document.getElementById('logout-btn').addEventListener('click', () => {
-          currentUser = null;
-          localStorage.removeItem('currentUser');
-          updateUIForUser();
-          displayFeed();
-        });
-        const profileFeaturedGrid = profilePage.querySelector('#profile-featured-products .featured-product-grid');
-        displayFeaturedProducts(profileFeaturedGrid);
-        document.getElementById('profile-featured-play-btn').addEventListener('click', () => {
-          const btn = document.getElementById('profile-featured-play-btn');
-          if (btn.classList.contains('play')) {
-            btn.classList.remove('play');
-            btn.classList.add('stop');
-            btn.textContent = '■';
-            animationInterval = setInterval(() => {
-              profileFeaturedGrid.scrollLeft += 2;
-              if (profileFeaturedGrid.scrollLeft >= profileFeaturedGrid.scrollWidth - profileFeaturedGrid.clientWidth) profileFeaturedGrid.scrollLeft = 0;
-            }, 20);
-          } else {
-            btn.classList.remove('stop');
-            btn.classList.add('play');
-            btn.textContent = '▶';
-            clearInterval(animationInterval);
-          }
-        });
+        document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
       };
 
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart')?.getContext('2d');
         if (!ctx) return;
-        const labels = Array(7).fill().map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return `${d.getMonth() + 1}/${d.getDate()}`; }).reverse();
-        const dataPoints = Array(7).fill().map(() => Math.floor(Math.random() * 100));
+        const labels = [];
+        const dataPoints = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
+          dataPoints.push(Math.floor(Math.random() * 100));
+        }
         new Chart(ctx, {
           type: 'line',
           data: {
             labels,
-            datasets: [{ label: 'Daily Views', data: dataPoints, borderColor: '#2ecc71', backgroundColor: 'rgba(46,204,113,0.1)', fill: true, tension: 0.3 }]
+            datasets: [{
+              label: 'Daily Views',
+              data: dataPoints,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46,204,113,0.1)',
+              fill: true,
+              tension: 0.3
+            }]
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: { title: { display: true, text: 'Date' } }, y: { title: { display: true, text: 'Views' }, beginAtZero: true } } }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
         });
       }
 
-      function openManageProductsModal() {
+      const openAddProductModal = () => {
+        document.getElementById('add-product-modal').style.display = 'block';
+      };
+
+      const openSettingsModal = () => {
+        document.getElementById('settings-modal').style.display = 'block';
+        document.getElementById('settings-name').value = currentUser?.name || "";
+        document.getElementById('settings-photo').value = currentUser?.profilePhoto || "";
+      };
+
+      const openManageProductsModal = () => {
         const business = businesses.find(b => b.id === currentUser?.id);
-        manageProductList.innerHTML = business.products.map(p => `
+        document.getElementById('manage-product-list').innerHTML = business.products.map(p => `
           <div class="product-item">
-            <img src="${p.photo || 'https://via.placeholder.com/100.png?text=Product'}" alt="${p.name}">
             <span>${p.name} - ${p.desc}</span>
             <div class="product-item-actions">
               <button class="edit-product-btn" data-id="${p.name}">Edit</button>
               <button class="delete-product-btn" data-id="${p.name}">Delete</button>
             </div>
           </div>
-        `).join('');
-        manageProductsModal.style.display = 'block';
-        document.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id'))));
-        document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => confirm(`Delete "${btn.getAttribute('data-id')}"?`) && deleteProduct(btn.getAttribute('data-id'))));
-      }
+        `).join('') || '<p>No products available.</p>';
+        document.getElementById('manage-products-modal').style.display = 'block';
+        document.querySelectorAll('.edit-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+        });
+        document.querySelectorAll('.delete-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+              deleteProduct(btn.getAttribute('data-id'));
+            }
+          });
+        });
+      };
 
-      function editProduct(productId) {
+      const editProduct = productId => {
         const business = businesses.find(b => b.id === currentUser?.id);
         const product = business?.products.find(p => p.name === productId);
         if (product) {
           document.getElementById('edit-prod-name').value = product.name;
           document.getElementById('edit-prod-desc').value = product.desc;
-          editProductModal.style.display = 'block';
+          document.getElementById('edit-prod-photo').value = product.photo;
+          document.getElementById('edit-product-modal').style.display = 'block';
         }
-      }
+      };
 
-      function deleteProduct(productId) {
+      const saveEditedProduct = () => {
+        const productId = document.getElementById('edit-prod-name').value.trim();
+        const prodDesc = document.getElementById('edit-prod-desc').value.trim();
+        const prodPhoto = document.getElementById('edit-prod-photo').value.trim();
         const business = businesses.find(b => b.id === currentUser?.id);
-        business.products = business.products.filter(p => p.name !== productId);
-        updateLocalStorage();
-        openManageProductsModal();
-        showProfile();
-      }
+        const product = business?.products.find(p => p.name === productId);
+        if (product) {
+          product.desc = prodDesc;
+          product.photo = prodPhoto || '';
+          updateLocalStorage();
+          closeModal('edit-product-modal');
+          showProfile();
+        }
+      };
+
+      const deleteProduct = productId => {
+        const business = businesses.find(b => b.id === currentUser?.id);
+        if (business) {
+          business.products = business.products.filter(p => p.name !== productId);
+          updateLocalStorage();
+          if (document.getElementById('manage-products-modal').style.display === 'block') {
+            openManageProductsModal();
+          } else {
+            showProfile();
+          }
+        }
+      };
 
       document.getElementById('submit-product-btn').addEventListener('click', () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
         const fileInput = document.getElementById('prod-media');
-        if (!prodName || !prodDesc) {
-          document.getElementById('add-product-error').style.display = 'block';
-          return;
-        }
         const business = businesses.find(b => b.id === currentUser?.id);
-        const addProduct = (photo) => {
-          business.products.push({ name: prodName, desc: prodDesc, photo, views: 0 });
-          updateLocalStorage();
-          closeModal('add-product-modal');
-          showProfile();
-        };
-        if (fileInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = e => addProduct(e.target.result);
-          reader.readAsDataURL(fileInput.files[0]);
-        } else {
-          addProduct('');
-        }
-      });
-
-      document.getElementById('save-product-btn').addEventListener('click', () => {
-        const prodName = document.getElementById('edit-prod-name').value.trim();
-        const prodDesc = document.getElementById('edit-prod-desc').value.trim();
-        const fileInput = document.getElementById('edit-prod-photo');
-        if (!prodName || !prodDesc) {
-          document.getElementById('edit-product-error').style.display = 'block';
-          return;
-        }
-        const business = businesses.find(b => b.id === currentUser?.id);
-        const product = business.products.find(p => p.name === document.getElementById('edit-prod-name').defaultValue);
-        if (fileInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            product.name = prodName;
-            product.desc = prodDesc;
-            product.photo = e.target.result;
+        if (business && prodName && prodDesc) {
+          const addProduct = (mediaURL) => {
+            business.products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
             updateLocalStorage();
-            closeModal('edit-product-modal');
+            closeModal('add-product-modal');
             showProfile();
           };
-          reader.readAsDataURL(fileInput.files[0]);
-        } else {
-          product.name = prodName;
-          product.desc = prodDesc;
-          updateLocalStorage();
-          closeModal('edit-product-modal');
-          showProfile();
+          if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => addProduct(e.target.result);
+            reader.readAsDataURL(fileInput.files[0]);
+          } else {
+            addProduct('https://via.placeholder.com/200.png?text=Product');
+          }
         }
       });
 
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
-        const fileInput = document.getElementById('settings-photo');
-        if (!newName) {
-          document.getElementById('settings-error').style.display = 'block';
-          return;
-        }
-        currentUser.name = newName;
-        if (fileInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            currentUser.profilePhoto = e.target.result;
-            if (currentUser.type === 'business') {
-              const business = businesses.find(b => b.id === currentUser.id);
-              business.name = newName;
-              business.displayPhoto = e.target.result;
-            }
-            updateLocalStorage();
-            closeModal('settings-modal');
-            showProfile();
-          };
-          reader.readAsDataURL(fileInput.files[0]);
-        } else {
+        const newPhoto = document.getElementById('settings-photo').value.trim();
+        if (newName) {
+          currentUser.name = newName;
+          currentUser.profilePhoto = newPhoto || '';
           if (currentUser.type === 'business') {
             const business = businesses.find(b => b.id === currentUser.id);
             business.name = newName;
+            business.displayPhoto = newPhoto || '';
           }
           updateLocalStorage();
           closeModal('settings-modal');
@@ -1040,36 +1071,66 @@
         showProfile();
       });
 
+      document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
+
       document.getElementById('view-store-btn').addEventListener('click', () => {
-        viewStore(document.getElementById('view-store-btn').getAttribute('data-id'));
+        const bizId = document.getElementById('view-store-btn').dataset.id;
+        if (bizId) {
+          viewStore(bizId);
+          closeModal('featured-product-popup');
+        }
+      });
+
+      document.querySelector('.close-btn[data-form="featured-product-popup"]').addEventListener('click', () => {
         closeModal('featured-product-popup');
       });
 
-      document.querySelector('.close-btn[data-form="featured-product-popup"]').addEventListener('click', () => closeModal('featured-product-popup'));
-
-      document.getElementById('business-btn').addEventListener('click', () => { popup.style.display = 'none'; businessForm.style.display = 'block'; });
-      document.getElementById('customer-btn').addEventListener('click', () => { popup.style.display = 'none'; customerForm.style.display = 'block'; });
-      document.getElementById('feed-btn').addEventListener('click', () => { popup.style.display = 'none'; displayFeed(); });
-      loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
-      signupBtn.addEventListener('click', () => popup.style.display = 'block');
+      document.getElementById('business-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('business-form').style.display = 'block';
+      });
+      document.getElementById('customer-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('customer-form').style.display = 'block';
+      });
+      document.getElementById('feed-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        displayFeed();
+      });
+      loginBtn.addEventListener('click', () => document.getElementById('login-form').style.display = 'block');
+      signupBtn.addEventListener('click', () => document.getElementById('popup').style.display = 'block');
       profileBtn.addEventListener('click', showProfile);
 
       document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
-        if (event.target.classList.contains('close-btn')) closeModal(event.target.getAttribute('data-form'));
+        if (event.target.id === 'back-to-feed') displayFeed();
+        if (event.target.id === 'back-to-store') viewStore(currentUser?.id);
+        if (event.target.classList.contains('back-to-feed-btn')) displayFeed();
+        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.dataset.id);
+        if (event.target.id === 'logout-btn') {
+          currentUser = null;
+          localStorage.removeItem('currentUser');
+          updateUIForUser();
+          displayFeed();
+        }
+        if (event.target.classList.contains('close-btn')) closeModal(event.target.dataset.form);
       });
 
       businessName.addEventListener('click', () => {
-        currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-        displayedCount = 6;
-        displayFeed();
+        if (feed.style.display === 'block') {
+          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+          displayedCount = 6;
+          displayFeed();
+        } else {
+          displayFeed();
+        }
       });
 
+      let searchTimeout;
       searchBar.addEventListener('keyup', () => {
-        clearTimeout(searchBar.timeout);
-        searchBar.timeout = setTimeout(() => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
           const query = searchBar.value.toLowerCase().trim();
-          currentBusinesses = query ? businesses.filter(biz => 
+          currentBusinesses = query ? businesses.filter(biz =>
             biz.name.toLowerCase().includes(query) ||
             biz.category.toLowerCase().includes(query) ||
             biz.location.toLowerCase().includes(query) ||
@@ -1101,36 +1162,46 @@
         const whatsapp = document.getElementById('biz-whatsapp').value.trim();
         const instagram = document.getElementById('biz-instagram').value.trim();
         const location = document.getElementById('biz-location').value.trim();
-        if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location || !/^\S+@\S+\.\S+$/.test(email) || !/^(876)\d{7}$/.test(whatsapp)) {
-          alert('Please fill in all fields correctly!');
-          return;
+
+        if (name && email && password && category && product && desc && whatsapp && instagram && location) {
+          const business = {
+            id: Date.now(),
+            name,
+            category,
+            products: [{ name: product, desc, photo: '', views: 0 }],
+            desc,
+            whatsapp,
+            instagram,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          };
+          const user = { id: business.id, type: 'business', name, email, password };
+          businesses.push(business);
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+          closeModal('business-form');
+          updateUIForUser();
+          displayFeed();
         }
-        const business = { id: Date.now(), name, category, products: [{ name: product, desc, photo: '', views: 0 }], desc, whatsapp, instagram, location, displayPhoto: '', views: 0, openingHour: "09:00", closingHour: "18:00" };
-        const user = { id: business.id, type: 'business', name, email, password };
-        businesses.push(business);
-        users.push(user);
-        currentUser = user;
-        updateLocalStorage();
-        closeModal('business-form');
-        updateUIForUser();
-        displayFeed();
       });
 
       document.getElementById('submit-customer-btn').addEventListener('click', () => {
         const name = document.getElementById('cust-name').value.trim();
         const email = document.getElementById('cust-email').value.trim();
         const password = document.getElementById('cust-password').value.trim();
-        if (!name || !email || !password || !/^\S+@\S+\.\S+$/.test(email)) {
-          alert('Please fill in all fields correctly!');
-          return;
+        if (name && email && password) {
+          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+          closeModal('customer-form');
+          updateUIForUser();
+          displayFeed();
         }
-        const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
-        users.push(user);
-        currentUser = user;
-        updateLocalStorage();
-        closeModal('customer-form');
-        updateUIForUser();
-        displayFeed();
       });
 
       document.getElementById('login-submit-btn').addEventListener('click', () => {
@@ -1143,13 +1214,12 @@
           closeModal('login-form');
           updateUIForUser();
           displayFeed();
-        } else {
-          alert('Invalid email or password!');
         }
       });
 
       const viewStore = bizId => {
         const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
         business.views++;
         if (currentUser && currentUser.type === 'customer') {
           currentUser.recentlyViewed = currentUser.recentlyViewed || [];
@@ -1161,12 +1231,12 @@
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
         storePage.innerHTML = `
-          <button id="back-to-feed">Back to Feed</button>
+          <button class="back-to-feed-btn">Back to Feed</button>
           <div class="store-container">
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
               <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
+              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
               <div class="contact">
@@ -1180,7 +1250,7 @@
               <div class="products-grid">
                 ${business.products.map(p => `
                   <div class="product-card">
-                    <img src="${p.photo || 'https://via.placeholder.com/250x150.png?text=Product'}" alt="${p.name}">
+                    <img src="${p.photo || 'https://via.placeholder.com/200.png?text=Product'}" alt="${p.name}">
                     <div class="product-info">
                       <p class="product-name">${p.name}</p>
                       <p class="product-desc">${p.desc}</p>
@@ -1190,13 +1260,62 @@
                 `).join('')}
               </div>
             </div>
+            <div class="featured-products">
+              <h3>Featured Products</h3>
+              <div class="carousel-container">
+                <div class="carousel-track">
+                  ${business.products.sort((a, b) => b.views - a.views).map(p => `
+                    <div class="carousel-item" data-biz-id="${business.id}" data-product-name="${p.name}">
+                      <img src="${p.photo || 'https://via.placeholder.com/200.png?text=Product'}" alt="${p.name}">
+                      <div class="product-info">${p.name} (Views: ${p.views})</div>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="carousel-nav">
+                  <button class="prev-btn">&lt;</button>
+                  <button class="next-btn">&gt;</button>
+                </div>
+              </div>
+            </div>
           </div>
         `;
-        document.getElementById('back-to-feed').addEventListener('click', displayFeed);
+        const track = storePage.querySelector('.carousel-track');
+        let currentIndex = 0;
+        const items = track.querySelectorAll('.carousel-item');
+        const totalItems = items.length;
+        const itemsPerRow = window.innerWidth >= 1025 ? 5 : 1;
+        const totalRows = Math.ceil(totalItems / itemsPerRow);
+
+        function updateStoreCarousel() {
+          const offset = -(currentIndex * (100 / itemsPerRow));
+          track.style.transform = `translateX(${offset}%)`;
+        }
+
+        storePage.querySelector('.prev-btn').addEventListener('click', () => {
+          currentIndex = Math.max(0, currentIndex - 1);
+          updateStoreCarousel();
+        });
+
+        storePage.querySelector('.next-btn').addEventListener('click', () => {
+          currentIndex = Math.min(totalRows - 1, currentIndex + 1);
+          updateStoreCarousel();
+        });
+
+        items.forEach(item => {
+          item.addEventListener('click', () => showFeaturedProductPopup(item.dataset.bizId, item.dataset.productName));
+        });
+
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % totalRows;
+          updateStoreCarousel();
+        }, 5000);
       };
 
-      if (!currentUser) popup.style.display = 'block';
-      else updateUIForUser();
+      if (!currentUser) {
+        document.getElementById('popup').style.display = 'block';
+      } else {
+        updateUIForUser();
+      }
       displayFeed();
     });
   </script>
