@@ -248,28 +248,26 @@
       display: none;
     }
 
-    /* Hot Products Section */
+    /* Hot Products Section (Updated to fix text overlap) */
     .hot-products {
-      background: var(--premium-bg);
       padding: 1.5rem;
-      border-radius: 15px;
-      margin-bottom: 2rem;
-      box-shadow: var(--premium-shadow);
-      border-left: 8px solid var(--primary-green);
-      position: relative;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      position: relative;
     }
     .hot-products h3 {
       text-align: center;
       font-size: 1.5rem;
       color: var(--primary-green);
       margin-bottom: 1rem;
-      font-weight: 700;
     }
     .hot-product-container {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       white-space: nowrap;
+      display: flex;
     }
     .hot-product-grid {
       display: flex;
@@ -280,13 +278,16 @@
     .hot-product-item {
       flex: 0 0 auto;
       width: 200px;
-      background: var(--white);
+      background: #f8f8f8;
       border-radius: 10px;
       padding: 10px;
       text-align: center;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s;
-      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     .hot-product-item:hover {
       transform: scale(1.05);
@@ -302,12 +303,9 @@
       display: block;
       font-size: 0.9rem;
       margin-top: 0.5rem;
-      color: var(--text-color);
-    }
-    @media (max-width: 768px) {
-      .hot-product-item {
-        width: calc((100vw - 4rem) / 2);
-      }
+      word-wrap: break-word;
+      text-align: center;
+      max-width: 180px;
     }
 
     /* Hot Product Popup */
@@ -680,6 +678,82 @@
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
     }
+
+    /* Slide Menu Styles */
+    .slide-menu {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100vh;
+      background: var(--white);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 1001;
+      transition: left 0.3s ease-in-out;
+    }
+
+    .slide-menu.active {
+      left: 0;
+    }
+
+    .slide-menu-content {
+      padding: 1.5rem;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .slide-menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .slide-menu-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .slide-menu-list button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .slide-menu-list button:hover {
+      background: var(--secondary-green);
+      transform: translateX(2px);
+    }
+
+    .slide-menu-close-btn {
+      background: none;
+      border: none;
+      color: var(--muted-color);
+      font-size: 1.2rem;
+      cursor: pointer;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    /* Overlay to dim the background when slide menu is open */
+    .slide-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+
+    .slide-menu-overlay.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -691,6 +765,19 @@
       <button id="signup-btn">Sign Up</button>
     </div>
   </header>
+
+  <div id="slide-menu" class="slide-menu" style="display: none;">
+    <div class="slide-menu-content">
+      <h2>Profile Menu</h2>
+      <ul class="slide-menu-list">
+        <li><button id="profile-settings-btn">Settings</button></li>
+        <li id="manage-products-item" style="display: none;"><button id="manage-products-btn">Manage Products</button></li>
+        <li id="recent-activity-item" style="display: none;"><button id="recent-activity-btn">Recent Activity</button></li>
+        <li><button id="logout-btn">Logout</button></li>
+      </ul>
+      <button class="slide-menu-close-btn">Close</button>
+    </div>
+  </div>
 
   <div class="container" id="main-content">
     <div class="search-container">
@@ -855,6 +942,10 @@
       const manageProductList = document.getElementById('manage-product-list');
       const hotProductGrid = document.querySelector('.hot-product-grid');
       const hotProductPopup = document.getElementById('hot-product-popup');
+      const slideMenu = document.getElementById('slide-menu');
+      const slideMenuOverlay = document.createElement('div');
+      slideMenuOverlay.className = 'slide-menu-overlay';
+      document.body.appendChild(slideMenuOverlay);
 
       /*** Helper Functions ***/
       function generateDummyBusinesses(count) {
@@ -1058,7 +1149,6 @@
             <p>Total Views: ${business.views}</p>
             <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0]?.name || 'No products'}</p>
             <button id="add-product-btn">Add Product</button>
-            <button id="manage-products-btn">Manage Products</button>
             <div class="product-list" id="profile-product-list">
               ${business.products.map(p => `
                 <div class="product-item">
@@ -1084,21 +1174,13 @@
         }
         profileContent += `
             </div>
-            <button id="settings-btn">Settings</button>
-            <button id="logout-btn">Logout</button>
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        const settingsBtn = document.getElementById('settings-btn');
-        if (settingsBtn) {
-          settingsBtn.addEventListener('click', openSettingsModal);
-        }
+        initViewsChart();
         if (currentUser.type === 'business') {
-          initViewsChart();
           const addProductBtn = document.getElementById('add-product-btn');
-          const manageProductsBtn = document.getElementById('manage-products-btn');
           if (addProductBtn) addProductBtn.addEventListener('click', openAddProductModal);
-          if (manageProductsBtn) manageProductsBtn.addEventListener('click', openManageProductsModal);
           document.querySelectorAll('.edit-product-btn').forEach(btn => {
             btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
           });
@@ -1110,6 +1192,13 @@
             });
           });
         }
+        document.getElementById(currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed')?.addEventListener('click', () => {
+          if (currentUser.type === 'business') {
+            viewStore(currentUser.id);
+          } else {
+            displayFeed();
+          }
+        });
       };
 
       function initViewsChart() {
@@ -1358,7 +1447,51 @@
       });
       loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
       signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
-      profileBtn.addEventListener('click', showProfile);
+      profileBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          loginForm.style.display = 'block';
+          return;
+        }
+        showSlideMenu();
+      });
+
+      function showSlideMenu() {
+        if (!slideMenu || !slideMenuOverlay) return;
+        slideMenu.classList.add('active');
+        slideMenuOverlay.classList.add('active');
+
+        // Conditionally show menu items based on user type
+        const manageProductsItem = document.getElementById('manage-products-item');
+        const recentActivityItem = document.getElementById('recent-activity-item');
+        if (currentUser.type === 'business') {
+          manageProductsItem.style.display = 'block';
+          recentActivityItem.style.display = 'none';
+        } else if (currentUser.type === 'customer') {
+          manageProductsItem.style.display = 'none';
+          recentActivityItem.style.display = 'block';
+        }
+
+        // Event listeners for slide menu items
+        document.getElementById('profile-settings-btn')?.addEventListener('click', openSettingsModal);
+        document.getElementById('manage-products-btn')?.addEventListener('click', openManageProductsModal);
+        document.getElementById('recent-activity-btn')?.addEventListener('click', () => {
+          showProfile();
+        });
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+          currentUser = null;
+          localStorage.removeItem('currentUser');
+          updateUIForUser();
+          closeSlideMenu();
+          displayFeed();
+        });
+        document.querySelector('.slide-menu-close-btn')?.addEventListener('click', closeSlideMenu);
+        slideMenuOverlay.addEventListener('click', closeSlideMenu);
+      }
+
+      function closeSlideMenu() {
+        if (slideMenu) slideMenu.classList.remove('active');
+        if (slideMenuOverlay) slideMenuOverlay.classList.remove('active');
+      }
 
       document.body.addEventListener('click', event => {
         if (event.target.id === 'back-to-feed') {
@@ -1376,14 +1509,12 @@
         if (event.target.id === 'add-product-btn') {
           openAddProductModal();
         }
-        if (event.target.id === 'logout-btn') {
-          currentUser = null;
-          localStorage.removeItem('currentUser');
-          updateUIForUser();
-          displayFeed();
-        }
         if (event.target.classList.contains('close-btn')) {
           closeModal(event.target.getAttribute('data-form'));
+        }
+        // Close slide menu if clicking outside
+        if (event.target === slideMenuOverlay && slideMenuOverlay.classList.contains('active')) {
+          closeSlideMenu();
         }
       });
 
