@@ -19,7 +19,13 @@
       --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
       --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Poppins', Arial, sans-serif;
       background: linear-gradient(135deg, var(--light-bg), var(--light-bg-alt));
@@ -27,6 +33,7 @@
       line-height: 1.6;
       min-height: 100vh;
     }
+
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
       color: var(--white);
@@ -36,11 +43,16 @@
       padding: 1rem 2rem;
       font-size: 1.5rem;
     }
-    #businessName { cursor: pointer; }
+
+    #businessName {
+      cursor: pointer;
+    }
+
     .header-buttons {
       display: flex;
       gap: 1rem;
     }
+
     .header-buttons button {
       background: var(--white);
       color: var(--primary-green);
@@ -52,25 +64,39 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
+
     .header-buttons button:hover {
       background: #f8f9fa;
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
+
     .container {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1.5rem;
     }
+
     @media (max-width: 1024px) {
-      .container { margin: 1rem auto; padding: 0 1rem; }
-      header { flex-direction: column; gap: 1rem; }
-      .header-buttons { flex-wrap: wrap; justify-content: center; }
+      .container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+      }
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
     }
+
     .search-container {
       margin-bottom: 1.5rem;
       position: relative;
     }
+
     #search-bar {
       width: 100%;
       padding: 0.875rem 1.5rem;
@@ -80,33 +106,38 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       transition: border-color 0.3s, box-shadow 0.3s;
     }
+
     #search-bar:focus {
       border-color: var(--primary-green);
       outline: none;
       box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
+
     #search-results-info {
       margin-top: 0.5rem;
       font-size: 0.9rem;
       color: var(--muted-color);
       text-align: center;
     }
+
     .business-card,
     .store-page,
     .profile-page {
       background: var(--white);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      border-radius: 15px;
+      border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       transition: transform 0.3s, box-shadow 0.3s;
     }
+
     .business-card:hover,
     .store-page:hover,
     .profile-page:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
+
     .business-card h3,
     .store-page h3,
     .profile-page h3 {
@@ -115,6 +146,7 @@
       font-size: 1.5rem;
       font-weight: 600;
     }
+
     .business-card .category,
     .store-page .category {
       font-style: italic;
@@ -122,6 +154,7 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
+
     .business-image,
     .profile-header img {
       width: 150px;
@@ -131,6 +164,7 @@
       margin-bottom: 1rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
     .letter-avatar {
       width: 150px;
       height: 150px;
@@ -141,8 +175,9 @@
       color: var(--white);
       border-radius: 50%;
       margin-bottom: 1rem;
-      background: #3498db;
+      background: var(--primary-green);
     }
+
     .status-indicator {
       display: inline-block;
       width: 10px;
@@ -150,6 +185,7 @@
       border-radius: 50%;
       margin-left: 5px;
     }
+
     .contact a {
       margin-right: 1rem;
       text-decoration: none;
@@ -157,12 +193,17 @@
       font-size: 0.9rem;
       transition: color 0.3s;
     }
-    .contact a:hover { color: var(--accent-blue-hover); }
+
+    .contact a:hover {
+      color: var(--accent-blue-hover);
+    }
+
     .views {
       font-size: 0.875rem;
       color: var(--muted-color);
       margin-top: 0.75rem;
     }
+
     button {
       background: var(--primary-green);
       color: var(--white);
@@ -174,11 +215,13 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
+
     button:hover {
       background: var(--secondary-green);
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
+
     .modal {
       position: fixed;
       top: 50%;
@@ -194,12 +237,14 @@
       width: 90%;
       display: none;
     }
+
     .modal h2 {
       color: var(--primary-green);
       margin-bottom: 1.5rem;
       font-size: 1.8rem;
       font-weight: 600;
     }
+
     input,
     select,
     textarea {
@@ -212,6 +257,7 @@
       font-size: 1rem;
       transition: border-color 0.3s, box-shadow 0.3s;
     }
+
     input:focus,
     select:focus,
     textarea:focus {
@@ -219,220 +265,135 @@
       outline: none;
       box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
+
     .modal .error {
       color: #e74c3c;
       font-size: 0.9rem;
       margin-top: 0.5rem;
       display: none;
     }
-    /* New Hot Products Section */
+
+    /* New Featured Products Section */
     .featured-products {
       background: var(--premium-bg);
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: 15px;
       margin-bottom: 2rem;
       box-shadow: var(--premium-shadow);
       position: relative;
       overflow: hidden;
     }
+
     .featured-products h3 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: var(--primary-green);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       text-align: center;
       font-weight: 700;
     }
+
     .featured-grid {
       display: flex;
       flex-wrap: nowrap;
       gap: 1rem;
-      padding: 0.5rem;
       overflow-x: auto;
       scroll-behavior: smooth;
-      transition: transform 0.3s ease;
+      padding-bottom: 1rem;
     }
+
     @media (min-width: 1025px) {
       .featured-grid {
         flex-wrap: wrap;
         justify-content: center;
-        overflow-x: hidden;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(250px, 1fr));
+        max-height: 600px; /* Two rows */
+        overflow: hidden;
       }
     }
+
     .featured-item {
       flex: 0 0 250px;
       background: var(--white);
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       overflow: hidden;
-      cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      position: relative;
     }
+
     .featured-item:hover {
       transform: scale(1.05);
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
+
     .featured-item img {
       width: 100%;
-      height: 150px;
+      height: 180px;
       object-fit: cover;
       border-radius: 15px 15px 0 0;
-      loading: lazy;
     }
+
     .featured-info {
       padding: 1rem;
-      text-align: left;
+      text-align: center;
     }
+
     .featured-info h4 {
       font-size: 1.1rem;
       color: var(--primary-green);
       margin-bottom: 0.5rem;
     }
+
     .featured-info p {
       font-size: 0.9rem;
       color: var(--muted-color);
     }
-    .auto-scroll-btn {
+
+    .play-pause-btn {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
+      bottom: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: red;
-      color: white;
-      border: none;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s, transform 0.3s;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .auto-scroll-btn.active {
+
+    .play-pause-btn.play {
       background: var(--primary-green);
-      animation: spin 1s infinite linear;
+      color: var(--white);
     }
-    .auto-scroll-btn::after {
-      content: 'Auto-scroll stopped';
-      position: absolute;
-      bottom: 40px;
-      right: 0;
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 0.5rem;
-      border-radius: 5px;
-      font-size: 0.8rem;
-      display: none;
+
+    .play-pause-btn.pause {
+      background: #e74c3c;
+      color: var(--white);
     }
-    .auto-scroll-btn.active::after {
-      content: 'Auto-scroll on';
-      display: block;
+
+    @keyframes slideRight {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .featured-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--premium-bg);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      z-index: 2000;
-      max-width: 400px;
-      width: 90%;
-      display: none;
-      text-align: center;
-    }
-    .featured-popup img {
-      width: 150px;
-      height: 150px;
-      border-radius: 10px;
-      object-fit: cover;
-      margin-bottom: 1rem;
-    }
-    .featured-popup h3 {
-      color: var(--primary-green);
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
+
+    /* Feed Grid */
     .feed-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
-    .store-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 1rem;
-    }
-    .business-info {
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 1rem;
-    }
-    .products-section { width: 100%; }
-    .products-section h4 {
-      margin-bottom: 1rem;
-      color: var(--primary-green);
-      font-size: 1.5rem;
-      text-align: center;
-    }
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    .product-card {
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .product-card img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-      loading: lazy;
-    }
-    .product-info {
-      padding: 1rem;
-      text-align: center;
-    }
-    .product-name {
-      font-size: 1.1rem;
-      color: var(--primary-green);
-      margin-bottom: 0.5rem;
-    }
-    .product-desc {
-      font-size: 0.95rem;
-      color: var(--text-color);
-      margin-bottom: 0.5rem;
-    }
-    .product-views {
-      font-size: 0.85rem;
-      color: var(--muted-color);
-    }
+
+    /* Profile Page */
     .profile-container {
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: var(--premium-shadow);
       text-align: center;
     }
+
     .profile-header {
       display: flex;
       flex-direction: column;
@@ -440,12 +401,14 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
+
     .product-list {
       margin-top: 1rem;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
     }
+
     .product-item {
       background: var(--white);
       padding: 1rem;
@@ -456,24 +419,30 @@
       align-items: center;
       cursor: pointer;
     }
+
     .product-item img {
-      width: 100px;
+      width: 100%;
       height: 100px;
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 0.5rem;
     }
+
     .product-item-actions button {
       margin: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
     }
-    #settings-modal input[type="file"] {
-      padding: 0.5rem;
+
+    /* Popup */
+    #featured-popup {
+      background: var(--premium-bg);
+      max-width: 400px;
     }
-    #manage-products-modal .product-item img {
-      width: 80px;
-      height: 80px;
+
+    #featured-popup img {
+      width: 150px;
+      height: 150px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
     }
   </style>
 </head>
@@ -495,7 +464,7 @@
     <div id="featured-products" class="featured-products">
       <h3>Featured Products</h3>
       <div class="featured-grid"></div>
-      <button class="auto-scroll-btn" title="Toggle Auto-Scroll"></button>
+      <button id="play-pause-btn" class="play-pause-btn play">▶</button>
     </div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
@@ -554,8 +523,6 @@
     <input type="text" id="settings-name" placeholder="Your Name" required />
     <input type="file" id="settings-photo" accept="image/*" />
     <button id="save-settings-btn">Save Settings</button>
-    <button id="reset-settings-btn">Reset to Default</button>
-    <div id="settings-error" class="error">Please fill in all required fields.</div>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
 
@@ -565,7 +532,6 @@
     <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
     <input type="file" id="prod-media" accept="image/*" />
     <button id="submit-product-btn">Add Product</button>
-    <div id="add-product-error" class="error">Please fill in all required fields!</div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
 
@@ -575,7 +541,6 @@
     <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
     <input type="file" id="edit-prod-media" accept="image/*" />
     <button id="save-product-btn">Save Changes</button>
-    <div id="edit-product-error" class="error">Please fill in all required fields.</div>
     <button class="close-btn" data-form="edit-product-modal">Close</button>
   </div>
 
@@ -585,7 +550,7 @@
     <button class="close-btn" data-form="manage-products-modal">Close</button>
   </div>
 
-  <div id="featured-popup" class="featured-popup">
+  <div id="featured-popup" class="modal">
     <button class="close-btn" data-form="featured-popup">×</button>
     <img id="featured-img" alt="Product Image">
     <h3 id="featured-name"></h3>
@@ -597,32 +562,27 @@
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
-      let displayedCount = 6;
       let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
-      let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+      let users = JSON.parse(localStorage.getItem('users')) || [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
-      let autoScrollInterval = null;
+      let isPlaying = false;
 
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
         if (!b.products || b.products.length === 0) {
-          b.products = [{ name: `Default Product`, desc: `Default description`, photo: '', views: 0 }];
+          b.products = [{ name: `Product ${b.id}`, desc: `Description`, photo: '', views: Math.floor(Math.random() * 1000) }];
         }
         return b;
       });
 
-      const popup = document.getElementById('popup');
-      const businessForm = document.getElementById('business-form');
-      const customerForm = document.getElementById('customer-form');
-      const loginForm = document.getElementById('login-form');
       const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
       const profilePage = document.getElementById('profile-page');
       const featuredProducts = document.getElementById('featured-products');
       const featuredGrid = featuredProducts.querySelector('.featured-grid');
-      const autoScrollBtn = featuredProducts.querySelector('.auto-scroll-btn');
+      const playPauseBtn = document.getElementById('play-pause-btn');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
       const signupBtn = document.getElementById('signup-btn');
@@ -633,37 +593,26 @@
       function generateDummyBusinesses(count) {
         const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
         const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
-        const dummyBusinesses = [];
-        for (let i = 0; i < count; i++) {
-          const category = categories[Math.floor(Math.random() * categories.length)];
-          const location = locations[Math.floor(Math.random() * locations.length)];
-          dummyBusinesses.push({
-            id: Date.now() + i,
-            name: `Business ${i + 1}`,
-            category,
-            products: [{ name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: '', views: Math.floor(Math.random() * 1000) }],
-            desc: `Description for business ${i + 1}.`,
-            whatsapp: `876555${String(i).padStart(4, '0')}`,
-            instagram: `business${i + 1}`,
-            location,
-            displayPhoto: '',
-            views: Math.floor(Math.random() * 1000),
-            openingHour: "09:00",
-            closingHour: "18:00"
-          });
-        }
-        return dummyBusinesses;
+        return Array.from({ length: count }, (_, i) => ({
+          id: Date.now() + i,
+          name: `Business ${i + 1}`,
+          category: categories[Math.floor(Math.random() * categories.length)],
+          products: [{ name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: '', views: Math.floor(Math.random() * 1000) }],
+          desc: `Description for business ${i + 1}.`,
+          whatsapp: `876555${String(i).padStart(4, '0')}`,
+          instagram: `business${i + 1}`,
+          location: locations[Math.floor(Math.random() * locations.length)],
+          displayPhoto: '',
+          views: Math.floor(Math.random() * 1000),
+          openingHour: "09:00",
+          closingHour: "18:00"
+        }));
       }
 
       function updateLocalStorage() {
-        try {
-          localStorage.setItem('businesses', JSON.stringify(businesses));
-          localStorage.setItem('users', JSON.stringify(users));
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        } catch (e) {
-          console.error('LocalStorage error:', e);
-          alert('Storage limit reached or unavailable.');
-        }
+        localStorage.setItem('businesses', JSON.stringify(businesses));
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
 
       function updateUIForUser() {
@@ -673,8 +622,7 @@
       }
 
       function closeModal(formId) {
-        const modal = document.getElementById(formId);
-        if (modal) modal.style.display = 'none';
+        document.getElementById(formId).style.display = 'none';
       }
 
       function getLetterAvatar(name) {
@@ -684,31 +632,27 @@
 
       function isStoreOpen(business) {
         const now = new Date();
-        const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
-        const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
+        const [openH, openM] = business.openingHour.split(":").map(Number);
+        const [closeH, closeM] = business.closingHour.split(":").map(Number);
         const openDate = new Date(now).setHours(openH, openM, 0, 0);
         const closeDate = new Date(now).setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
 
       function displayFeed() {
-        feed.style.display = 'block';
+        feed.style.display = 'grid';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
-        feed.innerHTML = '<div class="feed-grid"></div>';
-        const gridContainer = feed.querySelector('.feed-grid');
-        const businessesToShow = currentBusinesses.slice(0, window.innerWidth >= 1024 ? currentBusinesses.length : displayedCount);
-        document.getElementById('search-results-info').textContent = 
-          `Found ${currentBusinesses.length} results, showing ${businessesToShow.length}`;
+        feed.innerHTML = '';
+        const businessesToShow = currentBusinesses;
+        document.getElementById('search-results-info').textContent = `Found ${businessesToShow.length} results`;
         businessesToShow.forEach(business => {
-          const featuredProduct = business.products[0] || { name: 'No product', photo: '' };
           const card = document.createElement('div');
           card.className = 'business-card';
           card.innerHTML = `
             <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
             <p class="category">${business.category}</p>
-            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
-            <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
             <p>${business.desc}</p>
             <p><strong>Location:</strong> ${business.location}</p>
             <div class="contact">
@@ -718,74 +662,67 @@
             <p class="views">Views: ${business.views}</p>
             <button class="view-store-btn" data-id="${business.id}">View Store</button>
           `;
-          gridContainer.appendChild(card);
+          feed.appendChild(card);
         });
         displayFeaturedProducts();
       }
 
       function displayFeaturedProducts() {
-        const categories = [...new Set(businesses.map(b => b.category))];
-        const topProducts = categories.map(cat => {
-          const catBusinesses = businesses.filter(b => b.category === cat);
-          return catBusinesses.reduce((top, biz) => {
-            const topProduct = biz.products.reduce((prev, curr) => curr.views > prev.views ? curr : prev);
-            return top.views > biz.views ? top : { ...biz, featuredProduct: topProduct };
-          }, catBusinesses[0]);
-        }).sort((a, b) => b.views - a.views);
-
-        featuredGrid.innerHTML = '';
-        topProducts.forEach(biz => {
-          const product = biz.featuredProduct;
-          const item = document.createElement('div');
-          item.className = 'featured-item';
-          item.setAttribute('data-biz-id', biz.id);
-          item.innerHTML = `
-            <img src="${product.photo || 'https://via.placeholder.com/250x150'}" alt="${product.name}">
-            <div class="featured-info">
-              <h4>${biz.name} - ${product.name}</h4>
-              <p>${biz.category} | Views: ${biz.views}</p>
-            </div>
-          `;
-          featuredGrid.appendChild(item);
-          item.addEventListener('click', () => showFeaturedPopup(biz.id, product.name));
+        const productsByCategory = {};
+        businesses.forEach(biz => {
+          biz.products.forEach(prod => {
+            if (!productsByCategory[biz.category]) productsByCategory[biz.category] = [];
+            productsByCategory[biz.category].push({ ...prod, bizId: biz.id, bizName: biz.name });
+          });
         });
 
-        if (autoScrollBtn.classList.contains('active')) startAutoScroll();
+        const featured = Object.values(productsByCategory)
+          .flatMap(products => products.sort((a, b) => b.views - a.views))
+          .sort((a, b) => b.views - a.views);
+
+        featuredGrid.innerHTML = '';
+        featured.forEach(product => {
+          const item = document.createElement('div');
+          item.className = 'featured-item';
+          item.setAttribute('data-biz-id', product.bizId);
+          item.innerHTML = `
+            <img src="${product.photo || 'https://via.placeholder.com/250x180.png?text=Product'}" alt="${product.name}">
+            <div class="featured-info">
+              <h4>${product.name}</h4>
+              <p>${product.bizName} - Views: ${product.views}</p>
+            </div>
+          `;
+          item.addEventListener('click', () => showFeaturedPopup(product.bizId, product.name));
+          featuredGrid.appendChild(item);
+        });
       }
 
       function showFeaturedPopup(bizId, productName) {
-        const business = businesses.find(b => b.id == bizId);
+        const business = businesses.find(b => b.id === bizId);
         const product = business.products.find(p => p.name === productName);
-        document.getElementById('featured-img').src = product.photo || 'https://via.placeholder.com/150';
-        document.getElementById('featured-name').textContent = `${business.name} - ${product.name}`;
+        document.getElementById('featured-img').src = product.photo || 'https://via.placeholder.com/150.png?text=Product';
+        document.getElementById('featured-name').textContent = product.name;
         document.getElementById('featured-desc').textContent = product.desc;
-        document.getElementById('featured-views').textContent = `Views: ${business.views}`;
+        document.getElementById('featured-views').textContent = `Views: ${product.views}`;
         document.getElementById('view-store-btn').setAttribute('data-id', bizId);
         featuredPopup.style.display = 'block';
       }
 
-      function startAutoScroll() {
-        if (window.innerWidth < 1025) {
-          autoScrollInterval = setInterval(() => {
-            featuredGrid.scrollLeft += 2;
-            if (featuredGrid.scrollLeft >= featuredGrid.scrollWidth - featuredGrid.clientWidth) {
-              featuredGrid.scrollLeft = 0;
-            }
-          }, 20);
-        }
-      }
-
-      function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
-      }
-
-      autoScrollBtn.addEventListener('click', () => {
-        autoScrollBtn.classList.toggle('active');
-        if (autoScrollBtn.classList.contains('active')) {
-          startAutoScroll();
+      function animateFeaturedProducts() {
+        if (window.innerWidth >= 1025) return;
+        if (isPlaying) {
+          featuredGrid.style.animation = 'slideRight 20s linear infinite';
         } else {
-          stopAutoScroll();
+          featuredGrid.style.animation = 'none';
         }
+      }
+
+      playPauseBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playPauseBtn.classList.toggle('play', !isPlaying);
+        playPauseBtn.classList.toggle('pause', isPlaying);
+        playPauseBtn.textContent = isPlaying ? '■' : '▶';
+        animateFeaturedProducts();
       });
 
       function showProfile() {
@@ -793,27 +730,27 @@
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
-        let profileContent = `
+        const business = currentUser.type === 'business' ? businesses.find(b => b.id === currentUser.id) : null;
+        let html = `
           <div class="profile-container">
-            <a href="#" id="back-to-feed-btn" style="display:inline-block; padding:0.75rem 1.5rem; background:var(--primary-green); color:white; text-decoration:none; border-radius:8px; margin-bottom:1rem;">Back to Feed</a>
+            <button id="back-to-feed-btn">Back to Feed</button>
             <div class="profile-header">
-              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy">` : getLetterAvatar(currentUser.name)}
+              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}">` : getLetterAvatar(currentUser.name)}
               <h3>${currentUser.name}</h3>
               <p>${currentUser.email}</p>
             </div>
-            <div class="profile-details">
         `;
-        if (currentUser.type === 'business') {
-          const business = businesses.find(b => b.id === currentUser.id);
-          profileContent += `
-            <p>Total Views: ${business.views}</p>
+        if (business) {
+          html += `
+            <p>${business.desc}</p>
+            <button id="settings-btn">Settings</button>
             <button id="add-product-btn">Add Product</button>
             <button id="manage-products-btn">Manage Products</button>
-            <div class="product-list" id="profile-product-list">
+            <div class="product-list">
               ${business.products.map(p => `
                 <div class="product-item" data-id="${p.name}">
-                  ${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : '<div style="width:100px;height:100px;background:#ddd;border-radius:8px;"></div>'}
-                  <span>${p.name} - ${p.views} views</span>
+                  <img src="${p.photo || 'https://via.placeholder.com/100.png?text=Product'}" alt="${p.name}">
+                  <span>${p.name}</span>
                   <div class="product-item-actions">
                     <button class="edit-product-btn" data-id="${p.name}">Edit</button>
                     <button class="delete-product-btn" data-id="${p.name}">Delete</button>
@@ -821,50 +758,23 @@
                 </div>
               `).join('')}
             </div>
-            <div style="margin-top: 1rem; height:300px;">
+            <div style="margin-top: 2rem;">
               <canvas id="viewsChart"></canvas>
             </div>
           `;
-        } else {
-          profileContent += `
-            <h4>Recent Activity</h4>
-            ${currentUser.recentlyViewed?.map(item => `<p>${item.name}</p>`).join('') || '<p>No recent views.</p>'}
-          `;
         }
-        profileContent += `
-            </div>
-            <button id="settings-btn">Settings</button>
-            <button id="logout-btn">Logout</button>
-          </div>
-          <div id="featured-products-profile" class="featured-products">
-            <h3>Featured Products</h3>
-            <div class="featured-grid"></div>
-            <button class="auto-scroll-btn" title="Toggle Auto-Scroll"></button>
-          </div>
-        `;
-        profilePage.innerHTML = profileContent;
-        document.getElementById('back-to-feed-btn').addEventListener('click', (e) => { e.preventDefault(); displayFeed(); });
-        if (currentUser.type === 'business') {
+        html += `<button id="logout-btn">Logout</button></div>`;
+        profilePage.innerHTML = html;
+        document.getElementById('back-to-feed-btn').addEventListener('click', displayFeed);
+        if (business) {
           initViewsChart();
+          document.getElementById('settings-btn').addEventListener('click', () => document.getElementById('settings-modal').style.display = 'block');
           document.getElementById('add-product-btn').addEventListener('click', () => document.getElementById('add-product-modal').style.display = 'block');
           document.getElementById('manage-products-btn').addEventListener('click', openManageProductsModal);
           document.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id'))));
-          document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => {
-            if (confirm(`Delete "${btn.getAttribute('data-id')}"?`)) deleteProduct(btn.getAttribute('data-id'));
-          }));
-          document.querySelectorAll('.product-item').forEach(item => item.addEventListener('click', () => {
-            const productName = item.getAttribute('data-id');
-            const business = businesses.find(b => b.id === currentUser.id);
-            const product = business.products.find(p => p.name === productName);
-            alert(`${product.name}\n${product.desc}\nViews: ${product.views}`);
-          }));
+          document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id'))));
+          document.querySelectorAll('.product-item').forEach(item => item.addEventListener('click', () => showFeaturedPopup(business.id, item.getAttribute('data-id'))));
         }
-        document.getElementById('settings-btn').addEventListener('click', () => {
-          const modal = document.getElementById('settings-modal');
-          modal.style.display = 'block';
-          document.getElementById('settings-name').value = currentUser.name;
-          document.getElementById('settings-photo').value = '';
-        });
         document.getElementById('logout-btn').addEventListener('click', () => {
           currentUser = null;
           localStorage.removeItem('currentUser');
@@ -872,31 +782,21 @@
           displayFeed();
         });
         displayFeaturedProducts();
-        document.querySelector('#featured-products-profile .auto-scroll-btn').addEventListener('click', function() {
-          this.classList.toggle('active');
-          this.classList.contains('active') ? startAutoScroll() : stopAutoScroll();
-        });
       }
 
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart').getContext('2d');
-        const labels = Array(7).fill().map((_, i) => {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          return `${d.getMonth() + 1}/${d.getDate()}`;
-        }).reverse();
-        const dataPoints = Array(7).fill().map(() => Math.floor(Math.random() * 100));
+        const dataPoints = Array(7).fill(0).map(() => Math.floor(Math.random() * 100));
         new Chart(ctx, {
           type: 'line',
           data: {
-            labels,
+            labels: Array(7).fill(0).map((_, i) => `${new Date().getMonth() + 1}/${new Date().getDate() - i}`),
             datasets: [{
               label: 'Daily Views',
               data: dataPoints,
               borderColor: '#2ecc71',
               backgroundColor: 'rgba(46,204,113,0.1)',
-              fill: true,
-              tension: 0.3
+              fill: true
             }]
           },
           options: {
@@ -909,58 +809,27 @@
 
       function openManageProductsModal() {
         const business = businesses.find(b => b.id === currentUser.id);
-        const modal = document.getElementById('manage-products-modal');
-        const list = document.getElementById('manage-product-list');
-        list.innerHTML = business.products.map(p => `
+        document.getElementById('manage-product-list').innerHTML = business.products.map(p => `
           <div class="product-item">
-            ${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : '<div style="width:80px;height:80px;background:#ddd;border-radius:8px;"></div>'}
-            <span>${p.name} - ${p.views} views</span>
+            <img src="${p.photo || 'https://via.placeholder.com/100.png?text=Product'}" alt="${p.name}">
+            <span>${p.name}</span>
             <div class="product-item-actions">
               <button class="edit-product-btn" data-id="${p.name}">Edit</button>
               <button class="delete-product-btn" data-id="${p.name}">Delete</button>
             </div>
           </div>
         `).join('');
-        modal.style.display = 'block';
+        document.getElementById('manage-products-modal').style.display = 'block';
         document.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id'))));
-        document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => {
-          if (confirm(`Delete "${btn.getAttribute('data-id')}"?`)) deleteProduct(btn.getAttribute('data-id'));
-        }));
+        document.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id'))));
       }
 
       function editProduct(productId) {
         const business = businesses.find(b => b.id === currentUser.id);
         const product = business.products.find(p => p.name === productId);
-        const modal = document.getElementById('edit-product-modal');
         document.getElementById('edit-prod-name').value = product.name;
         document.getElementById('edit-prod-desc').value = product.desc;
-        document.getElementById('edit-prod-media').value = '';
-        modal.style.display = 'block';
-        document.getElementById('save-product-btn').onclick = () => {
-          const newName = document.getElementById('edit-prod-name').value.trim();
-          const newDesc = document.getElementById('edit-prod-desc').value.trim();
-          const fileInput = document.getElementById('edit-prod-media');
-          if (!newName || !newDesc) {
-            document.getElementById('edit-product-error').style.display = 'block';
-            return;
-          }
-          product.name = newName;
-          product.desc = newDesc;
-          if (fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              product.photo = e.target.result;
-              updateLocalStorage();
-              closeModal('edit-product-modal');
-              showProfile();
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-          } else {
-            updateLocalStorage();
-            closeModal('edit-product-modal');
-            showProfile();
-          }
-        };
+        document.getElementById('edit-product-modal').style.display = 'block';
       }
 
       function deleteProduct(productId) {
@@ -968,153 +837,128 @@
         business.products = business.products.filter(p => p.name !== productId);
         updateLocalStorage();
         showProfile();
-        if (document.getElementById('manage-products-modal').style.display === 'block') openManageProductsModal();
       }
 
       document.getElementById('submit-product-btn').addEventListener('click', () => {
-        const name = document.getElementById('prod-name').value.trim();
-        const desc = document.getElementById('prod-desc').value.trim();
-        const fileInput = document.getElementById('prod-media');
-        if (!name || !desc) {
-          document.getElementById('add-product-error').style.display = 'block';
-          return;
-        }
+        const name = document.getElementById('prod-name').value;
+        const desc = document.getElementById('prod-desc').value;
+        const file = document.getElementById('prod-media').files[0];
         const business = businesses.find(b => b.id === currentUser.id);
-        const product = { name, desc, photo: '', views: 0 };
-        if (fileInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            product.photo = e.target.result;
-            business.products.push(product);
-            updateLocalStorage();
-            closeModal('add-product-modal');
-            showProfile();
-          };
-          reader.readAsDataURL(fileInput.files[0]);
-        } else {
-          business.products.push(product);
+        const reader = new FileReader();
+        reader.onload = e => {
+          business.products.push({ name, desc, photo: e.target.result, views: 0 });
+          updateLocalStorage();
+          closeModal('add-product-modal');
+          showProfile();
+        };
+        if (file) reader.readAsDataURL(file);
+        else {
+          business.products.push({ name, desc, photo: '', views: 0 });
           updateLocalStorage();
           closeModal('add-product-modal');
           showProfile();
         }
       });
 
-      document.getElementById('save-settings-btn').addEventListener('click', () => {
-        const name = document.getElementById('settings-name').value.trim();
-        const fileInput = document.getElementById('settings-photo');
-        if (!name) {
-          document.getElementById('settings-error').style.display = 'block';
-          return;
-        }
-        currentUser.name = name;
-        if (fileInput.files[0]) {
+      document.getElementById('save-product-btn').addEventListener('click', () => {
+        const name = document.getElementById('edit-prod-name').value;
+        const desc = document.getElementById('edit-prod-desc').value;
+        const file = document.getElementById('edit-prod-media').files[0];
+        const business = businesses.find(b => b.id === currentUser.id);
+        const product = business.products.find(p => p.name === name);
+        if (file) {
           const reader = new FileReader();
-          reader.onload = (e) => {
+          reader.onload = e => {
+            product.desc = desc;
+            product.photo = e.target.result;
+            updateLocalStorage();
+            closeModal('edit-product-modal');
+            showProfile();
+          };
+          reader.readAsDataURL(file);
+        } else {
+          product.desc = desc;
+          updateLocalStorage();
+          closeModal('edit-product-modal');
+          showProfile();
+        }
+      });
+
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        const name = document.getElementById('settings-name').value;
+        const file = document.getElementById('settings-photo').files[0];
+        currentUser.name = name;
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => {
             currentUser.profilePhoto = e.target.result;
-            if (currentUser.type === 'business') {
-              const business = businesses.find(b => b.id === currentUser.id);
-              business.name = name;
-              business.displayPhoto = e.target.result;
-            }
+            if (currentUser.type === 'business') businesses.find(b => b.id === currentUser.id).displayPhoto = e.target.result;
             updateLocalStorage();
             closeModal('settings-modal');
             showProfile();
           };
-          reader.readAsDataURL(fileInput.files[0]);
+          reader.readAsDataURL(file);
         } else {
-          if (currentUser.type === 'business') {
-            const business = businesses.find(b => b.id === currentUser.id);
-            business.name = name;
-            if (!currentUser.profilePhoto) business.displayPhoto = '';
-          }
           updateLocalStorage();
           closeModal('settings-modal');
           showProfile();
         }
       });
 
-      document.getElementById('reset-settings-btn').addEventListener('click', () => {
-        currentUser.profilePhoto = '';
-        if (currentUser.type === 'business') {
-          const business = businesses.find(b => b.id === currentUser.id);
-          business.displayPhoto = '';
-        }
-        updateLocalStorage();
-        closeModal('settings-modal');
-        showProfile();
-      });
-
       document.getElementById('view-store-btn').addEventListener('click', () => {
-        const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
-        viewStore(bizId);
+        viewStore(document.getElementById('view-store-btn').getAttribute('data-id'));
         closeModal('featured-popup');
       });
 
       document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', () => closeModal(btn.getAttribute('data-form'))));
 
-      document.getElementById('business-btn').addEventListener('click', () => { popup.style.display = 'none'; businessForm.style.display = 'block'; });
-      document.getElementById('customer-btn').addEventListener('click', () => { popup.style.display = 'none'; customerForm.style.display = 'block'; });
-      document.getElementById('feed-btn').addEventListener('click', () => { popup.style.display = 'none'; displayFeed(); });
-      loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
-      signupBtn.addEventListener('click', () => popup.style.display = 'block');
+      loginBtn.addEventListener('click', () => document.getElementById('login-form').style.display = 'block');
+      signupBtn.addEventListener('click', () => document.getElementById('popup').style.display = 'block');
       profileBtn.addEventListener('click', showProfile);
 
-      businessName.addEventListener('click', () => {
-        currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-        displayedCount = 6;
-        displayFeed();
-      });
+      businessName.addEventListener('click', displayFeed);
 
       searchBar.addEventListener('keyup', () => {
         const query = searchBar.value.toLowerCase().trim();
-        currentBusinesses = query ? businesses.filter(biz => 
-          biz.name.toLowerCase().includes(query) ||
-          biz.category.toLowerCase().includes(query) ||
-          biz.location.toLowerCase().includes(query) ||
-          biz.products.some(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query))
+        currentBusinesses = query ? businesses.filter(b => 
+          b.name.toLowerCase().includes(query) || 
+          b.category.toLowerCase().includes(query) || 
+          b.products.some(p => p.name.toLowerCase().includes(query))
         ) : businesses;
-        displayedCount = 6;
         displayFeed();
       });
 
-      window.addEventListener('scroll', () => {
-        if (feed.style.display === 'block' && window.innerWidth < 1024 && 
-            window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && 
-            displayedCount < currentBusinesses.length) {
-          displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
-          displayFeed();
-        }
+      document.getElementById('business-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('business-form').style.display = 'block';
+      });
+
+      document.getElementById('customer-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('customer-form').style.display = 'block';
+      });
+
+      document.getElementById('feed-btn').addEventListener('click', () => {
+        document.getElementById('popup').style.display = 'none';
+        displayFeed();
       });
 
       document.getElementById('submit-business-btn').addEventListener('click', () => {
-        const name = document.getElementById('biz-name').value.trim();
-        const email = document.getElementById('biz-email').value.trim();
-        const password = document.getElementById('biz-password').value.trim();
-        const category = document.getElementById('biz-category').value;
-        const product = document.getElementById('biz-product').value.trim();
-        const desc = document.getElementById('biz-desc').value.trim();
-        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-        const instagram = document.getElementById('biz-instagram').value.trim();
-        const location = document.getElementById('biz-location').value.trim();
-        if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-          alert('Please fill in all fields!');
-          return;
-        }
         const business = {
           id: Date.now(),
-          name,
-          category,
-          products: [{ name: product, desc, photo: '', views: 0 }],
-          desc,
-          whatsapp,
-          instagram,
-          location,
+          name: document.getElementById('biz-name').value,
+          category: document.getElementById('biz-category').value,
+          products: [{ name: document.getElementById('biz-product').value, desc: document.getElementById('biz-desc').value, photo: '', views: 0 }],
+          desc: document.getElementById('biz-desc').value,
+          whatsapp: document.getElementById('biz-whatsapp').value,
+          instagram: document.getElementById('biz-instagram').value,
+          location: document.getElementById('biz-location').value,
           displayPhoto: '',
           views: 0,
           openingHour: "09:00",
           closingHour: "18:00"
         };
-        const user = { id: business.id, type: 'business', name, email, password };
+        const user = { id: business.id, type: 'business', name: business.name, email: document.getElementById('biz-email').value, password: document.getElementById('biz-password').value };
         businesses.push(business);
         users.push(user);
         currentUser = user;
@@ -1125,14 +969,7 @@
       });
 
       document.getElementById('submit-customer-btn').addEventListener('click', () => {
-        const name = document.getElementById('cust-name').value.trim();
-        const email = document.getElementById('cust-email').value.trim();
-        const password = document.getElementById('cust-password').value.trim();
-        if (!name || !email || !password) {
-          alert('Please fill in all fields!');
-          return;
-        }
-        const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+        const user = { id: Date.now(), type: 'customer', name: document.getElementById('cust-name').value, email: document.getElementById('cust-email').value, password: document.getElementById('cust-password').value, recentlyViewed: [] };
         users.push(user);
         currentUser = user;
         updateLocalStorage();
@@ -1142,40 +979,29 @@
       });
 
       document.getElementById('login-submit-btn').addEventListener('click', () => {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value.trim();
-        const foundUser = users.find(u => u.email === email && u.password === password);
-        if (foundUser) {
-          currentUser = foundUser;
+        const user = users.find(u => u.email === document.getElementById('login-email').value && u.password === document.getElementById('login-password').value);
+        if (user) {
+          currentUser = user;
           updateLocalStorage();
           closeModal('login-form');
           updateUIForUser();
           displayFeed();
-        } else {
-          alert('Invalid email or password!');
         }
       });
 
       function viewStore(bizId) {
         const business = businesses.find(b => b.id == bizId);
-        if (!business) return;
         business.views++;
-        if (currentUser && currentUser.type === 'customer') {
-          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
-          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
-          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-        }
         updateLocalStorage();
         feed.style.display = 'none';
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
         storePage.innerHTML = `
-          <a href="#" class="back-to-feed-btn" style="display:inline-block; padding:0.75rem 1.5rem; background:var(--primary-green); color:white; text-decoration:none; border-radius:8px; margin-bottom:1rem;">Back to Feed</a>
+          <button class="back-to-feed-btn">Back to Feed</button>
           <div class="store-container">
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
+              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
               <div class="contact">
@@ -1184,36 +1010,12 @@
               </div>
               <p class="views">Views: ${business.views}</p>
             </div>
-            <div class="products-section">
-              <h4>Products</h4>
-              <div class="products-grid">
-                ${business.products.map(p => `
-                  <div class="product-card" data-id="${p.name}">
-                    <img src="${p.photo || 'https://via.placeholder.com/250x150'}" alt="${p.name}" loading="lazy">
-                    <div class="product-info">
-                      <p class="product-name">${p.name}</p>
-                      <p class="product-desc">${p.desc}</p>
-                      <p class="product-views">Views: ${p.views}</p>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
           </div>
         `;
-        document.querySelector('.back-to-feed-btn').addEventListener('click', (e) => { e.preventDefault(); displayFeed(); });
-        document.querySelectorAll('.product-card').forEach(card => card.addEventListener('click', () => {
-          const productName = card.getAttribute('data-id');
-          const product = business.products.find(p => p.name === productName);
-          alert(`${product.name}\n${product.desc}\nViews: ${product.views}`);
-        }));
+        document.querySelector('.back-to-feed-btn').addEventListener('click', displayFeed);
       }
 
-      document.body.addEventListener('click', e => {
-        if (e.target.classList.contains('view-store-btn')) viewStore(e.target.getAttribute('data-id'));
-      });
-
-      if (!currentUser) popup.style.display = 'block';
+      if (!currentUser) document.getElementById('popup').style.display = 'block';
       else updateUIForUser();
       displayFeed();
     });
