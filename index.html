@@ -99,13 +99,14 @@
       .hot-product-grid {
         display: flex;
         flex-direction: row;
+        flex-wrap: nowrap; /* Ensures single row */
         gap: 1rem;
         animation: mobileSlide 15s infinite ease-in-out;
         padding: 0.5rem 0; /* Additional padding for better spacing */
       }
       .hot-product-item {
         flex: 0 0 auto;
-        width: 300px; /* Fixed width for single row on mobile */
+        width: calc((100vw - 4rem) / 2); /* Shows ~2 items at a time */
         margin: 0.25rem 0;
         padding: 1rem; /* Increased padding for better spacing */
         background: var(--white);
