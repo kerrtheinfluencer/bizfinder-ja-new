@@ -2,17 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Ensure IE uses the latest rendering engine -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Responsive viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Content Security Policy: adjust connect-src and other directives as needed -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://via.placeholder.com; connect-src 'self';" />
-  <!-- Referrer policy for privacy -->
-  <meta name="referrer" content="no-referrer" />
   <title>BizFinder JA</title>
-  <!-- Preconnect to CDN -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -651,7 +642,7 @@
       margin: 0.5rem;
       padding: 0.75rem 1.5rem;
     }
-    
+
     /* Edit Product Modal */
     #edit-product-modal {
       position: fixed;
@@ -691,7 +682,7 @@
       margin: 0.5rem;
       padding: 0.75rem 1.5rem;
     }
-    
+
     /* Manage Products Modal */
     #manage-products-modal {
       position: fixed;
@@ -825,7 +816,6 @@
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
     <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <!-- Changed input type remains; file upload now uses API integration -->
     <input type="file" id="prod-media" accept="image/*,video/*" />
     <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
     <button id="submit-product-btn">Add Product</button>
@@ -863,28 +853,6 @@
 
   <script>
     'use strict';
-    
-    // --- New Helper: Upload File to Amazon S3 via Serverless Function ---
-    // This function calls the /api/upload endpoint (to be implemented on Vercel/Railway)
-    // It should return a JSON object with the uploaded file URL.
-    async function uploadProductMedia(file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      try {
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin'
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        return data.url; // Expecting { url: "https://s3.amazonaws.com/your-bucket/filename" }
-      } catch (error) {
-        console.error('File upload failed:', error);
-        return null;
-      }
-    }
-    
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
       let displayedCount = 6;
@@ -1363,8 +1331,7 @@
         }
       };
       
-      // --- Updated Event Handler: Use uploadProductMedia for S3 Integration ---
-      document.getElementById('submit-product-btn').addEventListener('click', async () => {
+      document.getElementById('submit-product-btn').addEventListener('click', () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
         const fileInput = document.getElementById('prod-media');
@@ -1386,13 +1353,11 @@
         };
         if (fileInput && fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
-          // Upload the file to Amazon S3 via your serverless function
-          const mediaURL = await uploadProductMedia(file);
-          if (mediaURL) {
-            addProduct(mediaURL);
-          } else {
-            alert('Media upload failed, please try again.');
-          }
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            addProduct(e.target.result);
+          };
+          reader.readAsDataURL(file);
         } else {
           addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
         }
@@ -1721,11 +1686,5 @@
       displayFeed();
     });
   </script>
-  <!-- 
-    Deployment Notes:
-    - This application is configured for deployment on platforms such as Vercel and Railway.
-    - For production, implement a serverless function at /api/upload that handles file uploads to Amazon S3.
-    - Ensure you configure proper environment variables and security settings on your deployment platform.
-  -->
 </body>
 </html>
