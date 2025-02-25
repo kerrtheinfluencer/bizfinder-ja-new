@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Essential Meta Tags -->
   <meta charset="UTF-8" />
+  <!-- Ensure IE uses the latest rendering engine -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Responsive viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="BizFinder JA - A multi-vendor marketplace for Jamaica." />
-  <meta name="robots" content="index,follow" />
-  <!-- Content Security Policy: Adjust as needed for your production environment -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net https://via.placeholder.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
+  <!-- Content Security Policy: adjust connect-src and other directives as needed -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://via.placeholder.com; connect-src 'self';" />
+  <!-- Referrer policy for privacy -->
+  <meta name="referrer" content="no-referrer" />
   <title>BizFinder JA</title>
-  <!-- Favicon (replace URL with your own favicon) -->
-  <link rel="icon" href="https://via.placeholder.com/32.png?text=BF" type="image/png" />
-
+  <!-- Preconnect to CDN -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -560,7 +561,7 @@
       font-size: 0.9rem;
     }
     
-    /* SETTINGS MODAL (UPDATED for File Upload) */
+    /* Settings Modal */
     #settings-modal {
       position: fixed;
       top: 50%;
@@ -650,7 +651,7 @@
       margin: 0.5rem;
       padding: 0.75rem 1.5rem;
     }
-
+    
     /* Edit Product Modal */
     #edit-product-modal {
       position: fixed;
@@ -690,7 +691,7 @@
       margin: 0.5rem;
       padding: 0.75rem 1.5rem;
     }
-
+    
     /* Manage Products Modal */
     #manage-products-modal {
       position: fixed;
@@ -807,30 +808,26 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
-  <!-- SETTINGS MODAL (UPDATED for File Upload) -->
+  <!-- Settings Modal -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    <!-- Name Field -->
     <input type="text" id="settings-name" placeholder="Your Name (e.g., John Doe)" required />
-    <!-- File Upload Field with validation for images -->
-    <input type="file" id="settings-photo-file" accept="image/*" />
-    <div class="tooltip">
-      Upload a profile photo (max 2MB) or leave blank for a letter avatar.
-    </div>
+    <input type="url" id="settings-photo" placeholder="Profile Photo URL (e.g., https://example.com/photo.jpg)" />
+    <div class="tooltip">Enter a valid URL starting with http:// or https://, or leave blank for letter avatar.</div>
     <button id="save-settings-btn">Save Settings</button>
     <button id="reset-settings-btn">Reset to Default</button>
-    <div id="settings-error" class="error">Please fill in all required fields.</div>
+    <div id="settings-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
-  <!-- END SETTINGS MODAL -->
 
   <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
     <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <!-- Changed input type remains; file upload now uses API integration -->
     <input type="file" id="prod-media" accept="image/*,video/*" />
-    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute, image max 2MB)</p>
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
     <button id="submit-product-btn">Add Product</button>
     <div id="add-product-error" class="error">Please fill in all required fields!</div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
@@ -866,6 +863,28 @@
 
   <script>
     'use strict';
+    
+    // --- New Helper: Upload File to Amazon S3 via Serverless Function ---
+    // This function calls the /api/upload endpoint (to be implemented on Vercel/Railway)
+    // It should return a JSON object with the uploaded file URL.
+    async function uploadProductMedia(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        return data.url; // Expecting { url: "https://s3.amazonaws.com/your-bucket/filename" }
+      } catch (error) {
+        console.error('File upload failed:', error);
+        return null;
+      }
+    }
+    
     document.addEventListener('DOMContentLoaded', () => {
       /*** Data Initialization ***/
       let displayedCount = 6;
@@ -1037,7 +1056,7 @@
       }
 
       function updateCarousel() {
-        const itemWidth = carouselTrack.children[0]?.offsetWidth + 16;
+        const itemWidth = carouselTrack.children[0]?.offsetWidth + 16; // Including margin
         carouselTrack.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
       }
 
@@ -1260,8 +1279,7 @@
         if (settingsModal) {
           settingsModal.style.display = 'block';
           document.getElementById('settings-name').value = currentUser?.name || "";
-          const fileInput = document.getElementById('settings-photo-file');
-          if (fileInput) fileInput.value = "";
+          document.getElementById('settings-photo').value = currentUser?.profilePhoto || "";
           document.getElementById('settings-error').style.display = 'none';
         }
       };
@@ -1345,7 +1363,8 @@
         }
       };
       
-      document.getElementById('submit-product-btn').addEventListener('click', () => {
+      // --- Updated Event Handler: Use uploadProductMedia for S3 Integration ---
+      document.getElementById('submit-product-btn').addEventListener('click', async () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
         const fileInput = document.getElementById('prod-media');
@@ -1365,94 +1384,47 @@
             showProfile();
           }
         };
-
         if (fileInput && fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
-          // Validate file type and size (max 2MB for images)
-          if (!file.type.startsWith('image/')) {
-            error.style.display = 'block';
-            error.textContent = 'Please upload a valid image file.';
-            return;
-          }
-          if (file.size > 2 * 1024 * 1024) {
-            error.style.display = 'block';
-            error.textContent = 'The image file is too large. Please upload an image smaller than 2MB.';
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            addProduct(e.target.result);
-          };
-          try {
-            reader.readAsDataURL(file);
-          } catch (err) {
-            error.style.display = 'block';
-            error.textContent = 'Error processing the file.';
+          // Upload the file to Amazon S3 via your serverless function
+          const mediaURL = await uploadProductMedia(file);
+          if (mediaURL) {
+            addProduct(mediaURL);
+          } else {
+            alert('Media upload failed, please try again.');
           }
         } else {
           addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
         }
       });
       
-      // Save Settings (UPDATED for File Upload with validation)
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
-        const fileInput = document.getElementById('settings-photo-file');
+        const newPhoto = document.getElementById('settings-photo').value.trim();
         const error = document.getElementById('settings-error');
 
         if (!newName) {
           error.style.display = 'block';
-          error.textContent = 'Please enter your name.';
+          return;
+        }
+        if (newPhoto && !isValidUrl(newPhoto)) {
+          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.style.display = 'block';
           return;
         }
 
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          if (!file.type.startsWith('image/')) {
-            error.style.display = 'block';
-            error.textContent = 'Please upload a valid image file.';
-            return;
+        currentUser.name = newName;
+        currentUser.profilePhoto = newPhoto || '';
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.name = newName;
+            business.displayPhoto = newPhoto || '';
           }
-          if (file.size > 2 * 1024 * 1024) {
-            error.style.display = 'block';
-            error.textContent = 'The image file is too large. Please upload an image smaller than 2MB.';
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            currentUser.name = newName;
-            currentUser.profilePhoto = e.target.result;
-            if (currentUser.type === 'business') {
-              const business = businesses.find(b => b.id === currentUser.id);
-              if (business) {
-                business.name = newName;
-                business.displayPhoto = e.target.result;
-              }
-            }
-            updateLocalStorage();
-            closeModal('settings-modal');
-            showProfile();
-          };
-          try {
-            reader.readAsDataURL(file);
-          } catch (err) {
-            error.style.display = 'block';
-            error.textContent = 'Error processing the file.';
-          }
-        } else {
-          currentUser.name = newName;
-          currentUser.profilePhoto = '';
-          if (currentUser.type === 'business') {
-            const business = businesses.find(b => b.id === currentUser.id);
-            if (business) {
-              business.name = newName;
-              business.displayPhoto = '';
-            }
-          }
-          updateLocalStorage();
-          closeModal('settings-modal');
-          showProfile();
         }
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
       });
 
       document.getElementById('reset-settings-btn').addEventListener('click', () => {
@@ -1749,5 +1721,11 @@
       displayFeed();
     });
   </script>
+  <!-- 
+    Deployment Notes:
+    - This application is configured for deployment on platforms such as Vercel and Railway.
+    - For production, implement a serverless function at /api/upload that handles file uploads to Amazon S3.
+    - Ensure you configure proper environment variables and security settings on your deployment platform.
+  -->
 </body>
 </html>
