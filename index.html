@@ -91,6 +91,47 @@
         flex-wrap: wrap;
         justify-content: center;
       }
+      .hot-products {
+        padding: 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+      }
+      .hot-product-grid {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        animation: mobileSlide 15s infinite ease-in-out;
+        padding: 0.5rem 0; /* Additional padding for better spacing */
+      }
+      .hot-product-item {
+        flex: 0 0 auto;
+        width: 80%; /* Single row, one product wide on mobile */
+        margin: 0.25rem 0;
+        padding: 1rem; /* Increased padding for better spacing */
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column; /* Stack image and text vertically for alignment */
+        align-items: center;
+        text-align: center; /* Center text for better alignment */
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .hot-product-item img {
+        width: 100%; /* Full width of card on mobile */
+        height: 120px; /* Fixed height for consistency */
+        margin-bottom: 0.5rem; /* Space between image and text */
+        border-radius: 8px;
+        object-fit: cover;
+        loading: lazy; /* Lazy loading for performance */
+      }
+      .hot-product-item span {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        font-weight: 500;
+        word-wrap: break-word; /* Ensure text wraps properly */
+        max-width: 100%; /* Prevent overflow */
+      }
     }
     
     /* Search Bar */
@@ -152,6 +193,7 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
+    /* For business images, use circular display */
     .business-image {
       width: 150px;
       height: 150px;
@@ -160,6 +202,7 @@
       margin-bottom: 1rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    /* Letter avatar with fixed dimensions */
     .letter-avatar {
       width: 150px;
       height: 150px;
@@ -264,8 +307,8 @@
       display: none;
     }
     
-    /* Featured Products Carousel */
-    .featured-products {
+    /* Hot Products Banner - Premium Design for PC and Mobile Slideshow */
+    .hot-products {
       background: var(--premium-bg);
       padding: 1.5rem;
       border-radius: 15px;
@@ -275,86 +318,87 @@
       position: relative;
       overflow: hidden;
     }
-    .featured-products h3 {
+    .hot-products h3 {
+      width: 100%;
       font-size: 1.5rem;
       color: var(--primary-green);
       margin-bottom: 1rem;
       font-weight: 700;
       text-align: center;
     }
-    .carousel-container {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
+    .hot-products .hot-product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+      animation: pcSlide 20s infinite ease-in-out;
     }
-    .carousel-track {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-    }
-    .carousel-item {
-      flex: 0 0 250px;
-      height: 200px;
-      margin-right: 1rem;
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .carousel-item:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .carousel-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 12px;
-    }
-    .carousel-item .product-info {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.6);
-      color: var(--white);
-      padding: 0.5rem;
-      text-align: center;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    .carousel-controls {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-    .carousel-controls button {
-      background: rgba(46, 204, 113, 0.8);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.2rem;
-      pointer-events: auto;
-      transition: background 0.3s;
-    }
-    .carousel-controls button:hover {
-      background: var(--secondary-green);
-    }
-    @media (max-width: 1024px) {
-      .carousel-item {
-        flex: 0 0 200px;
-        height: 150px;
+    @media (min-width: 1025px) {
+      .hot-products .hot-product-grid {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
-    
-    /* Featured Product Popup */
-    #featured-product-popup {
+    .hot-product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+    .hot-product-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .hot-product-item img {
+      width: 80px;
+      height: 80px;
+      margin-right: 1rem;
+      border-radius: 8px;
+      object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
+    }
+    .hot-product-item span {
+      font-size: 1rem;
+      color: var(--text-color);
+      flex-grow: 1;
+      font-weight: 500;
+    }
+    .hot-product-item::after {
+      content: "🔥";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      animation: firePulse 1.5s infinite ease-in-out;
+    }
+
+    /* Fire Emoji and Slide Animations */
+    @keyframes firePulse {
+      0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+      50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+    @keyframes pcSlide {
+      0%, 10% { transform: translateX(0); }
+      20%, 30% { transform: translateX(-33.33%); }
+      40%, 50% { transform: translateX(-66.66%); }
+      60%, 70% { transform: translateX(-100%); }
+      80%, 90% { transform: translateX(-66.66%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes mobileSlide {
+      0%, 25% { transform: translateX(0); }
+      50%, 75% { transform: translateX(-100%); } /* Updated for single row */
+      100% { transform: translateX(0); }
+    }
+
+    /* Hot Product Popup - Premium View */
+    #hot-product-popup {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -369,29 +413,30 @@
       width: 90%;
       display: none;
     }
-    #featured-product-popup img {
+    #hot-product-popup img {
       width: 150px;
       height: 150px;
       border-radius: 10px;
       object-fit: cover;
       margin-bottom: 1rem;
+      loading: lazy;
     }
-    #featured-product-popup h3 {
+    #hot-product-popup h3 {
       color: var(--primary-green);
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
     }
-    #featured-product-popup p {
+    #hot-product-popup p {
       font-size: 1rem;
       color: var(--text-color);
       margin-bottom: 1rem;
     }
-    #featured-product-popup .views {
+    #hot-product-popup .views {
       font-size: 0.9rem;
       color: var(--muted-color);
       margin-bottom: 1rem;
     }
-    #featured-product-popup button {
+    #hot-product-popup button {
       background: var(--primary-green);
       color: var(--white);
       border: none;
@@ -402,12 +447,12 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
-    #featured-product-popup button:hover {
+    #hot-product-popup button:hover {
       background: var(--secondary-green);
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-    #featured-product-popup .close-btn {
+    #hot-product-popup .close-btn {
       position: absolute;
       top: 10px;
       right: 10px;
@@ -417,7 +462,7 @@
       cursor: pointer;
       color: var(--muted-color);
     }
-    
+
     /* Loading Spinner */
     .loading {
       text-align: center;
@@ -454,6 +499,7 @@
       height: 150px;
       border-radius: 50%;
       margin-bottom: 0.5rem;
+      loading: lazy; /* Lazy loading for performance */
     }
     .products-section {
       width: 100%;
@@ -484,6 +530,7 @@
       width: 100%;
       object-fit: cover;
       height: 150px;
+      loading: lazy; /* Lazy loading for performance */
     }
     .product-info {
       padding: 1rem;
@@ -527,6 +574,7 @@
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
     }
     .profile-details {
       margin-bottom: 1.5rem;
@@ -552,7 +600,7 @@
       font-size: 0.9rem;
     }
     
-    /* Settings Modal */
+    /* Settings Modal - Intuitive and Foolproof */
     #settings-modal {
       position: fixed;
       top: 50%;
@@ -736,15 +784,8 @@
       <input type="text" id="search-bar" placeholder="Search businesses..." />
       <div id="search-results-info"></div>
     </div>
-    <div id="featured-products" class="featured-products">
-      <h3>Featured Products</h3>
-      <div class="carousel-container">
-        <div class="carousel-track" id="carousel-track"></div>
-        <div class="carousel-controls">
-          <button id="carousel-prev">&lt;</button>
-          <button id="carousel-next">&gt;</button>
-        </div>
-      </div>
+    <div id="hot-products" class="hot-products">
+      <div class="hot-product-grid"></div>
     </div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
@@ -841,13 +882,13 @@
     <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
   </div>
 
-  <!-- Featured Product Popup -->
-  <div id="featured-product-popup" class="modal">
-    <button class="close-btn" data-form="featured-product-popup">×</button>
-    <img id="featured-product-img" alt="Product Image">
-    <h3 id="featured-product-name"></h3>
-    <p id="featured-product-desc"></p>
-    <p class="views" id="featured-product-views"></p>
+  <!-- Hot Product Popup -->
+  <div id="hot-product-popup" class="modal">
+    <button class="close-btn" data-form="hot-product-popup">×</button>
+    <img id="hot-product-img" alt="Product Image">
+    <h3 id="hot-product-name"></h3>
+    <p id="hot-product-desc"></p>
+    <p class="views" id="hot-product-views"></p>
     <button id="view-store-btn">View Store</button>
   </div>
 
@@ -861,11 +902,17 @@
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
       
+      // Ensure dummy businesses have opening/closing hours and products
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
         if (!b.products || b.products.length === 0) {
-          b.products = [{ name: `Default Product`, desc: `Default description`, photo: '', views: 0 }];
+          b.products = [{
+            name: `Default Product`,
+            desc: `Default description`,
+            photo: '',
+            views: 0
+          }];
         }
         return b;
       });
@@ -878,8 +925,7 @@
       const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
       const profilePage = document.getElementById('profile-page');
-      const featuredProducts = document.getElementById('featured-products');
-      const carouselTrack = document.getElementById('carousel-track');
+      const hotProducts = document.getElementById('hot-products');
       const loading = document.getElementById('loading');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
@@ -891,9 +937,8 @@
       const editProductModal = document.getElementById('edit-product-modal');
       const manageProductsModal = document.getElementById('manage-products-modal');
       const manageProductList = document.getElementById('manage-product-list');
-      const featuredProductPopup = document.getElementById('featured-product-popup');
-      const carouselPrev = document.getElementById('carousel-prev');
-      const carouselNext = document.getElementById('carousel-next');
+      const hotProductGrid = document.querySelector('.hot-product-grid') || hotProducts.querySelector('.hot-product-grid');
+      const hotProductPopup = document.getElementById('hot-product-popup');
 
       /*** Helper Functions ***/
       function generateDummyBusinesses(count) {
@@ -907,13 +952,18 @@
             id: Date.now() + i,
             name: `Business ${i + 1}`,
             category,
-            products: [{ name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: '', views: Math.floor(Math.random() * 100) }],
+            products: [{
+              name: `Product ${i + 1}`,
+              desc: `Description for product ${i + 1}`,
+              photo: '',
+              views: 0
+            }],
             desc: `Description for business ${i + 1}.`,
             whatsapp: `876555${String(i).padStart(4, '0')}`,
             instagram: `business${i + 1}`,
             location,
             displayPhoto: '',
-            views: Math.floor(Math.random() * 1000),
+            views: 0,
             openingHour: "09:00",
             closingHour: "18:00"
           });
@@ -975,97 +1025,9 @@
         }
       }
 
-      /*** Carousel Functionality ***/
-      let carouselIndex = 0;
-      let carouselInterval;
-
-      function displayFeaturedProducts(bizId = null) {
-        let productsToShow = [];
-        if (bizId) {
-          const business = businesses.find(b => b.id == bizId);
-          if (business) {
-            productsToShow = business.products.sort((a, b) => b.views - a.views);
-          }
-        } else {
-          const allProducts = businesses.flatMap(b => b.products.map(p => ({ ...p, bizId: b.id, bizName: b.name, category: b.category })));
-          const sortedByCategory = {};
-          allProducts.forEach(p => {
-            sortedByCategory[p.category] = sortedByCategory[p.category] || [];
-            sortedByCategory[p.category].push(p);
-          });
-          Object.values(sortedByCategory).forEach(arr => arr.sort((a, b) => b.views - a.views));
-          productsToShow = Object.values(sortedByCategory).flat();
-        }
-
-        if (productsToShow.length === 0) {
-          carouselTrack.innerHTML = '<p>No featured products available.</p>';
-          return;
-        }
-
-        carouselTrack.innerHTML = '';
-        productsToShow.forEach((product, index) => {
-          const item = document.createElement('div');
-          item.className = 'carousel-item';
-          item.setAttribute('data-biz-id', product.bizId || businesses.find(b => b.products.some(p => p.name === product.name)).id);
-          item.setAttribute('data-product-name', product.name);
-          item.innerHTML = `
-            <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}" loading="lazy">
-            <div class="product-info">${product.name} (${product.views} views)</div>
-          `;
-          carouselTrack.appendChild(item);
-        });
-
-        updateCarousel();
-        startCarousel(productsToShow.length);
-
-        document.querySelectorAll('.carousel-item').forEach(item => {
-          item.addEventListener('click', () => showFeaturedProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
-        });
-      }
-
-      function updateCarousel() {
-        const itemWidth = carouselTrack.children[0]?.offsetWidth + 16; // Including margin
-        carouselTrack.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
-      }
-
-      function startCarousel(totalItems) {
-        clearInterval(carouselInterval);
-        carouselInterval = setInterval(() => {
-          const itemWidth = carouselTrack.children[0]?.offsetWidth + 16;
-          carouselIndex++;
-          if (carouselIndex >= totalItems) carouselIndex = 0;
-          carouselTrack.style.transition = 'transform 0.5s ease-in-out';
-          updateCarousel();
-        }, 3000);
-      }
-
-      carouselPrev.addEventListener('click', () => {
-        carouselIndex--;
-        if (carouselIndex < 0) carouselIndex = carouselTrack.children.length - 1;
-        updateCarousel();
-      });
-
-      carouselNext.addEventListener('click', () => {
-        carouselIndex++;
-        if (carouselIndex >= carouselTrack.children.length) carouselIndex = 0;
-        updateCarousel();
-      });
-
-      function showFeaturedProductPopup(bizId, productName) {
-        const business = businesses.find(b => b.id == bizId);
-        if (!business) return;
-        const product = business.products.find(p => p.name === productName);
-        if (!product) return;
-        document.getElementById('featured-product-img').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('featured-product-name').textContent = product.name;
-        document.getElementById('featured-product-desc').textContent = product.desc || 'No description available';
-        document.getElementById('featured-product-views').textContent = `Views: ${product.views}`;
-        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
-        featuredProductPopup.style.display = 'block';
-      }
-
       /*** UI Rendering Functions ***/
       const displayFeed = () => {
+        console.time('displayFeed');
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
@@ -1105,7 +1067,51 @@
             gridContainer.appendChild(card);
           });
         }
-        displayFeaturedProducts();
+        displayHotProducts();
+        console.timeEnd('displayFeed');
+      };
+      
+      const displayHotProducts = () => {
+        if (!hotProductGrid) return; // Safety check
+        const hotCount = window.innerWidth >= 1024 ? 6 : Infinity; // Use Infinity for unlimited on mobile
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
+        hotProductGrid.innerHTML = '';
+        if (hot.length === 0) {
+          hotProductGrid.innerHTML = '<p>No hot products available.</p>';
+          return;
+        }
+        hot.forEach((biz, index) => {
+          const product = biz.products && biz.products.length > 0 
+            ? biz.products[0] 
+            : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
+          const item = document.createElement('div');
+          item.className = 'hot-product-item';
+          item.setAttribute('data-biz-id', biz.id);
+          item.setAttribute('data-product-name', product.name);
+          item.innerHTML = `
+            <img src="${product.photo}" alt="${product.name}" loading="lazy">
+            <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
+          `;
+          hotProductGrid.appendChild(item);
+        });
+        // Add click event listeners after rendering
+        document.querySelectorAll('.hot-product-item').forEach(item => {
+          item.addEventListener('click', () => showHotProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
+        });
+      };
+
+      const showHotProductPopup = (bizId, productName) => {
+        if (!hotProductPopup) return;
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        const product = business.products.find(p => p.name === productName);
+        if (!product) return;
+        document.getElementById('hot-product-img').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        document.getElementById('hot-product-name').textContent = product.name;
+        document.getElementById('hot-product-desc').textContent = product.desc || 'No description available';
+        document.getElementById('hot-product-views').textContent = `Views: ${business.views}`;
+        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
+        hotProductPopup.style.display = 'block';
       };
       
       const showProfile = () => {
@@ -1169,8 +1175,11 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
+        // Attach settings and product management event listeners after rendering the profile
         const settingsBtn = document.getElementById('settings-btn');
-        if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
+        if (settingsBtn) {
+          settingsBtn.addEventListener('click', openSettingsModal);
+        }
         if (currentUser.type === 'business') {
           initViewsChart();
           const addProductBtn = document.getElementById('add-product-btn');
@@ -1393,7 +1402,7 @@
       });
 
       document.getElementById('reset-settings-btn').addEventListener('click', () => {
-        currentUser.name = `User_${Date.now()}`;
+        currentUser.name = `User_${Date.now()}`; // Default name
         currentUser.profilePhoto = '';
         if (currentUser.type === 'business') {
           const business = businesses.find(b => b.id === currentUser.id);
@@ -1413,12 +1422,12 @@
         const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
         if (bizId) {
           viewStore(bizId);
-          closeModal('featured-product-popup');
+          closeModal('hot-product-popup');
         }
       });
 
-      document.querySelector('.close-btn[data-form="featured-product-popup"]')?.addEventListener('click', () => {
-        closeModal('featured-product-popup');
+      document.querySelector('.close-btn[data-form="hot-product-popup"]')?.addEventListener('click', () => {
+        closeModal('hot-product-popup');
       });
       
       /*** Event Handlers ***/
@@ -1439,18 +1448,30 @@
       profileBtn.addEventListener('click', showProfile);
       
       document.body.addEventListener('click', event => {
-        if (event.target.id === 'back-to-feed') displayFeed();
-        if (event.target.id === 'back-to-store') viewStore(currentUser?.id);
-        if (event.target.classList.contains('back-to-feed-btn')) displayFeed();
-        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
-        if (event.target.id === 'add-product-btn') openAddProductModal();
+        if (event.target.id === 'back-to-feed') {
+          displayFeed();
+        }
+        if (event.target.id === 'back-to-store') {
+          viewStore(currentUser?.id);
+        }
+        if (event.target.classList.contains('back-to-feed-btn')) {
+          displayFeed();
+        }
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
+        }
         if (event.target.id === 'logout-btn') {
           currentUser = null;
           localStorage.removeItem('currentUser');
           updateUIForUser();
           displayFeed();
         }
-        if (event.target.classList.contains('close-btn')) closeModal(event.target.getAttribute('data-form'));
+        if (event.target.classList.contains('close-btn')) {
+          closeModal(event.target.getAttribute('data-form'));
+        }
       });
       
       businessName.addEventListener('click', () => {
@@ -1463,6 +1484,7 @@
         }
       });
       
+      // Debounce search input
       let searchTimeout;
       searchBar.addEventListener('keyup', () => {
         clearTimeout(searchTimeout);
@@ -1483,7 +1505,7 @@
           }
           displayedCount = 6;
           displayFeed();
-        }, 300);
+        }, 300); // 300ms debounce delay
       });
       
       window.addEventListener('scroll', () => {
@@ -1523,7 +1545,12 @@
             id: Date.now(),
             name,
             category,
-            products: [{ name: product, desc, photo: '', views: 0 }],
+            products: [{
+              name: product,
+              desc,
+              photo: '',
+              views: 0
+            }],
             desc,
             whatsapp,
             instagram,
@@ -1599,6 +1626,7 @@
       });
       
       const viewStore = bizId => {
+        console.time('viewStore');
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
         business.views++;
@@ -1629,16 +1657,6 @@
               </div>
               <p class="views">Views: ${business.views}</p>
             </div>
-            <div id="store-featured-products" class="featured-products">
-              <h3>Featured Products</h3>
-              <div class="carousel-container">
-                <div class="carousel-track" id="store-carousel-track"></div>
-                <div class="carousel-controls">
-                  <button id="store-carousel-prev">&lt;</button>
-                  <button id="store-carousel-next">&gt;</button>
-                </div>
-              </div>
-            </div>
             <div class="products-section">
               <h4>Products</h4>
               <div class="products-grid">
@@ -1656,26 +1674,7 @@
             </div>
           </div>
         `;
-        displayFeaturedProducts(bizId);
-        const storeCarouselTrack = document.getElementById('store-carousel-track');
-        const storeCarouselPrev = document.getElementById('store-carousel-prev');
-        const storeCarouselNext = document.getElementById('store-carousel-next');
-        let storeCarouselIndex = 0;
-        function updateStoreCarousel() {
-          const itemWidth = storeCarouselTrack.children[0]?.offsetWidth + 16;
-          storeCarouselTrack.style.transform = `translateX(-${storeCarouselIndex * itemWidth}px)`;
-        }
-        storeCarouselPrev.addEventListener('click', () => {
-          storeCarouselIndex--;
-          if (storeCarouselIndex < 0) storeCarouselIndex = storeCarouselTrack.children.length - 1;
-          updateStoreCarousel();
-        });
-        storeCarouselNext.addEventListener('click', () => {
-          storeCarouselIndex++;
-          if (storeCarouselIndex >= storeCarouselTrack.children.length) storeCarouselIndex = 0;
-          updateStoreCarousel();
-        });
-        startCarousel(business.products.length);
+        console.timeEnd('viewStore');
       };
       
       if (!currentUser) {
