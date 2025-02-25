@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Essential Meta Tags -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BizFinder JA - A multi-vendor marketplace for Jamaica." />
+  <meta name="robots" content="index,follow" />
+  <!-- Content Security Policy: Adjust as needed for your production environment -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net https://via.placeholder.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
   <title>BizFinder JA</title>
+  <!-- Favicon (replace URL with your own favicon) -->
+  <link rel="icon" href="https://via.placeholder.com/32.png?text=BF" type="image/png" />
+
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -552,7 +560,7 @@
       font-size: 0.9rem;
     }
     
-    /* Settings Modal - UPDATED for File Upload */
+    /* SETTINGS MODAL (UPDATED for File Upload) */
     #settings-modal {
       position: fixed;
       top: 50%;
@@ -799,36 +807,19 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
-  <!-- SETTINGS MODAL - REPLACED WITH FILE UPLOAD -->
+  <!-- SETTINGS MODAL (UPDATED for File Upload) -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    
-    <!-- Name field stays the same -->
-    <input
-      type="text"
-      id="settings-name"
-      placeholder="Your Name (e.g., John Doe)"
-      required
-    />
-
-    <!-- File input instead of URL input -->
-    <input
-      type="file"
-      id="settings-photo-file"
-      accept="image/*"
-    />
+    <!-- Name Field -->
+    <input type="text" id="settings-name" placeholder="Your Name (e.g., John Doe)" required />
+    <!-- File Upload Field with validation for images -->
+    <input type="file" id="settings-photo-file" accept="image/*" />
     <div class="tooltip">
-      Upload a profile photo or leave blank for a letter avatar.
+      Upload a profile photo (max 2MB) or leave blank for a letter avatar.
     </div>
-    
     <button id="save-settings-btn">Save Settings</button>
     <button id="reset-settings-btn">Reset to Default</button>
-    
-    <!-- Simplified error message -->
-    <div id="settings-error" class="error">
-      Please fill in all required fields.
-    </div>
-    
+    <div id="settings-error" class="error">Please fill in all required fields.</div>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
   <!-- END SETTINGS MODAL -->
@@ -839,7 +830,7 @@
     <input type="text" id="prod-name" placeholder="Product Name" required />
     <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
     <input type="file" id="prod-media" accept="image/*,video/*" />
-    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute, image max 2MB)</p>
     <button id="submit-product-btn">Add Product</button>
     <div id="add-product-error" class="error">Please fill in all required fields!</div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
@@ -1046,7 +1037,7 @@
       }
 
       function updateCarousel() {
-        const itemWidth = carouselTrack.children[0]?.offsetWidth + 16; // Including margin
+        const itemWidth = carouselTrack.children[0]?.offsetWidth + 16;
         carouselTrack.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
       }
 
@@ -1269,7 +1260,6 @@
         if (settingsModal) {
           settingsModal.style.display = 'block';
           document.getElementById('settings-name').value = currentUser?.name || "";
-          // We no longer use the URL input, so just clear the file input
           const fileInput = document.getElementById('settings-photo-file');
           if (fileInput) fileInput.value = "";
           document.getElementById('settings-error').style.display = 'none';
@@ -1375,42 +1365,63 @@
             showProfile();
           }
         };
+
         if (fileInput && fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
+          // Validate file type and size (max 2MB for images)
+          if (!file.type.startsWith('image/')) {
+            error.style.display = 'block';
+            error.textContent = 'Please upload a valid image file.';
+            return;
+          }
+          if (file.size > 2 * 1024 * 1024) {
+            error.style.display = 'block';
+            error.textContent = 'The image file is too large. Please upload an image smaller than 2MB.';
+            return;
+          }
           const reader = new FileReader();
           reader.onload = function(e) {
             addProduct(e.target.result);
           };
-          reader.readAsDataURL(file);
+          try {
+            reader.readAsDataURL(file);
+          } catch (err) {
+            error.style.display = 'block';
+            error.textContent = 'Error processing the file.';
+          }
         } else {
           addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
         }
       });
       
-      // UPDATED "Save Settings" - uses file upload instead of URL
+      // Save Settings (UPDATED for File Upload with validation)
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
         const fileInput = document.getElementById('settings-photo-file');
         const error = document.getElementById('settings-error');
 
-        // Simple validation for the name field
         if (!newName) {
           error.style.display = 'block';
           error.textContent = 'Please enter your name.';
           return;
         }
 
-        // If a file is actually selected, read it as Base64
         if (fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
+          if (!file.type.startsWith('image/')) {
+            error.style.display = 'block';
+            error.textContent = 'Please upload a valid image file.';
+            return;
+          }
+          if (file.size > 2 * 1024 * 1024) {
+            error.style.display = 'block';
+            error.textContent = 'The image file is too large. Please upload an image smaller than 2MB.';
+            return;
+          }
           const reader = new FileReader();
-          
           reader.onload = function(e) {
-            // e.target.result is the Base64-encoded image
             currentUser.name = newName;
-            currentUser.profilePhoto = e.target.result;  // Store the Base64 in user profile
-            
-            // If current user is a business, also update the business entry
+            currentUser.profilePhoto = e.target.result;
             if (currentUser.type === 'business') {
               const business = businesses.find(b => b.id === currentUser.id);
               if (business) {
@@ -1418,20 +1429,19 @@
                 business.displayPhoto = e.target.result;
               }
             }
-            
             updateLocalStorage();
             closeModal('settings-modal');
             showProfile();
           };
-          
-          // Read the file as Base64
-          reader.readAsDataURL(file);
-          
+          try {
+            reader.readAsDataURL(file);
+          } catch (err) {
+            error.style.display = 'block';
+            error.textContent = 'Error processing the file.';
+          }
         } else {
-          // No file selected, so just update the name and reset photo to '' for letter avatar
           currentUser.name = newName;
-          currentUser.profilePhoto = '';  // triggers letter avatar
-          
+          currentUser.profilePhoto = '';
           if (currentUser.type === 'business') {
             const business = businesses.find(b => b.id === currentUser.id);
             if (business) {
@@ -1439,7 +1449,6 @@
               business.displayPhoto = '';
             }
           }
-          
           updateLocalStorage();
           closeModal('settings-modal');
           showProfile();
