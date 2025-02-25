@@ -99,14 +99,38 @@
       .hot-product-grid {
         display: flex;
         flex-direction: row;
-        gap: 0.5rem;
+        gap: 1rem;
         animation: mobileSlide 15s infinite ease-in-out;
+        padding: 0.5rem 0; /* Additional padding for better spacing */
       }
       .hot-product-item {
         flex: 0 0 auto;
-        width: 45%; /* Two items per row on mobile */
+        width: 100%; /* Single row, one product wide on mobile */
         margin: 0.25rem 0;
-        padding: 0.5rem;
+        padding: 1rem; /* Increased padding for better spacing */
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column; /* Stack image and text vertically for alignment */
+        align-items: center;
+        text-align: center; /* Center text for better alignment */
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .hot-product-item img {
+        width: 100%; /* Full width of card on mobile */
+        height: 120px; /* Fixed height for consistency */
+        margin-bottom: 0.5rem; /* Space between image and text */
+        border-radius: 8px;
+        object-fit: cover;
+        loading: lazy; /* Lazy loading for performance */
+      }
+      .hot-product-item span {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        font-weight: 500;
+        word-wrap: break-word; /* Ensure text wraps properly */
+        max-width: 100%; /* Prevent overflow */
       }
     }
     
@@ -369,7 +393,7 @@
     }
     @keyframes mobileSlide {
       0%, 25% { transform: translateX(0); }
-      50%, 75% { transform: translateX(-50%); }
+      50%, 75% { transform: translateX(-100%); }
       100% { transform: translateX(0); }
     }
 
@@ -795,6 +819,7 @@
     <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
     <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
     <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
+    <div id="business-form-error" class="error">Please fill in all required fields or provide a valid WhatsApp number.</div>
     <button id="submit-business-btn">Submit</button>
     <button class="close-btn" data-form="business-form">Close</button>
   </div>
@@ -804,6 +829,7 @@
     <input type="text" id="cust-name" placeholder="Name" required />
     <input type="email" id="cust-email" placeholder="Email" required />
     <input type="password" id="cust-password" placeholder="Password" required />
+    <div id="customer-form-error" class="error">Please fill in all required fields or provide a valid email.</div>
     <button id="submit-customer-btn">Submit</button>
     <button class="close-btn" data-form="customer-form">Close</button>
   </div>
@@ -812,6 +838,7 @@
     <h2>Login</h2>
     <input type="email" id="login-email" placeholder="Email" required />
     <input type="password" id="login-password" placeholder="Password" required />
+    <div id="login-error" class="error">Invalid email or password!</div>
     <button id="login-submit-btn">Login</button>
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
@@ -833,8 +860,8 @@
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
     <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="file" id="prod-media" accept="image/*,video/*" />
-    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
+    <input type="file" id="prod-media" accept="image/*" />
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image</p>
     <button id="submit-product-btn">Add Product</button>
     <div id="add-product-error" class="error">Please fill in all required fields!</div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
@@ -877,18 +904,11 @@
       let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
       let currentBusinesses = businesses;
-      
-      // Ensure dummy businesses have opening/closing hours and products
       businesses = businesses.map(b => {
         if (!b.openingHour) b.openingHour = "09:00";
         if (!b.closingHour) b.closingHour = "18:00";
         if (!b.products || b.products.length === 0) {
-          b.products = [{
-            name: `Default Product`,
-            desc: `Default description`,
-            photo: '',
-            views: 0
-          }];
+          b.products = [{ name: `Default Product`, desc: `Default description`, photo: '', views: 0 }];
         }
         return b;
       });
@@ -913,7 +933,7 @@
       const editProductModal = document.getElementById('edit-product-modal');
       const manageProductsModal = document.getElementById('manage-products-modal');
       const manageProductList = document.getElementById('manage-product-list');
-      const hotProductGrid = document.querySelector('.hot-product-grid') || hotProducts.querySelector('.hot-product-grid');
+      const hotProductGrid = document.querySelector('.hot-product-grid');
       const hotProductPopup = document.getElementById('hot-product-popup');
 
       /*** Helper Functions ***/
@@ -928,12 +948,7 @@
             id: Date.now() + i,
             name: `Business ${i + 1}`,
             category,
-            products: [{
-              name: `Product ${i + 1}`,
-              desc: `Description for product ${i + 1}`,
-              photo: '',
-              views: 0
-            }],
+            products: [{ name: `Product ${i + 1}`, desc: `Description for product ${i + 1}`, photo: '', views: 0 }],
             desc: `Description for business ${i + 1}.`,
             whatsapp: `876555${String(i).padStart(4, '0')}`,
             instagram: `business${i + 1}`,
@@ -946,7 +961,7 @@
         }
         return dummyBusinesses;
       }
-      
+
       function updateLocalStorage() {
         try {
           localStorage.setItem('businesses', JSON.stringify(businesses));
@@ -957,13 +972,13 @@
           alert('Storage limit reached or unavailable. Some data may not be saved.');
         }
       }
-      
+
       function updateUIForUser() {
         profileBtn.style.display = currentUser ? 'block' : 'none';
         loginBtn.style.display = currentUser ? 'none' : 'block';
         signupBtn.style.display = currentUser ? 'none' : 'block';
       }
-      
+
       function closeModal(formId) {
         const modal = document.getElementById(formId);
         if (modal) {
@@ -972,7 +987,7 @@
           if (error) error.style.display = 'none';
         }
       }
-      
+
       function getLetterAvatar(name) {
         const firstName = name.split(" ")[0];
         const letter = firstName.charAt(0).toUpperCase();
@@ -980,7 +995,7 @@
         const color = colors[Math.floor(Math.random() * colors.length)];
         return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
       }
-      
+
       function isStoreOpen(business) {
         const now = new Date();
         const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
@@ -991,7 +1006,7 @@
         closeDate.setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
-      
+
       function isValidUrl(url) {
         try {
           new URL(url);
@@ -1003,7 +1018,6 @@
 
       /*** UI Rendering Functions ***/
       const displayFeed = () => {
-        console.time('displayFeed');
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
@@ -1044,12 +1058,11 @@
           });
         }
         displayHotProducts();
-        console.timeEnd('displayFeed');
       };
-      
+
       const displayHotProducts = () => {
-        if (!hotProductGrid) return; // Safety check
-        const hotCount = window.innerWidth >= 1024 ? 6 : 2;
+        if (!hotProductGrid) return;
+        const hotCount = window.innerWidth >= 1024 ? 6 : Infinity;
         const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
         hotProductGrid.innerHTML = '';
         if (hot.length === 0) {
@@ -1070,7 +1083,6 @@
           `;
           hotProductGrid.appendChild(item);
         });
-        // Add click event listeners after rendering
         document.querySelectorAll('.hot-product-item').forEach(item => {
           item.addEventListener('click', () => showHotProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
         });
@@ -1089,7 +1101,7 @@
         document.getElementById('view-store-btn').setAttribute('data-id', bizId);
         hotProductPopup.style.display = 'block';
       };
-      
+
       const showProfile = () => {
         if (!currentUser) return;
         feed.style.display = 'none';
@@ -1151,7 +1163,6 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        // Attach settings and product management event listeners after rendering the profile
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
           settingsBtn.addEventListener('click', openSettingsModal);
@@ -1174,7 +1185,7 @@
           });
         }
       };
-      
+
       function initViewsChart() {
         const ctx = document.getElementById('viewsChart')?.getContext('2d');
         if (!ctx) return;
@@ -1220,7 +1231,7 @@
           }
         });
       }
-      
+
       const openAddProductModal = () => {
         if (addProductModal) {
           addProductModal.style.display = 'block';
@@ -1271,32 +1282,33 @@
           document.getElementById('edit-prod-name').value = product.name;
           document.getElementById('edit-prod-desc').value = product.desc;
           document.getElementById('edit-prod-photo').value = product.photo;
+          editProductModal.setAttribute('data-original-name', productId);
           editProductModal.style.display = 'block';
           document.getElementById('edit-product-error').style.display = 'none';
         }
       };
 
       const saveEditedProduct = () => {
-        const productId = document.getElementById('edit-prod-name').value.trim();
+        const originalName = editProductModal.getAttribute('data-original-name');
+        const newName = document.getElementById('edit-prod-name').value.trim();
         const prodDesc = document.getElementById('edit-prod-desc').value.trim();
         const prodPhoto = document.getElementById('edit-prod-photo').value.trim();
         const error = document.getElementById('edit-product-error');
-
-        if (!productId || !prodDesc) {
+        if (!newName || !prodDesc) {
           error.style.display = 'block';
           return;
         }
         if (prodPhoto && !isValidUrl(prodPhoto)) {
-          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.textContent = 'Please provide a valid photo URL';
           error.style.display = 'block';
           return;
         }
-
         const business = businesses.find(b => b.id === currentUser?.id);
-        const oldProduct = business?.products.find(p => p.name === productId);
-        if (oldProduct) {
-          oldProduct.desc = prodDesc;
-          oldProduct.photo = prodPhoto || '';
+        const product = business?.products.find(p => p.name === originalName);
+        if (product) {
+          product.name = newName;
+          product.desc = prodDesc;
+          product.photo = prodPhoto || '';
           updateLocalStorage();
           closeModal('edit-product-modal');
           showProfile();
@@ -1315,18 +1327,16 @@
           }
         }
       };
-      
+
       document.getElementById('submit-product-btn').addEventListener('click', () => {
         const prodName = document.getElementById('prod-name').value.trim();
         const prodDesc = document.getElementById('prod-desc').value.trim();
         const fileInput = document.getElementById('prod-media');
         const error = document.getElementById('add-product-error');
-
         if (!prodName || !prodDesc) {
           error.style.display = 'block';
           return;
         }
-
         const addProduct = (mediaURL) => {
           const business = businesses.find(b => b.id === currentUser?.id);
           if (business) {
@@ -1347,22 +1357,20 @@
           addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
         }
       });
-      
+
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
         const newPhoto = document.getElementById('settings-photo').value.trim();
         const error = document.getElementById('settings-error');
-
         if (!newName) {
           error.style.display = 'block';
           return;
         }
         if (newPhoto && !isValidUrl(newPhoto)) {
-          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.textContent = 'Please provide a valid photo URL';
           error.style.display = 'block';
           return;
         }
-
         currentUser.name = newName;
         currentUser.profilePhoto = newPhoto || '';
         if (currentUser.type === 'business') {
@@ -1378,7 +1386,7 @@
       });
 
       document.getElementById('reset-settings-btn').addEventListener('click', () => {
-        currentUser.name = `User_${Date.now()}`; // Default name
+        currentUser.name = `User_${Date.now()}`;
         currentUser.profilePhoto = '';
         if (currentUser.type === 'business') {
           const business = businesses.find(b => b.id === currentUser.id);
@@ -1391,9 +1399,9 @@
         closeModal('settings-modal');
         showProfile();
       });
-      
+
       document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
-      
+
       document.getElementById('view-store-btn').addEventListener('click', () => {
         const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
         if (bizId) {
@@ -1405,7 +1413,7 @@
       document.querySelector('.close-btn[data-form="hot-product-popup"]')?.addEventListener('click', () => {
         closeModal('hot-product-popup');
       });
-      
+
       /*** Event Handlers ***/
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
@@ -1422,7 +1430,7 @@
       loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
       signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
       profileBtn.addEventListener('click', showProfile);
-      
+
       document.body.addEventListener('click', event => {
         if (event.target.id === 'back-to-feed') {
           displayFeed();
@@ -1449,7 +1457,7 @@
           closeModal(event.target.getAttribute('data-form'));
         }
       });
-      
+
       businessName.addEventListener('click', () => {
         if (feed.style.display === 'block') {
           currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
@@ -1459,8 +1467,7 @@
           displayFeed();
         }
       });
-      
-      // Debounce search input
+
       let searchTimeout;
       searchBar.addEventListener('keyup', () => {
         clearTimeout(searchTimeout);
@@ -1481,9 +1488,9 @@
           }
           displayedCount = 6;
           displayFeed();
-        }, 300); // 300ms debounce delay
+        }, 300);
       });
-      
+
       window.addEventListener('scroll', () => {
         if (feed.style.display === 'block' && window.innerWidth < 1024 && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
           loading.style.display = 'block';
@@ -1494,7 +1501,7 @@
           }, 500);
         }
       });
-      
+
       document.getElementById('submit-business-btn').addEventListener('click', () => {
         try {
           const name = document.getElementById('biz-name').value.trim();
@@ -1506,27 +1513,27 @@
           const whatsapp = document.getElementById('biz-whatsapp').value.trim();
           const instagram = document.getElementById('biz-instagram').value.trim();
           const location = document.getElementById('biz-location').value.trim();
-    
+          const error = document.getElementById('business-form-error');
           if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('Please fill in all fields!');
+            error.textContent = 'Please fill in all fields!';
+            error.style.display = 'block';
+            return;
           }
           if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
+            error.textContent = 'Please enter a valid email address!';
+            error.style.display = 'block';
+            return;
           }
           if (!/^(876)\d{7}$/.test(whatsapp)) {
-            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+            error.textContent = 'Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)';
+            error.style.display = 'block';
+            return;
           }
-    
           const business = {
             id: Date.now(),
             name,
             category,
-            products: [{
-              name: product,
-              desc,
-              photo: '',
-              views: 0
-            }],
+            products: [{ name: product, desc, photo: '', views: 0 }],
             desc,
             whatsapp,
             instagram,
@@ -1537,55 +1544,58 @@
             closingHour: "18:00"
           };
           const user = { id: business.id, type: 'business', name, email, password };
-    
           businesses.push(business);
           users.push(user);
           currentUser = user;
           updateLocalStorage();
-    
           closeModal('business-form');
           updateUIForUser();
           displayFeed();
         } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
+          console.error('Error signing up business:', error);
+          alert('An error occurred while signing up. Please try again.');
         }
       });
-      
+
       document.getElementById('submit-customer-btn').addEventListener('click', () => {
         try {
           const name = document.getElementById('cust-name').value.trim();
           const email = document.getElementById('cust-email').value.trim();
           const password = document.getElementById('cust-password').value.trim();
-    
+          const error = document.getElementById('customer-form-error');
           if (!name || !email || !password) {
-            throw new Error('Please fill in all fields!');
+            error.textContent = 'Please fill in all fields!';
+            error.style.display = 'block';
+            return;
           }
           if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
+            error.textContent = 'Please enter a valid email address!';
+            error.style.display = 'block';
+            return;
           }
-    
           const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
           users.push(user);
           currentUser = user;
           updateLocalStorage();
-    
           closeModal('customer-form');
           updateUIForUser();
           displayFeed();
         } catch (error) {
-          alert(`An error occurred while signing up: ${error.message}`);
+          console.error('Error signing up customer:', error);
+          alert('An error occurred while signing up. Please try again.');
         }
       });
-      
+
       document.getElementById('login-submit-btn').addEventListener('click', () => {
         try {
           const email = document.getElementById('login-email').value.trim();
           const password = document.getElementById('login-password').value.trim();
-    
+          const error = document.getElementById('login-error');
           if (!email || !password) {
-            throw new Error('Please enter both email and password!');
+            error.textContent = 'Please enter both email and password!';
+            error.style.display = 'block';
+            return;
           }
-    
           const foundUser = users.find(u => u.email === email && u.password === password);
           if (foundUser) {
             currentUser = foundUser;
@@ -1594,15 +1604,16 @@
             updateUIForUser();
             displayFeed();
           } else {
-            throw new Error('Invalid email or password!');
+            error.textContent = 'Invalid email or password!';
+            error.style.display = 'block';
           }
         } catch (error) {
-          alert(`An error occurred while logging in: ${error.message}`);
+          console.error('Error logging in:', error);
+          alert('An error occurred while logging in. Please try again.');
         }
       });
-      
+
       const viewStore = bizId => {
-        console.time('viewStore');
         const business = businesses.find(b => b.id == bizId);
         if (!business) return;
         business.views++;
@@ -1650,9 +1661,8 @@
             </div>
           </div>
         `;
-        console.timeEnd('viewStore');
       };
-      
+
       if (!currentUser) {
         popup.style.display = 'block';
       } else {
