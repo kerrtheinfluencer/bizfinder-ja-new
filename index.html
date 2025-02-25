@@ -552,7 +552,7 @@
       font-size: 0.9rem;
     }
     
-    /* Settings Modal */
+    /* Settings Modal - UPDATED for File Upload */
     #settings-modal {
       position: fixed;
       top: 50%;
@@ -799,17 +799,39 @@
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
-  <!-- Settings Modal -->
+  <!-- SETTINGS MODAL - REPLACED WITH FILE UPLOAD -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name (e.g., John Doe)" required />
-    <input type="url" id="settings-photo" placeholder="Profile Photo URL (e.g., https://example.com/photo.jpg)" />
-    <div class="tooltip">Enter a valid URL starting with http:// or https://, or leave blank for letter avatar.</div>
+    
+    <!-- Name field stays the same -->
+    <input
+      type="text"
+      id="settings-name"
+      placeholder="Your Name (e.g., John Doe)"
+      required
+    />
+
+    <!-- File input instead of URL input -->
+    <input
+      type="file"
+      id="settings-photo-file"
+      accept="image/*"
+    />
+    <div class="tooltip">
+      Upload a profile photo or leave blank for a letter avatar.
+    </div>
+    
     <button id="save-settings-btn">Save Settings</button>
     <button id="reset-settings-btn">Reset to Default</button>
-    <div id="settings-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
+    
+    <!-- Simplified error message -->
+    <div id="settings-error" class="error">
+      Please fill in all required fields.
+    </div>
+    
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
+  <!-- END SETTINGS MODAL -->
 
   <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
@@ -1247,7 +1269,9 @@
         if (settingsModal) {
           settingsModal.style.display = 'block';
           document.getElementById('settings-name').value = currentUser?.name || "";
-          document.getElementById('settings-photo').value = currentUser?.profilePhoto || "";
+          // We no longer use the URL input, so just clear the file input
+          const fileInput = document.getElementById('settings-photo-file');
+          if (fileInput) fileInput.value = "";
           document.getElementById('settings-error').style.display = 'none';
         }
       };
@@ -1363,33 +1387,63 @@
         }
       });
       
+      // UPDATED "Save Settings" - uses file upload instead of URL
       document.getElementById('save-settings-btn').addEventListener('click', () => {
         const newName = document.getElementById('settings-name').value.trim();
-        const newPhoto = document.getElementById('settings-photo').value.trim();
+        const fileInput = document.getElementById('settings-photo-file');
         const error = document.getElementById('settings-error');
 
+        // Simple validation for the name field
         if (!newName) {
           error.style.display = 'block';
-          return;
-        }
-        if (newPhoto && !isValidUrl(newPhoto)) {
-          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
-          error.style.display = 'block';
+          error.textContent = 'Please enter your name.';
           return;
         }
 
-        currentUser.name = newName;
-        currentUser.profilePhoto = newPhoto || '';
-        if (currentUser.type === 'business') {
-          const business = businesses.find(b => b.id === currentUser.id);
-          if (business) {
-            business.name = newName;
-            business.displayPhoto = newPhoto || '';
+        // If a file is actually selected, read it as Base64
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            // e.target.result is the Base64-encoded image
+            currentUser.name = newName;
+            currentUser.profilePhoto = e.target.result;  // Store the Base64 in user profile
+            
+            // If current user is a business, also update the business entry
+            if (currentUser.type === 'business') {
+              const business = businesses.find(b => b.id === currentUser.id);
+              if (business) {
+                business.name = newName;
+                business.displayPhoto = e.target.result;
+              }
+            }
+            
+            updateLocalStorage();
+            closeModal('settings-modal');
+            showProfile();
+          };
+          
+          // Read the file as Base64
+          reader.readAsDataURL(file);
+          
+        } else {
+          // No file selected, so just update the name and reset photo to '' for letter avatar
+          currentUser.name = newName;
+          currentUser.profilePhoto = '';  // triggers letter avatar
+          
+          if (currentUser.type === 'business') {
+            const business = businesses.find(b => b.id === currentUser.id);
+            if (business) {
+              business.name = newName;
+              business.displayPhoto = '';
+            }
           }
+          
+          updateLocalStorage();
+          closeModal('settings-modal');
+          showProfile();
         }
-        updateLocalStorage();
-        closeModal('settings-modal');
-        showProfile();
       });
 
       document.getElementById('reset-settings-btn').addEventListener('click', () => {
