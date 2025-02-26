@@ -2,87 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Jamaica Multi-Vendor Marketplace</title>
+  <!-- Font Awesome for icons (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* Basic styling for layout */
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    header { background-color: #333; color: #fff; padding: 10px 20px; }
-    header h1 { margin: 0; }
-    nav { margin-top: 10px; }
-    nav a { color: #fff; margin-right: 10px; text-decoration: none; cursor: pointer; }
-    .container { padding: 20px; }
-    .hidden { display: none; }
-    .product { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-    form { margin-bottom: 20px; }
-    input, button { padding: 5px; margin: 5px 0; }
+    /* Basic resets and layout styling */
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
+    header { background: #333; color: #fff; padding: 1rem; display: flex; align-items: center; justify-content: space-between; }
+    header .logo { font-size: 1.5rem; }
+    header .search-bar { flex: 1; margin-left: 1rem; }
+    header .search-bar input { width: 100%; padding: 0.5rem; border: none; border-radius: 4px; }
+    .container { display: flex; }
+    .sidebar { width: 250px; background: #fff; padding: 1rem; border-right: 1px solid #ddd; }
+    .content { flex: 1; padding: 1rem; }
+    .grid { display: grid; grid-gap: 1rem; }
+    /* Desktop: 3 items per row */
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    /* Mobile: 2 items per row */
+    @media (max-width: 767px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    /* Card styles with simple fade-in animation */
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeInUp 0.5s forwards;
+      cursor: pointer;
+    }
+    @keyframes fadeInUp {
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .card img { width: 100%; height: 150px; object-fit: cover; }
+    .card .card-content { padding: 0.5rem; }
+    .card .card-title { font-size: 1.2rem; margin: 0; }
+    .card .card-description { font-size: 0.9rem; color: #555; }
+    /* Modal for store preview */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background: #fff;
+      margin: 10% auto;
+      padding: 1rem;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 4px;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <!-- Header with site logo and search bar -->
   <header>
-    <h1>Jamaica Multi-Vendor Marketplace</h1>
-    <nav>
-      <a onclick="showSection('home')">Home</a>
-      <a onclick="showSection('login')">Login/Register</a>
-      <a onclick="showSection('dashboard')">Dashboard</a>
-      <a onclick="logout()">Logout</a>
-    </nav>
+    <div class="logo">Jamaica Market</div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search stores, products..." />
+    </div>
   </header>
-
   <div class="container">
-    <!-- Home Section: List of all products -->
-    <section id="home">
-      <h2>Products</h2>
-      <div id="productsList"></div>
-    </section>
-
-    <!-- Login/Register Section -->
-    <section id="login" class="hidden">
-      <h2>Login / Register</h2>
-      <div id="authDiv">
-        <h3>Register</h3>
-        <form id="registerForm">
-          <input type="email" id="registerEmail" placeholder="Email" required />
-          <input type="password" id="registerPassword" placeholder="Password" required />
-          <button type="submit">Register</button>
-        </form>
-        <h3>Login</h3>
-        <form id="loginForm">
-          <input type="email" id="loginEmail" placeholder="Email" required />
-          <input type="password" id="loginPassword" placeholder="Password" required />
-          <button type="submit">Login</button>
-        </form>
+    <!-- Sidebar with category filters -->
+    <div class="sidebar">
+      <h3>Filters</h3>
+      <div>
+        <label><input type="checkbox" value="fashion" class="filter" /> Fashion</label><br>
+        <label><input type="checkbox" value="electronics" class="filter" /> Electronics</label><br>
+        <label><input type="checkbox" value="food" class="filter" /> Food</label><br>
       </div>
-    </section>
-
-    <!-- Vendor Dashboard: Add product and view vendor’s own products -->
-    <section id="dashboard" class="hidden">
-      <h2>Vendor Dashboard</h2>
-      <div id="dashboardContent">
-        <h3>Add New Product</h3>
-        <form id="productForm">
-          <input type="text" id="productName" placeholder="Product Name" required />
-          <input type="text" id="productDescription" placeholder="Product Description" required />
-          <input type="number" id="productPrice" placeholder="Price" required step="0.01" />
-          <button type="submit">Add Product</button>
-        </form>
-        <h3>Your Products</h3>
-        <div id="vendorProducts"></div>
+    </div>
+    <!-- Main content area with an infinite scrolling grid -->
+    <div class="content">
+      <div id="grid" class="grid">
+        <!-- Store cards will be inserted here dynamically -->
       </div>
-    </section>
+      <div id="loader" style="text-align: center; padding: 1rem; display:none;">
+        Loading more...
+      </div>
+    </div>
   </div>
-
-  <!-- Firebase SDKs -->
-  <!-- Firebase App (the core Firebase SDK) -->
+  
+  <!-- Modal popup for store preview -->
+  <div id="storeModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <div id="modalContent">
+        <!-- Store details and product previews go here -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Firebase and core JavaScript -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <!-- Firebase Authentication -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <!-- Firebase Firestore -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script>
-    // Firebase configuration (replace with your own keys if needed)
-    var firebaseConfig = {
+    // Your Firebase configuration (make sure to secure these keys in production)
+    const firebaseConfig = {
       apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
       authDomain: "bizfinder-7b1b6.firebaseapp.com",
       projectId: "bizfinder-7b1b6",
@@ -91,131 +125,129 @@
       appId: "1:953228556886:web:8c589d5a59a75045c959f7",
       measurementId: "G-SW2BZ8LD07"
     };
-
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
-
-    // Simple navigation between sections
-    function showSection(sectionId) {
-      document.getElementById('home').classList.add('hidden');
-      document.getElementById('login').classList.add('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById(sectionId).classList.remove('hidden');
+    
+    // Dummy data for demonstration (replace this with Firestore queries in production)
+    const allStores = [];
+    for (let i = 1; i <= 50; i++) {
+      allStores.push({
+        id: i,
+        name: "Store " + i,
+        category: i % 3 === 0 ? "fashion" : (i % 3 === 1 ? "electronics" : "food"),
+        description: "This is a brief description of Store " + i,
+        image: "https://via.placeholder.com/300x150?text=Store+" + i,
+        products: [
+          { name: "Product A", image: "https://via.placeholder.com/100?text=A" },
+          { name: "Product B", image: "https://via.placeholder.com/100?text=B" },
+          { name: "Product C", image: "https://via.placeholder.com/100?text=C" }
+        ]
+      });
     }
-
-    // Listen for authentication state changes
-    auth.onAuthStateChanged(function(user) {
-      if (user) {
-        // If a user is logged in, show the vendor dashboard
-        showSection('dashboard');
-        loadVendorProducts(user.uid);
+    
+    // Variables for infinite scrolling and filtering
+    let filteredStores = [...allStores];
+    const grid = document.getElementById("grid");
+    const loader = document.getElementById("loader");
+    const searchInput = document.getElementById("searchInput");
+    const filters = document.querySelectorAll(".filter");
+    let itemsPerLoad = 9;
+    let currentIndex = 0;
+    
+    // Render a batch of store cards
+    function renderStores(storeList) {
+      storeList.forEach(store => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${store.image}" alt="${store.name}" />
+          <div class="card-content">
+            <h4 class="card-title">${store.name}</h4>
+            <p class="card-description">${store.description}</p>
+          </div>
+        `;
+        card.addEventListener("click", () => openModal(store));
+        grid.appendChild(card);
+      });
+    }
+    
+    // Infinite scroll: load more cards when the user nears the bottom
+    function loadMoreStores() {
+      if (currentIndex >= filteredStores.length) return;
+      loader.style.display = "block";
+      setTimeout(() => {
+        const nextItems = filteredStores.slice(currentIndex, currentIndex + itemsPerLoad);
+        renderStores(nextItems);
+        currentIndex += itemsPerLoad;
+        loader.style.display = "none";
+      }, 500);
+    }
+    
+    // Listen for scrolling events
+    window.addEventListener("scroll", () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMoreStores();
+      }
+    });
+    
+    // Search functionality: filter stores based on search input
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+      filteredStores = allStores.filter(store => store.name.toLowerCase().includes(query));
+      applyFilters();
+    });
+    
+    // Filter functionality: update the displayed stores based on category checkboxes
+    filters.forEach(filter => {
+      filter.addEventListener("change", () => {
+        applyFilters();
+      });
+    });
+    
+    // Apply both search and category filters
+    function applyFilters() {
+      const activeFilters = Array.from(filters)
+        .filter(f => f.checked)
+        .map(f => f.value);
+      let tempStores = filteredStores;
+      if (activeFilters.length > 0) {
+        tempStores = tempStores.filter(store => activeFilters.includes(store.category));
+      }
+      // Reset grid and pagination
+      grid.innerHTML = "";
+      currentIndex = 0;
+      filteredStores = tempStores;
+      if (filteredStores.length === 0) {
+        grid.innerHTML = "<p>No stores found.</p>";
       } else {
-        // If no user is logged in, show the home page
-        showSection('home');
+        loadMoreStores();
       }
-      loadProducts();
-    });
-
-    // Register form
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var email = document.getElementById('registerEmail').value;
-      var password = document.getElementById('registerPassword').value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          alert("Registration successful");
-        })
-        .catch((error) => {
-          alert("Error: " + error.message);
-        });
-    });
-
-    // Login form
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var email = document.getElementById('loginEmail').value;
-      var password = document.getElementById('loginPassword').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          alert("Login successful");
-        })
-        .catch((error) => {
-          alert("Error: " + error.message);
-        });
-    });
-
-    // Logout function
-    function logout() {
-      auth.signOut().then(() => {
-        alert("Logged out successfully");
-        showSection('home');
-      });
     }
-
-    // Load all products for the home page
-    function loadProducts() {
-      db.collection("products").orderBy("createdAt", "desc").get().then((querySnapshot) => {
-        var productsList = document.getElementById('productsList');
-        productsList.innerHTML = "";
-        querySnapshot.forEach((doc) => {
-          var data = doc.data();
-          var productDiv = document.createElement("div");
-          productDiv.className = "product";
-          productDiv.innerHTML = "<h4>" + data.name + "</h4>" +
-                                 "<p>" + data.description + "</p>" +
-                                 "<p>Price: $" + data.price + "</p>" +
-                                 "<p>Vendor: " + data.vendorEmail + "</p>";
-          productsList.appendChild(productDiv);
-        });
-      });
+    
+    // Modal functions to show store details and product previews
+    const modal = document.getElementById("storeModal");
+    const modalContent = document.getElementById("modalContent");
+    const closeModalBtn = document.getElementById("closeModal");
+    function openModal(store) {
+      modalContent.innerHTML = `
+        <h2>${store.name}</h2>
+        <p>${store.description}</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          ${store.products.map(prod => `
+            <div style="text-align: center; margin: 5px;">
+              <img src="${prod.image}" alt="${prod.name}" style="width: 80px; height:80px; object-fit:cover; border-radius: 4px;">
+              <p style="font-size: 0.8rem;">${prod.name}</p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      modal.style.display = "block";
     }
-
-    // Load products added by the current vendor
-    function loadVendorProducts(vendorId) {
-      db.collection("products").where("vendorId", "==", vendorId).orderBy("createdAt", "desc").get().then((querySnapshot) => {
-        var vendorProducts = document.getElementById('vendorProducts');
-        vendorProducts.innerHTML = "";
-        querySnapshot.forEach((doc) => {
-          var data = doc.data();
-          var productDiv = document.createElement("div");
-          productDiv.className = "product";
-          productDiv.innerHTML = "<h4>" + data.name + "</h4>" +
-                                 "<p>" + data.description + "</p>" +
-                                 "<p>Price: $" + data.price + "</p>";
-          vendorProducts.appendChild(productDiv);
-        });
-      });
-    }
-
-    // Add new product (vendor only)
-    document.getElementById('productForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var user = auth.currentUser;
-      if (!user) {
-        alert("You must be logged in as a vendor to add products.");
-        return;
-      }
-      var name = document.getElementById('productName').value;
-      var description = document.getElementById('productDescription').value;
-      var price = parseFloat(document.getElementById('productPrice').value);
-      db.collection("products").add({
-        name: name,
-        description: description,
-        price: price,
-        vendorId: user.uid,
-        vendorEmail: user.email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        alert("Product added successfully");
-        document.getElementById('productForm').reset();
-        loadProducts();
-        loadVendorProducts(user.uid);
-      }).catch((error) => {
-        alert("Error adding product: " + error.message);
-      });
-    });
+    closeModalBtn.addEventListener("click", () => { modal.style.display = "none"; });
+    window.addEventListener("click", (event) => { if (event.target === modal) modal.style.display = "none"; });
+    
+    // Initial load of store cards
+    loadMoreStores();
   </script>
 </body>
 </html>
