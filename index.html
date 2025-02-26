@@ -1,121 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jamaica Multi-Vendor Marketplace</title>
-  <!-- Font Awesome for icons (optional) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <!-- Firebase Authentication -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <!-- Firebase Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
-    /* Basic resets and layout styling */
-    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
-    header { background: #333; color: #fff; padding: 1rem; display: flex; align-items: center; justify-content: space-between; }
-    header .logo { font-size: 1.5rem; }
-    header .search-bar { flex: 1; margin-left: 1rem; }
-    header .search-bar input { width: 100%; padding: 0.5rem; border: none; border-radius: 4px; }
-    .container { display: flex; }
-    .sidebar { width: 250px; background: #fff; padding: 1rem; border-right: 1px solid #ddd; }
-    .content { flex: 1; padding: 1rem; }
-    .grid { display: grid; grid-gap: 1rem; }
-    /* Desktop: 3 items per row */
-    @media (min-width: 768px) {
-      .grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    /* Mobile: 2 items per row */
-    @media (max-width: 767px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    /* Card styles with simple fade-in animation */
-    .card {
-      background: #fff;
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transform: translateY(20px);
-      opacity: 0;
-      animation: fadeInUp 0.5s forwards;
-      cursor: pointer;
-    }
-    @keyframes fadeInUp {
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .card img { width: 100%; height: 150px; object-fit: cover; }
-    .card .card-content { padding: 0.5rem; }
-    .card .card-title { font-size: 1.2rem; margin: 0; }
-    .card .card-description { font-size: 0.9rem; color: #555; }
-    /* Modal for store preview */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      overflow: auto;
-      background: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background: #fff;
-      margin: 10% auto;
-      padding: 1rem;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 4px;
-      position: relative;
-    }
-    .close {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { display: flex; justify-content: space-between; align-items: center; }
+    .hidden { display: none; }
+    .vendor, .order, .review { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    input, textarea { padding: 8px; margin: 5px 0; width: 100%; max-width: 400px; }
+    button { padding: 8px 16px; margin-top: 5px; }
   </style>
 </head>
 <body>
-  <!-- Header with site logo and search bar -->
   <header>
-    <div class="logo">Jamaica Market</div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search stores, products..." />
+    <h1>Jamaica Multi-Vendor Marketplace</h1>
+    <div id="auth-section">
+      <button id="sign-in-btn">Sign In with Google</button>
+      <button id="sign-out-btn" class="hidden">Sign Out</button>
     </div>
   </header>
-  <div class="container">
-    <!-- Sidebar with category filters -->
-    <div class="sidebar">
-      <h3>Filters</h3>
-      <div>
-        <label><input type="checkbox" value="fashion" class="filter" /> Fashion</label><br>
-        <label><input type="checkbox" value="electronics" class="filter" /> Electronics</label><br>
-        <label><input type="checkbox" value="food" class="filter" /> Food</label><br>
-      </div>
-    </div>
-    <!-- Main content area with an infinite scrolling grid -->
-    <div class="content">
-      <div id="grid" class="grid">
-        <!-- Store cards will be inserted here dynamically -->
-      </div>
-      <div id="loader" style="text-align: center; padding: 1rem; display:none;">
-        Loading more...
-      </div>
-    </div>
-  </div>
   
-  <!-- Modal popup for store preview -->
-  <div id="storeModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <div id="modalContent">
-        <!-- Store details and product previews go here -->
-      </div>
-    </div>
-  </div>
+  <!-- Vendor Dashboard (visible after sign‑in) -->
+  <section id="dashboard" class="hidden">
+    <h2>Vendor Dashboard</h2>
+    <p>Manage your products and orders here.</p>
+    <h3>Add Product</h3>
+    <form id="add-product-form">
+      <input type="text" id="product-name" placeholder="Product Name" required>
+      <input type="number" id="product-price" placeholder="Price" required>
+      <button type="submit">Add Product</button>
+    </form>
+  </section>
   
-  <!-- Firebase and core JavaScript -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <!-- Vendors List & Search -->
+  <section id="vendor-section">
+    <h2>Vendors</h2>
+    <input type="text" id="search-input" placeholder="Search vendors...">
+    <div id="vendor-list">
+      <!-- Vendor information will be loaded here from Firestore -->
+    </div>
+  </section>
+  
+  <!-- Shopping Cart (placeholder functionality) -->
+  <section id="cart-section">
+    <h2>Shopping Cart</h2>
+    <div id="cart-items">
+      <!-- Cart items go here -->
+    </div>
+    <button id="checkout-btn">Checkout</button>
+  </section>
+  
+  <!-- User Reviews -->
+  <section id="reviews-section">
+    <h2>User Reviews</h2>
+    <form id="review-form">
+      <textarea id="review-text" placeholder="Write a review..." required></textarea>
+      <button type="submit">Submit Review</button>
+    </form>
+    <div id="reviews-list">
+      <!-- Reviews loaded from Firestore -->
+    </div>
+  </section>
+  
+  <!-- Order Tracking (visible for signed‑in users) -->
+  <section id="orders-section" class="hidden">
+    <h2>Order Tracking</h2>
+    <div id="orders-list">
+      <!-- User orders will be loaded here from Firestore -->
+    </div>
+  </section>
+  
   <script>
-    // Your Firebase configuration (make sure to secure these keys in production)
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
       authDomain: "bizfinder-7b1b6.firebaseapp.com",
@@ -125,129 +89,161 @@
       appId: "1:953228556886:web:8c589d5a59a75045c959f7",
       measurementId: "G-SW2BZ8LD07"
     };
+    
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
     
-    // Dummy data for demonstration (replace this with Firestore queries in production)
-    const allStores = [];
-    for (let i = 1; i <= 50; i++) {
-      allStores.push({
-        id: i,
-        name: "Store " + i,
-        category: i % 3 === 0 ? "fashion" : (i % 3 === 1 ? "electronics" : "food"),
-        description: "This is a brief description of Store " + i,
-        image: "https://via.placeholder.com/300x150?text=Store+" + i,
-        products: [
-          { name: "Product A", image: "https://via.placeholder.com/100?text=A" },
-          { name: "Product B", image: "https://via.placeholder.com/100?text=B" },
-          { name: "Product C", image: "https://via.placeholder.com/100?text=C" }
-        ]
-      });
-    }
+    // Authentication handling
+    const signInBtn = document.getElementById('sign-in-btn');
+    const signOutBtn = document.getElementById('sign-out-btn');
+    const dashboardSection = document.getElementById('dashboard');
+    const ordersSection = document.getElementById('orders-section');
     
-    // Variables for infinite scrolling and filtering
-    let filteredStores = [...allStores];
-    const grid = document.getElementById("grid");
-    const loader = document.getElementById("loader");
-    const searchInput = document.getElementById("searchInput");
-    const filters = document.querySelectorAll(".filter");
-    let itemsPerLoad = 9;
-    let currentIndex = 0;
-    
-    // Render a batch of store cards
-    function renderStores(storeList) {
-      storeList.forEach(store => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${store.image}" alt="${store.name}" />
-          <div class="card-content">
-            <h4 class="card-title">${store.name}</h4>
-            <p class="card-description">${store.description}</p>
-          </div>
-        `;
-        card.addEventListener("click", () => openModal(store));
-        grid.appendChild(card);
-      });
-    }
-    
-    // Infinite scroll: load more cards when the user nears the bottom
-    function loadMoreStores() {
-      if (currentIndex >= filteredStores.length) return;
-      loader.style.display = "block";
-      setTimeout(() => {
-        const nextItems = filteredStores.slice(currentIndex, currentIndex + itemsPerLoad);
-        renderStores(nextItems);
-        currentIndex += itemsPerLoad;
-        loader.style.display = "none";
-      }, 500);
-    }
-    
-    // Listen for scrolling events
-    window.addEventListener("scroll", () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-        loadMoreStores();
-      }
+    signInBtn.addEventListener('click', () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          console.log('Signed in as:', result.user.displayName);
+        })
+        .catch((error) => {
+          console.error('Error signing in:', error);
+        });
     });
     
-    // Search functionality: filter stores based on search input
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase();
-      filteredStores = allStores.filter(store => store.name.toLowerCase().includes(query));
-      applyFilters();
-    });
-    
-    // Filter functionality: update the displayed stores based on category checkboxes
-    filters.forEach(filter => {
-      filter.addEventListener("change", () => {
-        applyFilters();
+    signOutBtn.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        console.log('Signed out');
       });
     });
     
-    // Apply both search and category filters
-    function applyFilters() {
-      const activeFilters = Array.from(filters)
-        .filter(f => f.checked)
-        .map(f => f.value);
-      let tempStores = filteredStores;
-      if (activeFilters.length > 0) {
-        tempStores = tempStores.filter(store => activeFilters.includes(store.category));
-      }
-      // Reset grid and pagination
-      grid.innerHTML = "";
-      currentIndex = 0;
-      filteredStores = tempStores;
-      if (filteredStores.length === 0) {
-        grid.innerHTML = "<p>No stores found.</p>";
+    auth.onAuthStateChanged(user => {
+      if(user) {
+        signInBtn.classList.add('hidden');
+        signOutBtn.classList.remove('hidden');
+        dashboardSection.classList.remove('hidden');
+        ordersSection.classList.remove('hidden');
+        loadUserOrders(user);
       } else {
-        loadMoreStores();
+        signInBtn.classList.remove('hidden');
+        signOutBtn.classList.add('hidden');
+        dashboardSection.classList.add('hidden');
+        ordersSection.classList.add('hidden');
       }
+    });
+    
+    // Load vendors from Firestore in real-time
+    const vendorListDiv = document.getElementById('vendor-list');
+    function loadVendors() {
+      db.collection('vendors').onSnapshot(snapshot => {
+        vendorListDiv.innerHTML = '';
+        snapshot.forEach(doc => {
+          const vendor = doc.data();
+          const vendorDiv = document.createElement('div');
+          vendorDiv.className = 'vendor';
+          vendorDiv.innerHTML = `
+            <h3>${vendor.name}</h3>
+            <p>${vendor.description || 'No description available.'}</p>
+            <p>Price: $${vendor.price || 'N/A'}</p>
+            <button onclick="addToCart('${doc.id}', '${vendor.name}', ${vendor.price || 0})">Add to Cart</button>
+          `;
+          vendorListDiv.appendChild(vendorDiv);
+        });
+      });
+    }
+    loadVendors();
+    
+    // Search functionality to filter vendors
+    const searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      document.querySelectorAll('.vendor').forEach(vendorDiv => {
+        const name = vendorDiv.querySelector('h3').textContent.toLowerCase();
+        vendorDiv.style.display = name.includes(searchTerm) ? '' : 'none';
+      });
+    });
+    
+    // Shopping Cart logic
+    let cart = [];
+    window.addToCart = function(id, name, price) {
+      cart.push({id, name, price});
+      renderCart();
     }
     
-    // Modal functions to show store details and product previews
-    const modal = document.getElementById("storeModal");
-    const modalContent = document.getElementById("modalContent");
-    const closeModalBtn = document.getElementById("closeModal");
-    function openModal(store) {
-      modalContent.innerHTML = `
-        <h2>${store.name}</h2>
-        <p>${store.description}</p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          ${store.products.map(prod => `
-            <div style="text-align: center; margin: 5px;">
-              <img src="${prod.image}" alt="${prod.name}" style="width: 80px; height:80px; object-fit:cover; border-radius: 4px;">
-              <p style="font-size: 0.8rem;">${prod.name}</p>
-            </div>
-          `).join('')}
-        </div>
-      `;
-      modal.style.display = "block";
+    function renderCart() {
+      const cartItemsDiv = document.getElementById('cart-items');
+      cartItemsDiv.innerHTML = '';
+      cart.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.textContent = `${item.name} - $${item.price}`;
+        cartItemsDiv.appendChild(itemDiv);
+      });
     }
-    closeModalBtn.addEventListener("click", () => { modal.style.display = "none"; });
-    window.addEventListener("click", (event) => { if (event.target === modal) modal.style.display = "none"; });
     
-    // Initial load of store cards
-    loadMoreStores();
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+      alert('Checkout functionality is not implemented in this demo.');
+    });
+    
+    // Vendor Dashboard: Add Product (demo adds product to "vendors" collection)
+    document.getElementById('add-product-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('product-name').value;
+      const price = parseFloat(document.getElementById('product-price').value);
+      db.collection('vendors').add({
+        name: name,
+        description: 'New product added by vendor.',
+        price: price
+      }).then(() => {
+        document.getElementById('add-product-form').reset();
+        alert('Product added!');
+      }).catch(error => {
+        console.error('Error adding product:', error);
+      });
+    });
+    
+    // User Reviews: Submit and load reviews from Firestore
+    document.getElementById('review-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const reviewText = document.getElementById('review-text').value;
+      db.collection('reviews').add({
+        text: reviewText,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        document.getElementById('review-form').reset();
+      }).catch(error => {
+        console.error('Error submitting review:', error);
+      });
+    });
+    
+    db.collection('reviews').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      const reviewsList = document.getElementById('reviews-list');
+      reviewsList.innerHTML = '';
+      snapshot.forEach(doc => {
+        const review = doc.data();
+        const reviewDiv = document.createElement('div');
+        reviewDiv.className = 'review';
+        reviewDiv.textContent = review.text;
+        reviewsList.appendChild(reviewDiv);
+      });
+    });
+    
+    // Order Tracking: Load orders for the authenticated user
+    function loadUserOrders(user) {
+      db.collection('orders')
+        .where('userId', '==', user.uid)
+        .onSnapshot(snapshot => {
+          const ordersList = document.getElementById('orders-list');
+          ordersList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'order';
+            orderDiv.innerHTML = `<p>Order ID: ${doc.id}</p><p>Status: ${order.status || 'Processing'}</p>`;
+            ordersList.appendChild(orderDiv);
+          });
+        });
+    }
   </script>
 </body>
 </html>
