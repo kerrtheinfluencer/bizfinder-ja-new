@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BizFinder JA</title>
-  <!-- Firebase CDN (using compat libraries for easier migration) -->
+  <!-- Firebase (compat libraries for simplicity) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <!-- Chart.js for interactive graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Core Styles (hot products styles removed) */
+    /* Removed hot product styles and kept core styling. */
     :root {
       --primary-green: #2ecc71;
       --secondary-green: #27ae60;
@@ -449,7 +449,7 @@
   </div>
   <script>
     'use strict';
-    // Firebase configuration and initialization
+    // 1. Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
       authDomain: "bizfinder-7b1b6.firebaseapp.com",
@@ -462,19 +462,18 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    // (For testing, ensure your Firestore rules permit read/write)
 
-    let currentUser = null;
-    let businesses = [];
+    // 2. Global state
+    let currentUser = null;  // Current user's data from "users" collection
+    let businesses = [];      // Cached array of businesses
 
-    // Utility: Create a letter avatar if no photo provided
+    // 3. Utility Functions
     function getLetterAvatar(name) {
       const letter = name.charAt(0).toUpperCase();
       const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
       const color = colors[Math.floor(Math.random() * colors.length)];
       return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
     }
-    // Utility: Check if store is open based on hours
     function isStoreOpen(business) {
       const now = new Date();
       const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
@@ -485,7 +484,8 @@
       closeDate.setHours(closeH, closeM, 0, 0);
       return now >= openDate && now <= closeDate;
     }
-    // Load businesses from Firestore
+
+    // 4. Firestore Data
     async function loadBusinesses() {
       document.getElementById('loading').style.display = 'block';
       try {
@@ -497,101 +497,116 @@
       }
       document.getElementById('loading').style.display = 'none';
     }
-    // Display business feed
+
     function displayFeed() {
-      document.getElementById('feed').style.display = 'grid';
-      document.getElementById('store-page').style.display = 'none';
-      document.getElementById('profile-page').style.display = 'none';
       const feed = document.getElementById('feed');
+      const storePage = document.getElementById('store-page');
+      const profilePage = document.getElementById('profile-page');
+      feed.style.display = 'grid';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'none';
       feed.innerHTML = "";
       const info = document.getElementById('search-results-info');
       if(businesses.length === 0) {
         info.textContent = 'No results found.';
-      } else {
-        info.textContent = `Found ${businesses.length} businesses.`;
-        businesses.forEach(business => {
-          const featuredProduct = (business.products && business.products.length > 0) ? business.products[0] : { name: 'No product', photo: '' };
-          const card = document.createElement('div');
-          card.className = 'business-card';
-          card.innerHTML = `
-            <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-            <p class="category">${business.category}</p>
-            ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
-            <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-            <p>${business.desc}</p>
-            <p><strong>Location:</strong> ${business.location}</p>
-            <div class="contact">
-              <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-              <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-            </div>
-            <p class="views">Views: ${business.views || 0}</p>
-            <button class="view-store-btn" data-id="${business.id}">View Store</button>
-          `;
-          feed.appendChild(card);
-        });
+        return;
       }
+      info.textContent = `Found ${businesses.length} businesses.`;
+      businesses.forEach(business => {
+        const featured = (business.products && business.products.length>0) ? business.products[0] : {name:'No product'};
+        const card = document.createElement('div');
+        card.className = 'business-card';
+        card.innerHTML = `
+          <h3>${business.name}
+            <span class="status-indicator" style="background:${isStoreOpen(business) ? 'green' : 'red'};"></span>
+          </h3>
+          <p class="category">${business.category}</p>
+          ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+          <p><strong>Featured Product:</strong> ${featured.name}</p>
+          <p>${business.desc}</p>
+          <p><strong>Location:</strong> ${business.location}</p>
+          <div class="contact">
+            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+          </div>
+          <p class="views">Views: ${business.views || 0}</p>
+          <button class="view-store-btn" data-id="${business.id}">View Store</button>
+        `;
+        feed.appendChild(card);
+      });
     }
-    // View a specific business/store
+
     async function viewStore(bizId) {
       try {
         const doc = await db.collection("businesses").doc(bizId).get();
-        if(doc.exists) {
-          const business = doc.data();
-          // Update view count
-          await db.collection("businesses").doc(bizId).update({ views: (business.views || 0) + 1 });
-          business.views = (business.views || 0) + 1;
-          document.getElementById('feed').style.display = 'none';
-          document.getElementById('store-page').style.display = 'block';
-          document.getElementById('profile-page').style.display = 'none';
-          const storePage = document.getElementById('store-page');
-          storePage.innerHTML = `
-            <button class="back-to-feed-btn">Back to Feed</button>
-            <div class="store-container">
-              <div class="business-info">
-                <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-                <p class="category">${business.category}</p>
-                ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
-                <p>${business.desc}</p>
-                <p><strong>Location:</strong> ${business.location}</p>
-                <div class="contact">
-                  <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                  <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                </div>
-                <p class="views">Views: ${business.views}</p>
+        if(!doc.exists) return;
+        const business = doc.data();
+        // increment overall store views
+        await db.collection("businesses").doc(bizId).update({
+          views: (business.views || 0) + 1
+        });
+        business.views = (business.views || 0) + 1;
+
+        document.getElementById('feed').style.display = 'none';
+        document.getElementById('store-page').style.display = 'block';
+        document.getElementById('profile-page').style.display = 'none';
+        const storePage = document.getElementById('store-page');
+        storePage.innerHTML = `
+          <button class="back-to-feed-btn">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${business.name}
+                <span class="status-indicator" style="background:${isStoreOpen(business) ? 'green' : 'red'};"></span>
+              </h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
               </div>
-              <div class="products-section">
-                <h4>Products</h4>
-                <div class="products-grid">
-                  ${business.products ? business.products.map(p => `
-                    <div class="product-card">
-                      <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
-                      <div class="product-info">
-                        <p class="product-name">${p.name}</p>
-                        <p class="product-desc">${p.desc}</p>
-                        <p class="product-views">Views: ${p.views || 0}</p>
-                      </div>
+              <p class="views">Views: ${business.views}</p>
+            </div>
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${business.products ? business.products.map(p => `
+                  <div class="product-card">
+                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
+                    <div class="product-info">
+                      <p class="product-name">${p.name}</p>
+                      <p class="product-desc">${p.desc}</p>
+                      <p class="product-views">Views: ${p.views || 0}</p>
                     </div>
-                  `).join('') : '<p>No products available.</p>'}
-                </div>
+                  </div>
+                `).join('') : '<p>No products available.</p>'}
               </div>
             </div>
-          `;
-        }
+          </div>
+        `;
       } catch(error) {
         alert("Error viewing store: " + error.message);
       }
     }
-    // Show profile for logged-in user
+
+    // 5. Profile
     async function showProfile() {
       if(!currentUser) return;
-      document.getElementById('feed').style.display = 'none';
-      document.getElementById('store-page').style.display = 'none';
-      document.getElementById('profile-page').style.display = 'block';
-      let profileContent = `<div class="profile-container">
-        <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">
-          ${currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed'}
-        </button>
-        <div class="profile-header">`;
+      const feed = document.getElementById('feed');
+      const storePage = document.getElementById('store-page');
+      const profilePage = document.getElementById('profile-page');
+      feed.style.display = 'none';
+      storePage.style.display = 'none';
+      profilePage.style.display = 'block';
+
+      let profileContent = `
+        <div class="profile-container">
+          <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">
+            ${currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed'}
+          </button>
+          <div class="profile-header">
+      `;
       if(currentUser.profilePhoto) {
         profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}">`;
       } else {
@@ -600,8 +615,10 @@
       profileContent += `
             <h3>${currentUser.name}</h3>
             <p>${currentUser.email}</p>
-        </div>
-        <div class="profile-details">`;
+          </div>
+          <div class="profile-details">
+      `;
+
       if(currentUser.type === 'business') {
         const doc = await db.collection("businesses").doc(currentUser.id).get();
         if(doc.exists) {
@@ -609,21 +626,25 @@
           profileContent += `
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views || 0}</p>
-            <p>Featured Product: ${(business.products && business.products.length > 0) ? business.products[0].name : 'No products'}</p>
+            <p>Featured Product: ${
+              (business.products && business.products.length>0) ? business.products[0].name : 'No products'
+            }</p>
             <button id="add-product-btn">Add Product</button>
             <button id="manage-products-btn">Manage Products</button>
             <div class="product-list" id="profile-product-list">
-              ${business.products ? business.products.map(p => `
-                <div class="product-item">
-                  <span>${p.name} - ${p.desc}</span>
-                  <div class="product-item-actions">
-                    <button class="edit-product-btn" data-id="${p.name}">Edit</button>
-                    <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+              ${
+                business.products ? business.products.map(p => `
+                  <div class="product-item">
+                    <span>${p.name} - ${p.desc}</span>
+                    <div class="product-item-actions">
+                      <button class="edit-product-btn" data-id="${p.name}">Edit</button>
+                      <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+                    </div>
                   </div>
-                </div>
-              `).join('') : '<p>No products available.</p>'}
+                `).join('') : '<p>No products available.</p>'
+              }
             </div>
-            <div style="margin-top: 1rem; height:300px;">
+            <div style="margin-top:1rem; height:300px;">
               <canvas id="viewsChart"></canvas>
             </div>
           `;
@@ -631,39 +652,31 @@
       } else if(currentUser.type === 'customer') {
         profileContent += `
           <h4>Recent Activity</h4>
-          ${currentUser.recentlyViewed ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>No recent views.</p>'}
+          ${
+            currentUser.recentlyViewed && currentUser.recentlyViewed.length
+            ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('')
+            : '<p>No recent views.</p>'
+          }
         `;
       }
       profileContent += `
+          </div>
+          <button id="settings-btn">Settings</button>
+          <button id="logout-btn">Logout</button>
         </div>
-        <button id="settings-btn">Settings</button>
-        <button id="logout-btn">Logout</button>
-      </div>`;
-      document.getElementById('profile-page').innerHTML = profileContent;
-      if(currentUser.type === 'business') {
-        initViewsChart();
-        document.getElementById('add-product-btn').addEventListener('click', () => {
-          document.getElementById('add-product-modal').style.display = 'block';
-        });
-        document.getElementById('manage-products-btn').addEventListener('click', openManageProductsModal);
-        document.querySelectorAll('.edit-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
-        });
-        document.querySelectorAll('.delete-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if(confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
-              deleteProduct(btn.getAttribute('data-id'));
-            }
-          });
-        });
-      }
+      `;
+      profilePage.innerHTML = profileContent;
+
+      // Initialize chart if business
+      if(currentUser.type === 'business') initViewsChart();
     }
+
     function initViewsChart() {
       const ctx = document.getElementById('viewsChart')?.getContext('2d');
       if(!ctx) return;
       const labels = [];
       const dataPoints = [];
-      for(let i = 6; i >= 0; i--) {
+      for(let i=6; i>=0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         labels.push(`${d.getMonth()+1}/${d.getDate()}`);
@@ -693,12 +706,14 @@
         }
       });
     }
+
     async function openManageProductsModal() {
       const modal = document.getElementById('manage-products-modal');
-      const businessDoc = await db.collection("businesses").doc(currentUser.id).get();
-      if(businessDoc.exists) {
-        const business = businessDoc.data();
-        document.getElementById('manage-product-list').innerHTML = business.products ? business.products.map(p => `
+      const doc = await db.collection("businesses").doc(currentUser.id).get();
+      if(!doc.exists) return;
+      const business = doc.data();
+      document.getElementById('manage-product-list').innerHTML = business.products
+        ? business.products.map(p => `
           <div class="product-item">
             <span>${p.name} - ${p.desc}</span>
             <div class="product-item-actions">
@@ -706,20 +721,22 @@
               <button class="delete-product-btn" data-id="${p.name}">Delete</button>
             </div>
           </div>
-        `).join('') : '<p>No products available.</p>';
-        modal.style.display = 'block';
-        document.querySelectorAll('.edit-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+        `).join('')
+        : '<p>No products available.</p>';
+      modal.style.display = 'block';
+
+      document.querySelectorAll('.edit-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+      });
+      document.querySelectorAll('.delete-product-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if(confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+            deleteProduct(btn.getAttribute('data-id'));
+          }
         });
-        document.querySelectorAll('.delete-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if(confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
-              deleteProduct(btn.getAttribute('data-id'));
-            }
-          });
-        });
-      }
+      });
     }
+
     function editProduct(productId) {
       db.collection("businesses").doc(currentUser.id).get().then(doc => {
         if(doc.exists) {
@@ -734,6 +751,7 @@
         }
       });
     }
+
     async function saveEditedProduct() {
       const prodName = document.getElementById('edit-prod-name').value.trim();
       const prodDesc = document.getElementById('edit-prod-desc').value.trim();
@@ -753,7 +771,7 @@
             }
             return p;
           });
-          await docRef.update({ products: products });
+          await docRef.update({ products });
           document.getElementById('edit-product-modal').style.display = 'none';
           showProfile();
         }
@@ -761,6 +779,7 @@
         alert("Error saving product: " + error.message);
       }
     }
+
     async function deleteProduct(productId) {
       try {
         const docRef = db.collection("businesses").doc(currentUser.id);
@@ -768,13 +787,15 @@
         if(docSnap.exists) {
           const business = docSnap.data();
           const products = business.products.filter(p => p.name !== productId);
-          await docRef.update({ products: products });
+          await docRef.update({ products });
           openManageProductsModal();
         }
       } catch(error) {
         alert("Error deleting product: " + error.message);
       }
     }
+
+    // 6. Event Listeners
     document.getElementById('submit-product-btn').addEventListener('click', () => {
       const prodName = document.getElementById('prod-name').value.trim();
       const prodDesc = document.getElementById('prod-desc').value.trim();
@@ -789,7 +810,7 @@
             const business = doc.data();
             const products = business.products || [];
             products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
-            db.collection("businesses").doc(currentUser.id).update({ products: products }).then(() => {
+            db.collection("businesses").doc(currentUser.id).update({ products }).then(() => {
               document.getElementById('add-product-modal').style.display = 'none';
               showProfile();
             });
@@ -815,10 +836,13 @@
         document.getElementById('settings-error').style.display = 'block';
         return;
       }
-      const userRef = db.collection("users").doc(currentUser.id);
-      userRef.update({ name: newName, profilePhoto: newPhoto }).then(() => {
+      db.collection("users").doc(currentUser.id).update({
+        name: newName, profilePhoto: newPhoto
+      }).then(() => {
         if(currentUser.type === 'business') {
-          db.collection("businesses").doc(currentUser.id).update({ name: newName, displayPhoto: newPhoto });
+          db.collection("businesses").doc(currentUser.id).update({
+            name: newName, displayPhoto: newPhoto
+          });
         }
         document.getElementById('settings-modal').style.display = 'none';
         showProfile();
@@ -826,14 +850,19 @@
     });
     document.getElementById('reset-settings-btn').addEventListener('click', () => {
       const defaultName = `User_${Date.now()}`;
-      db.collection("users").doc(currentUser.id).update({ name: defaultName, profilePhoto: "" }).then(() => {
+      db.collection("users").doc(currentUser.id).update({
+        name: defaultName, profilePhoto: ""
+      }).then(() => {
         if(currentUser.type === 'business') {
-          db.collection("businesses").doc(currentUser.id).update({ name: defaultName, displayPhoto: "" });
+          db.collection("businesses").doc(currentUser.id).update({
+            name: defaultName, displayPhoto: ""
+          });
         }
         document.getElementById('settings-modal').style.display = 'none';
         showProfile();
       });
     });
+
     document.body.addEventListener('click', event => {
       if(event.target.id === 'back-to-feed' || event.target.classList.contains('back-to-feed-btn')) {
         displayFeed();
@@ -844,28 +873,47 @@
       if(event.target.classList.contains('view-store-btn')) {
         viewStore(event.target.getAttribute('data-id'));
       }
-      if(event.target.id === 'add-product-btn') {
-        document.getElementById('add-product-modal').style.display = 'block';
-      }
       if(event.target.id === 'logout-btn') {
         auth.signOut().then(() => {
           currentUser = null;
           displayFeed();
         });
       }
+      if(event.target.id === 'add-product-btn') {
+        document.getElementById('add-product-modal').style.display = 'block';
+      }
       if(event.target.classList.contains('close-btn')) {
         document.getElementById(event.target.getAttribute('data-form')).style.display = 'none';
       }
+      if(event.target.id === 'manage-products-btn') {
+        openManageProductsModal();
+      }
+      if(event.target.id === 'settings-btn') {
+        document.getElementById('settings-modal').style.display = 'block';
+        document.getElementById('settings-error').style.display = 'none';
+      }
+    });
+
+    // 7. Top Nav Buttons
+    document.getElementById('login-btn').addEventListener('click', () => {
+      document.getElementById('login-form').style.display = 'block';
+    });
+    document.getElementById('signup-btn').addEventListener('click', () => {
+      document.getElementById('popup').style.display = 'block';
     });
     document.getElementById('businessName').addEventListener('click', () => {
       loadBusinesses();
     });
+
+    // 8. Searching
     let searchTimeout;
     document.getElementById('search-bar').addEventListener('keyup', () => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         const query = document.getElementById('search-bar').value.toLowerCase().trim();
-        if(query) {
+        if(!query) {
+          loadBusinesses();
+        } else {
           const filtered = businesses.filter(biz =>
             biz.name.toLowerCase().includes(query) ||
             biz.category.toLowerCase().includes(query) ||
@@ -877,11 +925,11 @@
           );
           businesses = filtered;
           displayFeed();
-        } else {
-          loadBusinesses();
         }
       }, 300);
     });
+
+    // 9. Popup Buttons
     document.getElementById('business-btn').addEventListener('click', () => {
       document.getElementById('popup').style.display = 'none';
       document.getElementById('business-form').style.display = 'block';
@@ -892,15 +940,11 @@
     });
     document.getElementById('feed-btn').addEventListener('click', () => {
       document.getElementById('popup').style.display = 'none';
+      // If we haven't loaded businesses yet, do so:
       loadBusinesses();
     });
-    document.getElementById('login-btn').addEventListener('click', () => {
-      document.getElementById('login-form').style.display = 'block';
-    });
-    document.getElementById('signup-btn').addEventListener('click', () => {
-      document.getElementById('popup').style.display = 'block';
-    });
-    // Business Sign-Up
+
+    // 10. Sign-Up / Login
     document.getElementById('submit-business-btn').addEventListener('click', async () => {
       const name = document.getElementById('biz-name').value.trim();
       const email = document.getElementById('biz-email').value.trim();
@@ -911,6 +955,7 @@
       const whatsapp = document.getElementById('biz-whatsapp').value.trim();
       const instagram = document.getElementById('biz-instagram').value.trim();
       const location = document.getElementById('biz-location').value.trim();
+
       if(!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
         alert('Please fill in all fields!');
         return;
@@ -941,7 +986,7 @@
           closingHour: "18:00"
         };
         await db.collection("businesses").doc(uid).set(businessData);
-        const userData = { id: uid, type: 'business', name, email };
+        const userData = { id: uid, type: 'business', name, email, profilePhoto: '' };
         await db.collection("users").doc(uid).set(userData);
         currentUser = userData;
         document.getElementById('business-form').style.display = 'none';
@@ -950,7 +995,7 @@
         alert("Error during business sign-up: " + error.message);
       }
     });
-    // Customer Sign-Up
+
     document.getElementById('submit-customer-btn').addEventListener('click', async () => {
       const name = document.getElementById('cust-name').value.trim();
       const email = document.getElementById('cust-email').value.trim();
@@ -966,7 +1011,7 @@
       try {
         const res = await auth.createUserWithEmailAndPassword(email, password);
         const uid = res.user.uid;
-        const userData = { id: uid, type: 'customer', name, email, recentlyViewed: [] };
+        const userData = { id: uid, type: 'customer', name, email, profilePhoto: '', recentlyViewed: [] };
         await db.collection("users").doc(uid).set(userData);
         currentUser = userData;
         document.getElementById('customer-form').style.display = 'none';
@@ -975,7 +1020,7 @@
         alert("Error during customer sign-up: " + error.message);
       }
     });
-    // Login
+
     document.getElementById('login-submit-btn').addEventListener('click', async () => {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
@@ -998,24 +1043,32 @@
         alert("Error during login: " + error.message);
       }
     });
-    // Listen for auth state changes
-    auth.onAuthStateChanged(user => {
+
+    // 11. Ensure we always have an Auth user, even if anonymous
+    auth.onAuthStateChanged(async user => {
       if(user) {
-        db.collection("users").doc(user.uid).get().then(doc => {
-          if(doc.exists) {
-            currentUser = doc.data();
-          }
-        });
+        // If we just signed in or reloaded, fetch user data from "users" collection if it exists
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if(userDoc.exists) {
+          currentUser = userDoc.data();
+        }
       } else {
-        currentUser = null;
+        // If no user is logged in, sign in anonymously so Firestore rules allow read
+        try {
+          await auth.signInAnonymously();
+        } catch(err) {
+          console.error("Anonymous sign-in error:", err);
+        }
       }
     });
-    // Initial load
-    window.addEventListener('load', () => {
-      if(!currentUser) {
+
+    // 12. On first load, show popup if no user, else load businesses
+    window.addEventListener('load', async () => {
+      // If no user is logged in, popup shows automatically. If user is recognized,
+      // onAuthStateChanged will eventually call loadBusinesses().
+      if(!auth.currentUser) {
         document.getElementById('popup').style.display = 'block';
       }
-      loadBusinesses();
     });
   </script>
 </body>
