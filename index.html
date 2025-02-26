@@ -1,249 +1,33 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jamaica Multi-Vendor Marketplace</title>
-  <!-- Firebase App (the core Firebase SDK) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <!-- Firebase Authentication -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <!-- Firebase Firestore -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    header { display: flex; justify-content: space-between; align-items: center; }
-    .hidden { display: none; }
-    .vendor, .order, .review { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
-    input, textarea { padding: 8px; margin: 5px 0; width: 100%; max-width: 400px; }
-    button { padding: 8px 16px; margin-top: 5px; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Jamaica Multi-Vendor Marketplace</h1>
-    <div id="auth-section">
-      <button id="sign-in-btn">Sign In with Google</button>
-      <button id="sign-out-btn" class="hidden">Sign Out</button>
-    </div>
-  </header>
-  
-  <!-- Vendor Dashboard (visible after sign‑in) -->
-  <section id="dashboard" class="hidden">
-    <h2>Vendor Dashboard</h2>
-    <p>Manage your products and orders here.</p>
-    <h3>Add Product</h3>
-    <form id="add-product-form">
-      <input type="text" id="product-name" placeholder="Product Name" required>
-      <input type="number" id="product-price" placeholder="Price" required>
-      <button type="submit">Add Product</button>
-    </form>
-  </section>
-  
-  <!-- Vendors List & Search -->
-  <section id="vendor-section">
-    <h2>Vendors</h2>
-    <input type="text" id="search-input" placeholder="Search vendors...">
-    <div id="vendor-list">
-      <!-- Vendor information will be loaded here from Firestore -->
-    </div>
-  </section>
-  
-  <!-- Shopping Cart (placeholder functionality) -->
-  <section id="cart-section">
-    <h2>Shopping Cart</h2>
-    <div id="cart-items">
-      <!-- Cart items go here -->
-    </div>
-    <button id="checkout-btn">Checkout</button>
-  </section>
-  
-  <!-- User Reviews -->
-  <section id="reviews-section">
-    <h2>User Reviews</h2>
-    <form id="review-form">
-      <textarea id="review-text" placeholder="Write a review..." required></textarea>
-      <button type="submit">Submit Review</button>
-    </form>
-    <div id="reviews-list">
-      <!-- Reviews loaded from Firestore -->
-    </div>
-  </section>
-  
-  <!-- Order Tracking (visible for signed‑in users) -->
-  <section id="orders-section" class="hidden">
-    <h2>Order Tracking</h2>
-    <div id="orders-list">
-      <!-- User orders will be loaded here from Firestore -->
-    </div>
-  </section>
-  
-  <script>
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
-      authDomain: "bizfinder-7b1b6.firebaseapp.com",
-      projectId: "bizfinder-7b1b6",
-      storageBucket: "bizfinder-7b1b6.firebasestorage.app",
-      messagingSenderId: "953228556886",
-      appId: "1:953228556886:web:8c589d5a59a75045c959f7",
-      measurementId: "G-SW2BZ8LD07"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    
-    // Authentication handling
-    const signInBtn = document.getElementById('sign-in-btn');
-    const signOutBtn = document.getElementById('sign-out-btn');
-    const dashboardSection = document.getElementById('dashboard');
-    const ordersSection = document.getElementById('orders-section');
-    
-    signInBtn.addEventListener('click', () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          console.log('Signed in as:', result.user.displayName);
-        })
-        .catch((error) => {
-          console.error('Error signing in:', error);
-        });
-    });
-    
-    signOutBtn.addEventListener('click', () => {
-      auth.signOut().then(() => {
-        console.log('Signed out');
-      });
-    });
-    
-    auth.onAuthStateChanged(user => {
-      if(user) {
-        signInBtn.classList.add('hidden');
-        signOutBtn.classList.remove('hidden');
-        dashboardSection.classList.remove('hidden');
-        ordersSection.classList.remove('hidden');
-        loadUserOrders(user);
-      } else {
-        signInBtn.classList.remove('hidden');
-        signOutBtn.classList.add('hidden');
-        dashboardSection.classList.add('hidden');
-        ordersSection.classList.add('hidden');
-      }
-    });
-    
-    // Load vendors from Firestore in real-time
-    const vendorListDiv = document.getElementById('vendor-list');
-    function loadVendors() {
-      db.collection('vendors').onSnapshot(snapshot => {
-        vendorListDiv.innerHTML = '';
-        snapshot.forEach(doc => {
-          const vendor = doc.data();
-          const vendorDiv = document.createElement('div');
-          vendorDiv.className = 'vendor';
-          vendorDiv.innerHTML = `
-            <h3>${vendor.name}</h3>
-            <p>${vendor.description || 'No description available.'}</p>
-            <p>Price: $${vendor.price || 'N/A'}</p>
-            <button onclick="addToCart('${doc.id}', '${vendor.name}', ${vendor.price || 0})">Add to Cart</button>
-          `;
-          vendorListDiv.appendChild(vendorDiv);
-        });
-      });
-    }
-    loadVendors();
-    
-    // Search functionality to filter vendors
-    const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', () => {
-      const searchTerm = searchInput.value.toLowerCase();
-      document.querySelectorAll('.vendor').forEach(vendorDiv => {
-        const name = vendorDiv.querySelector('h3').textContent.toLowerCase();
-        vendorDiv.style.display = name.includes(searchTerm) ? '' : 'none';
-      });
-    });
-    
-    // Shopping Cart logic
-    let cart = [];
-    window.addToCart = function(id, name, price) {
-      cart.push({id, name, price});
-      renderCart();
-    }
-    
-    function renderCart() {
-      const cartItemsDiv = document.getElementById('cart-items');
-      cartItemsDiv.innerHTML = '';
-      cart.forEach(item => {
-        const itemDiv = document.createElement('div');
-        itemDiv.textContent = `${item.name} - $${item.price}`;
-        cartItemsDiv.appendChild(itemDiv);
-      });
-    }
-    
-    document.getElementById('checkout-btn').addEventListener('click', () => {
-      alert('Checkout functionality is not implemented in this demo.');
-    });
-    
-    // Vendor Dashboard: Add Product (demo adds product to "vendors" collection)
-    document.getElementById('add-product-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('product-name').value;
-      const price = parseFloat(document.getElementById('product-price').value);
-      db.collection('vendors').add({
-        name: name,
-        description: 'New product added by vendor.',
-        price: price
-      }).then(() => {
-        document.getElementById('add-product-form').reset();
-        alert('Product added!');
-      }).catch(error => {
-        console.error('Error adding product:', error);
-      });
-    });
-    
-    // User Reviews: Submit and load reviews from Firestore
-    document.getElementById('review-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const reviewText = document.getElementById('review-text').value;
-      db.collection('reviews').add({
-        text: reviewText,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        document.getElementById('review-form').reset();
-      }).catch(error => {
-        console.error('Error submitting review:', error);
-      });
-    });
-    
-    db.collection('reviews').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      const reviewsList = document.getElementById('reviews-list');
-      reviewsList.innerHTML = '';
-      snapshot.forEach(doc => {
-        const review = doc.data();
-        const reviewDiv = document.createElement('div');
-        reviewDiv.className = 'review';
-        reviewDiv.textContent = review.text;
-        reviewsList.appendChild(reviewDiv);
-      });
-    });
-    
-    // Order Tracking: Load orders for the authenticated user
-    function loadUserOrders(user) {
-      db.collection('orders')
-        .where('userId', '==', user.uid)
-        .onSnapshot(snapshot => {
-          const ordersList = document.getElementById('orders-list');
-          ordersList.innerHTML = '';
-          snapshot.forEach(doc => {
-            const order = doc.data();
-            const orderDiv = document.createElement('div');
-            orderDiv.className = 'order';
-            orderDiv.innerHTML = `<p>Order ID: ${doc.id}</p><p>Status: ${order.status || 'Processing'}</p>`;
-            ordersList.appendChild(orderDiv);
-          });
-        });
-    }
-  </script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jamaica Multi-Vendor Marketplace</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <!-- Firebase Configuration & Main Logic -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/main.js" defer></script>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="vendor-dashboard.html">Vendor Dashboard</a>
+      <a href="login.html">Login</a>
+    </nav>
+    <header>
+      <h1>Jamaica Multi-Vendor Marketplace</h1>
+      <p>Discover local products from trusted vendors.</p>
+    </header>
+    <section id="vendor-list">
+      <!-- Vendor listings loaded via Firestore will appear here -->
+    </section>
+    <footer>
+      <p>&copy; 2025 Jamaica Multi-Vendor Marketplace</p>
+    </footer>
+  </body>
 </html>

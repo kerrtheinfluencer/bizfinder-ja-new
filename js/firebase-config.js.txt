@@ -1,0 +1,19 @@
+// firebase-config.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
+  authDomain: "bizfinder-7b1b6.firebaseapp.com",
+  projectId: "bizfinder-7b1b6",
+  storageBucket: "bizfinder-7b1b6.firebasestorage.app",
+  messagingSenderId: "953228556886",
+  appId: "1:953228556886:web:df1ad42bb83837a8c959f7",
+  measurementId: "G-53B50VMYML"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+export { db, auth };
