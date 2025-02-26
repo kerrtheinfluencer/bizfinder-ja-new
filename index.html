@@ -1,1073 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizFinder JA</title>
-  <!-- Chart.js for interactive graph -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDK v9.6.1 -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multivendor Marketplace</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@mui/material@5.0.0/umd/material-ui.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <style>
-    /* CSS Variables */
-    :root {
-      --primary-green: #2ecc71;
-      --secondary-green: #27ae60;
-      --light-bg: #f5f9fc;
-      --light-bg-alt: #e6f0fa;
-      --text-color: #333;
-      --muted-color: #7f8c8d;
-      --accent-blue: #3498db;
-      --accent-blue-hover: #2980b9;
-      --white: #fff;
-    }
-    
-    /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Poppins', Arial, sans-serif;
-      background: linear-gradient(135deg, var(--light-bg), var(--light-bg-alt));
-      color: var(--text-color);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-    
-    /* Header */
-    header {
-      background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      font-size: 1.5rem;
-    }
-    #businessName {
-      cursor: pointer;
-    }
-    .header-buttons {
-      display: flex;
-      gap: 1rem;
-    }
-    .header-buttons button {
-      background: var(--white);
-      color: var(--primary-green);
-      border: none;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-    }
-    .header-buttons button:hover {
-      background: #f8f9fa;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-    
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-    }
-    
-    /* Mobile Optimization */
-    @media (max-width: 600px) {
-      .container {
-        margin: 1rem auto;
-        padding: 0 1rem;
-      }
-      header {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .header-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-    
-    /* Search Bar */
-    .search-container {
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-    #search-bar {
-      width: 100%;
-      padding: 0.875rem 1.5rem;
-      border: 2px solid #ddd;
-      border-radius: 25px;
-      font-size: 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    #search-bar:focus {
-      border-color: var(--primary-green);
-      outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
-    }
-    #search-results-info {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--muted-color);
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    
-    /* Cards and Pages */
-    .business-card,
-    .store-page,
-    .profile-page {
-      background: var(--white);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .business-card:hover,
-    .store-page:hover,
-    .profile-page:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-    .business-card h3,
-    .store-page h3,
-    .profile-page h3 {
-      margin-bottom: 1rem;
-      color: var(--primary-green);
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-    .business-card .category,
-    .store-page .category {
-      font-style: italic;
-      color: var(--muted-color);
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-    }
-    .business-image {
-      width: 150px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .letter-avatar {
-      width: 150px;
-      height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-      color: var(--white);
-      border-radius: 50%;
-      margin-bottom: 1rem;
-    }
-    
-    /* Status Indicator */
-    .status-indicator {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-left: 5px;
-    }
-    
-    /* Contact Links */
-    .contact a {
-      margin-right: 1rem;
-      text-decoration: none;
-      color: var(--accent-blue);
-      font-size: 0.9rem;
-      transition: color 0.3s;
-    }
-    .contact a:hover {
-      color: var(--accent-blue-hover);
-    }
-    .views {
-      font-size: 0.875rem;
-      color: var(--muted-color);
-      margin-top: 0.75rem;
-    }
-    
-    /* Buttons */
-    button {
-      background: var(--primary-green);
-      color: var(--white);
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-    }
-    button:hover {
-      background: var(--secondary-green);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-    
-    /* Modals */
-    .modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-      z-index: 1000;
-      text-align: center;
-      max-width: 500px;
-      width: 90%;
-      display: none;
-    }
-    .modal h2 {
-      color: var(--primary-green);
-      margin-bottom: 1.5rem;
-      font-size: 1.8rem;
-      font-weight: 600;
-    }
-    input,
-    select {
-      display: block;
-      width: 100%;
-      margin: 0.75rem 0;
-      padding: 0.875rem;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    input:focus,
-    select:focus {
-      border-color: var(--primary-green);
-      outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
-    }
-    
-    /* Hot Products */
-    .hot-products {
-      background: linear-gradient(135deg, var(--white), var(--light-bg));
-      padding: 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-left: 5px solid var(--primary-green);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
-    }
-    .hot-products h3 {
-      width: 100%;
-      font-size: 1.2rem;
-      color: var(--primary-green);
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-    .hot-product-item {
-      display: flex;
-      align-items: center;
-      margin: 0.5rem;
-      padding: 0.5rem;
-      background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .hot-product-item img {
-      width: 50px;
-      height: 50px;
-      margin-right: 0.75rem;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-    .hot-product-item span {
-      font-size: 0.9rem;
-      color: #34495e;
-    }
-    
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 1.5rem;
-      display: none;
-      color: var(--muted-color);
-      font-size: 1rem;
-    }
-    
-    /* Feed Grid */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    
-    /* Store Page */
-    .store-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 1rem;
-    }
-    .business-info {
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 1rem;
-    }
-    .products-section {
-      width: 100%;
-    }
-    .products-section h4 {
-      margin-bottom: 1rem;
-      color: var(--primary-green);
-      font-size: 1.5rem;
-      text-align: center;
-    }
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    .product-card {
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .product-card img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-    }
-    .product-info {
-      padding: 1rem;
-      text-align: center;
-    }
-    .product-name {
-      font-size: 1.1rem;
-      color: var(--primary-green);
-      margin-bottom: 0.5rem;
-    }
-    .product-desc {
-      font-size: 0.95rem;
-      color: var(--text-color);
-      margin-bottom: 0.5rem;
-    }
-    .product-views {
-      font-size: 0.85rem;
-      color: var(--muted-color);
-    }
-    
-    /* Profile Page */
-    .profile-container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .profile-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .profile-header img,
-    .profile-header .letter-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .profile-details {
-      margin-bottom: 1.5rem;
-    }
+    body { margin: 0; font-family: 'Roboto', sans-serif; }
+    #root { padding: 20px; }
   </style>
 </head>
 <body>
-  <header>
-    <span id="businessName">BizFinder JA</span>
-    <div class="header-buttons">
-      <button id="profile-btn" style="display: none;">Profile</button>
-      <button id="login-btn">Login</button>
-      <button id="signup-btn">Sign Up</button>
-    </div>
-  </header>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const {
+      Container, Typography, Button, TextField, Grid, Card, CardContent, CardActions,
+      AppBar, Toolbar, IconButton, Avatar, Menu, MenuItem, CircularProgress,
+      InputAdornment, SearchIcon
+    } = MaterialUI;
 
-  <div class="container" id="main-content">
-    <div class="search-container">
-      <input type="text" id="search-bar" placeholder="Search businesses..." />
-      <div id="search-results-info"></div>
-    </div>
-    <div id="hot-products" class="hot-products"></div>
-    <div id="feed" class="feed-grid"></div>
-    <div id="store-page" class="store-page" style="display: none;"></div>
-    <div id="profile-page" class="profile-page" style="display: none;"></div>
-    <div id="loading" class="loading">Loading...</div>
-  </div>
+    // Firebase configuration (using your provided credentials)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
+      authDomain: "bizfinder-7b1b6.firebaseapp.com",
+      projectId: "bizfinder-7b1b6",
+      storageBucket: "bizfinder-7b1b6.firebasestorage.app",
+      messagingSenderId: "953228556886",
+      appId: "1:953228556886:web:8c589d5a59a75045c959f7",
+      measurementId: "G-SW2BZ8LD07"
+    };
 
-  <!-- Modals -->
-  <div id="popup" class="modal">
-    <h2>Welcome to BizFinder JA!</h2>
-    <p>Sign up to join our vibrant community or log in to access your account.</p>
-    <button id="business-btn">Sign Up as Business</button>
-    <button id="customer-btn">Sign Up as Customer</button>
-    <button id="login-btn-modal">Log In</button>
-    <button id="feed-btn">Continue to Feed</button>
-  </div>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  <div id="business-form" class="modal">
-    <h2>Business Sign-Up</h2>
-    <input type="text" id="biz-name" placeholder="Business Name" required />
-    <input type="email" id="biz-email" placeholder="Email" required />
-    <input type="password" id="biz-password" placeholder="Password" required />
-    <select id="biz-category">
-      <option value="Food & Drinks">Food & Drinks</option>
-      <option value="Fashion & Accessories">Fashion & Accessories</option>
-      <option value="Tech & Electronics">Tech & Electronics</option>
-      <option value="Home & Kitchen">Home & Kitchen</option>
-      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-    </select>
-    <input type="text" id="biz-product" placeholder="Featured Product Name" required />
-    <input type="text" id="biz-desc" placeholder="Short Description" required />
-    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
-    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
-    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
-    <button id="submit-business-btn">Submit</button>
-    <button class="close-btn" data-form="business-form">Close</button>
-  </div>
+    // Authentication Component
+    function Auth({ setUserRole }) {
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [user, setUser] = useState(null);
+      const [role, setRole] = useState('customer'); // customer or vendor
+      const [error, setError] = useState('');
+      const [loading, setLoading] = useState(false);
 
-  <div id="customer-form" class="modal">
-    <h2>Customer Sign-Up</h2>
-    <input type="text" id="cust-name" placeholder="Name" required />
-    <input type="email" id="cust-email" placeholder="Email" required />
-    <input type="password" id="cust-password" placeholder="Password" required />
-    <button id="submit-customer-btn">Submit</button>
-    <button class="close-btn" data-form="customer-form">Close</button>
-  </div>
-
-  <div id="login-form" class="modal">
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email" required />
-    <input type="password" id="login-password" placeholder="Password" required />
-    <button id="login-submit-btn">Login</button>
-    <button class="close-btn" data-form="login-form">Close</button>
-  </div>
-
-  <div id="settings-modal" class="modal">
-    <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name" />
-    <input type="text" id="settings-photo" placeholder="Profile Photo URL (leave empty for letter avatar)" />
-    <button id="save-settings-btn">Save Settings</button>
-    <button class="close-btn" data-form="settings-modal">Close</button>
-  </div>
-
-  <div id="add-product-modal" class="modal">
-    <h2>Add Product</h2>
-    <input type="text" id="prod-name" placeholder="Product Name" required />
-    <input type="text" id="prod-desc" placeholder="Product Description" required />
-    <input type="file" id="prod-media" accept="image/*" />
-    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image</p>
-    <button id="submit-product-btn">Add Product</button>
-    <button class="close-btn" data-form="add-product-modal">Close</button>
-  </div>
-
-  <script>
-    'use strict';
-    document.addEventListener('DOMContentLoaded', () => {
-      // Firebase Initialization
-      const firebaseConfig = {
-        apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
-        authDomain: "bizfinder-7b1b6.firebaseapp.com",
-        projectId: "bizfinder-7b1b6",
-        storageBucket: "bizfinder-7b1b6.firebasestorage.app",
-        messagingSenderId: "953228556886",
-        appId: "1:953228556886:web:8c589d5a59a75045c959f7",
-        measurementId: "G-SW2BZ8LD07"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const db = firebase.firestore();
-
-      let currentUser = null;
-      let currentBusinesses = [];
-
-      // DOM Elements
-      const popup = document.getElementById('popup');
-      const businessForm = document.getElementById('business-form');
-      const customerForm = document.getElementById('customer-form');
-      const loginForm = document.getElementById('login-form');
-      const feed = document.getElementById('feed');
-      const storePage = document.getElementById('store-page');
-      const profilePage = document.getElementById('profile-page');
-      const hotProducts = document.getElementById('hot-products');
-      const loading = document.getElementById('loading');
-      const profileBtn = document.getElementById('profile-btn');
-      const loginBtn = document.getElementById('login-btn');
-      const signupBtn = document.getElementById('signup-btn');
-      const searchBar = document.getElementById('search-bar');
-      const businessName = document.getElementById('businessName');
-
-      // Helper Functions
-      function updateUIForUser() {
-        profileBtn.style.display = currentUser ? 'block' : 'none';
-        loginBtn.style.display = currentUser ? 'none' : 'block';
-        signupBtn.style.display = currentUser ? 'none' : 'block';
-        popup.style.display = currentUser ? 'none' : 'block';
-      }
-
-      function closeModal(formId) {
-        document.getElementById(formId).style.display = 'none';
-      }
-
-      function getLetterAvatar(name) {
-        const firstName = name.split(" ")[0];
-        const letter = firstName.charAt(0).toUpperCase();
-        const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
-      }
-
-      function isStoreOpen(business) {
-        const now = new Date();
-        const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
-        const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
-        const openDate = new Date(now);
-        openDate.setHours(openH, openM, 0, 0);
-        const closeDate = new Date(now);
-        closeDate.setHours(closeH, closeM, 0, 0);
-        return now >= openDate && now <= closeDate;
-      }
-
-      // UI Rendering Functions
-      const displayFeed = async () => {
-        feed.style.display = 'block';
-        storePage.style.display = 'none';
-        profilePage.style.display = 'none';
-        feed.innerHTML = '<div class="feed-grid"></div>';
-        const gridContainer = feed.querySelector('.feed-grid');
-        loading.style.display = 'block';
-        try {
-          const snapshot = await db.collection('businesses').get();
-          currentBusinesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          const totalResults = currentBusinesses.length;
-          const info = document.getElementById('search-results-info');
-          if (totalResults === 0) {
-            info.textContent = 'No results found.';
-            gridContainer.innerHTML = '';
+      useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+          if (user) {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            const userData = userDoc.data();
+            setUser(user);
+            setUserRole(userData?.role || 'customer');
           } else {
-            info.textContent = `Found ${totalResults} results`;
-            currentBusinesses.forEach(business => {
-              const featuredProduct = business.products && business.products.length > 0 
-                ? business.products[0] 
-                : { name: 'No product', photo: '' };
-              const card = document.createElement('div');
-              card.className = 'business-card';
-              card.innerHTML = `
-                <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-                <p class="category">${business.category}</p>
-                ${business.displayPhoto 
-                  ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
-                  : getLetterAvatar(business.name)}
-                <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-                ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
-                <p>${business.desc}</p>
-                <p><strong>Location:</strong> ${business.location}</p>
-                <div class="contact">
-                  <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                  <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                </div>
-                <p class="views">Views: ${business.views}</p>
-                <button class="view-store-btn" data-id="${business.id}">View Store</button>
-              `;
-              gridContainer.appendChild(card);
-            });
+            setUser(null);
+            setUserRole('customer');
           }
-          await displayHotProducts();
-        } catch (error) {
-          console.error('Error fetching businesses:', error);
-          alert('Failed to load businesses. Please try again later.');
-        } finally {
-          loading.style.display = 'none';
-        }
-      };
+        });
+        return () => unsubscribe();
+      }, []);
 
-      const displayHotProducts = async () => {
+      const handleSignup = async () => {
+        setLoading(true);
         try {
-          const snapshot = await db.collection('businesses').orderBy('views', 'desc').limit(3).get();
-          const hot = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          hotProducts.innerHTML = '<h3>Hot Products</h3>';
-          hot.forEach(biz => {
-            const product = biz.products[0] || { name: 'No product', photo: '' };
-            hotProducts.innerHTML += `
-              <div class="hot-product-item">
-                <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
-                <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
-              </div>
-            `;
-          });
-        } catch (error) {
-          console.error('Error fetching hot products:', error);
+          const { user } = await auth.createUserWithEmailAndPassword(email, password);
+          await db.collection('users').doc(user.uid).set({ email, role });
+          setError('');
+        } catch (err) {
+          setError(err.message);
         }
+        setLoading(false);
       };
 
-      const showProfile = async () => {
-        if (!currentUser) return;
-        feed.style.display = 'none';
-        storePage.style.display = 'none';
-        profilePage.style.display = 'block';
-        let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
-        let profileContent = `
-          <div class="profile-container">
-            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
-            <div class="profile-header">
-        `;
-        if (currentUser.profilePhoto) {
-          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />`;
-        } else {
-          profileContent += getLetterAvatar(currentUser.name);
-        }
-        profileContent += `
-              <h3>${currentUser.name}</h3>
-              <p>${currentUser.email}</p>
-            </div>
-            <div class="profile-details">
-        `;
-        if (currentUser.type === 'business') {
-          try {
-            const businessDoc = await db.collection('businesses').doc(currentUser.businessId).get();
-            if (businessDoc.exists) {
-              const business = businessDoc.data();
-              profileContent += `
-                <h4>Business Metrics</h4>
-                <p>Total Views: ${business.views}</p>
-                <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
-                <button id="add-product-btn">Add Product</button>
-                <div style="margin-top: 1rem; height:300px;">
-                  <canvas id="viewsChart"></canvas>
-                </div>
-              `;
-            } else {
-              profileContent += `<p>Business data not found.</p>`;
-            }
-          } catch (error) {
-            console.error('Error fetching business data:', error);
-            profileContent += `<p>Error loading business data.</p>`;
-          }
-        } else {
-          profileContent += `
-            <h4>Recent Activity</h4>
-            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
-              ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') 
-              : '<p>No recent views.</p>'}
-          `;
-        }
-        profileContent += `
-            </div>
-            <button id="settings-btn">Settings</button>
-            <button id="logout-btn">Logout</button>
-          </div>
-        `;
-        profilePage.innerHTML = profileContent;
-
-        document.getElementById('settings-btn').addEventListener('click', () => {
-          document.getElementById('settings-modal').style.display = 'block';
-          document.getElementById('settings-name').value = currentUser.name || "";
-          document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
-        });
-        document.getElementById('logout-btn').addEventListener('click', () => {
-          auth.signOut().then(() => {
-            currentUser = null;
-            updateUIForUser();
-            displayFeed();
-          }).catch(error => {
-            alert(`Logout failed: ${error.message}`);
-          });
-        });
-        if (currentUser.type === 'business') {
-          initViewsChart();
-          document.getElementById('add-product-btn').addEventListener('click', () => {
-            document.getElementById('add-product-modal').style.display = 'block';
-          });
-        }
-        document.getElementById('back-to-feed')?.addEventListener('click', displayFeed);
-        document.getElementById('back-to-store')?.addEventListener('click', () => viewStore(currentUser.businessId));
-      };
-
-      function initViewsChart() {
-        const ctx = document.getElementById('viewsChart').getContext('2d');
-        const labels = [];
-        const dataPoints = [];
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
-          dataPoints.push(Math.floor(Math.random() * 100));
-        }
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Daily Views',
-              data: dataPoints,
-              borderColor: '#2ecc71',
-              backgroundColor: 'rgba(46,204,113,0.1)',
-              fill: true,
-              tension: 0.3
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
-          }
-        });
-      }
-
-      const viewStore = async bizId => {
+      const handleLogin = async () => {
+        setLoading(true);
         try {
-          const businessDoc = await db.collection('businesses').doc(bizId).get();
-          if (!businessDoc.exists) return;
-          const business = { id: businessDoc.id, ...businessDoc.data() };
-          await db.collection('businesses').doc(bizId).update({ views: business.views + 1 });
-          if (currentUser && currentUser.type === 'customer') {
-            currentUser.recentlyViewed = currentUser.recentlyViewed || [];
-            currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
-            currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-            await db.collection('users').doc(currentUser.id).update({ recentlyViewed: currentUser.recentlyViewed });
-          }
-          feed.style.display = 'none';
-          storePage.style.display = 'block';
-          profilePage.style.display = 'none';
-          storePage.innerHTML = `
-            <button onclick="displayFeed()">Back to Feed</button>
-            <div class="store-container">
-              <div class="business-info">
-                <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-                <p class="category">${business.category}</p>
-                ${business.displayPhoto 
-                  ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
-                  : getLetterAvatar(business.name)}
-                <p>${business.desc}</p>
-                <p><strong>Location:</strong> ${business.location}</p>
-                <div class="contact">
-                  <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                  <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                </div>
-                <p class="views">Views: ${business.views + 1}</p>
-              </div>
-              <div class="products-section">
-                <h4>Products</h4>
-                <div class="products-grid">
-                  ${business.products.map(p => `
-                    <div class="product-card">
-                      <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
-                      <div class="product-info">
-                        <p class="product-name">${p.name}</p>
-                        <p class="product-desc">${p.desc}</p>
-                        <p class="product-views">Views: ${p.views}</p>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
-          `;
-        } catch (error) {
-          console.error('Error viewing store:', error);
-          alert('Failed to load store. Please try again later.');
+          await auth.signInWithEmailAndPassword(email, password);
+          setError('');
+        } catch (err) {
+          setError(err.message);
         }
+        setLoading(false);
       };
 
-      // Event Listeners
-      document.getElementById('business-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        businessForm.style.display = 'block';
-      });
-      document.getElementById('customer-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        customerForm.style.display = 'block';
-      });
-      document.getElementById('login-btn-modal').addEventListener('click', () => {
-        popup.style.display = 'none';
-        loginForm.style.display = 'block';
-      });
-      document.getElementById('feed-btn').addEventListener('click', () => {
-        popup.style.display = 'none';
-        displayFeed();
-      });
-      loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
-      signupBtn.addEventListener('click', () => popup.style.display = 'block');
-      profileBtn.addEventListener('click', showProfile);
-      businessName.addEventListener('click', displayFeed);
+      const handleLogout = async () => {
+        await auth.signOut();
+      };
 
-      document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => closeModal(btn.getAttribute('data-form')));
-      });
+      if (user) return null; // Handled in AppBar
 
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) {
-          viewStore(event.target.getAttribute('data-id'));
-        }
-      });
+      return (
+        <Container maxWidth="xs" style={{ marginTop: '50px' }}>
+          <Typography variant="h5" align="center">Login / Signup</Typography>
+          {error && <Typography color="error" align="center">{error}</Typography>}
+          <TextField
+            label="Email"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleSignup}
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} /> : 'Signup'}
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleLogin}
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} /> : 'Login'}
+              </Button>
+            </Grid>
+          </Grid>
+          <Typography align="center" style={{ marginTop: '10px' }}>
+            Role:
+            <Button onClick={() => setRole('customer')} color={role === 'customer' ? 'primary' : 'inherit'}>Customer</Button>
+            <Button onClick={() => setRole('vendor')} color={role === 'vendor' ? 'primary' : 'inherit'}>Vendor</Button>
+          </Typography>
+        </Container>
+      );
+    }
 
-      searchBar.addEventListener('keyup', () => {
-        const query = searchBar.value.toLowerCase().trim();
-        if (query) {
-          const filtered = currentBusinesses.filter(biz => 
-            biz.name.toLowerCase().includes(query) ||
-            biz.category.toLowerCase().includes(query) ||
-            biz.location.toLowerCase().includes(query) ||
-            (biz.products && biz.products.some(product => 
-              product.name.toLowerCase().includes(query) ||
-              product.desc.toLowerCase().includes(query)
-            ))
-          );
-          feed.innerHTML = '<div class="feed-grid"></div>';
-          const gridContainer = feed.querySelector('.feed-grid');
-          const info = document.getElementById('search-results-info');
-          if (filtered.length === 0) {
-            info.textContent = 'No results found.';
-            gridContainer.innerHTML = '';
-          } else {
-            info.textContent = `Found ${filtered.length} results`;
-            filtered.forEach(business => {
-              const featuredProduct = business.products[0] || { name: 'No product', photo: '' };
-              const card = document.createElement('div');
-              card.className = 'business-card';
-              card.innerHTML = `
-                <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-                <p class="category">${business.category}</p>
-                ${business.displayPhoto 
-                  ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
-                  : getLetterAvatar(business.name)}
-                <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-                ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
-                <p>${business.desc}</p>
-                <p><strong>Location:</strong> ${business.location}</p>
-                <div class="contact">
-                  <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                  <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                </div>
-                <p class="views">Views: ${business.views}</p>
-                <button class="view-store-btn" data-id="${business.id}">View Store</button>
-              `;
-              gridContainer.appendChild(card);
-            });
-          }
-        } else {
-          displayFeed();
-        }
-      });
+    // Product Listing Component
+    function Products({ userRole, user }) {
+      const [products, setProducts] = useState([]);
+      const [search, setSearch] = useState('');
+      const [loading, setLoading] = useState(true);
 
-      document.getElementById('submit-business-btn').addEventListener('click', () => {
-        const name = document.getElementById('biz-name').value.trim();
-        const email = document.getElementById('biz-email').value.trim(); // Fixed ID from 'biz-employee' to 'biz-email'
-        const password = document.getElementById('biz-password').value.trim();
-        const category = document.getElementById('biz-category').value;
-        const product = document.getElementById('biz-product').value.trim();
-        const desc = document.getElementById('biz-desc').value.trim();
-        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-        const instagram = document.getElementById('biz-instagram').value.trim();
-        const location = document.getElementById('biz-location').value.trim();
-
-        if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-          alert('Please fill in all fields!');
-          return;
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-          .then(userCredential => {
-            const user = userCredential.user;
-            const businessData = {
-              name,
-              category,
-              products: [{ name: product, desc, photo: '', views: 0 }],
-              desc,
-              whatsapp,
-              instagram,
-              location,
-              displayPhoto: '',
-              views: 0,
-              openingHour: "09:00",
-              closingHour: "18:00",
-              userId: user.uid
-            };
-            return db.collection('businesses').doc(user.uid).set(businessData)
-              .then(() => {
-                const userData = { id: user.uid, type: 'business', name, email, businessId: user.uid };
-                return db.collection('users').doc(user.uid).set(userData);
-              });
-          })
-          .then(() => {
-            currentUser = { id: userCredential.user.uid, type: 'business', name, email, businessId: userCredential.user.uid };
-            closeModal('business-form');
-            updateUIForUser();
-            displayFeed();
-          })
-          .catch(error => {
-            alert(`Error signing up: ${error.message}`);
-          });
-      });
-
-      document.getElementById('submit-customer-btn').addEventListener('click', () => {
-        const name = document.getElementById('cust-name').value.trim();
-        const email = document.getElementById('cust-email').value.trim();
-        const password = document.getElementById('cust-password').value.trim();
-
-        if (!name || !email || !password) {
-          alert('Please fill in all fields!');
-          return;
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-          .then(userCredential => {
-            const user = userCredential.user;
-            const userData = { id: user.uid, type: 'customer', name, email, recentlyViewed: [] };
-            return db.collection('users').doc(user.uid).set(userData);
-          })
-          .then(() => {
-            currentUser = { id: userCredential.user.uid, type: 'customer', name, email, recentlyViewed: [] };
-            closeModal('customer-form');
-            updateUIForUser();
-            displayFeed();
-          })
-          .catch(error => {
-            alert(`Error signing up: ${error.message}`);
-          });
-      });
-
-      document.getElementById('login-submit-btn').addEventListener('click', () => {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value.trim();
-
-        if (!email || !password) {
-          alert('Please enter both email and password!');
-          return;
-        }
-
-        auth.signInWithEmailAndPassword(email, password)
-          .then(userCredential => {
-            return db.collection('users').doc(userCredential.user.uid).get();
-          })
-          .then(doc => {
-            if (doc.exists) {
-              currentUser = doc.data();
-              closeModal('login-form');
-              updateUIForUser();
-              displayFeed();
-            } else {
-              throw new Error('User data not found');
-            }
-          })
-          .catch(error => {
-            alert(`Login failed: ${error.message}`);
-          });
-      });
-
-      document.getElementById('submit-product-btn').addEventListener('click', () => {
-        const prodName = document.getElementById('prod-name').value.trim();
-        const prodDesc = document.getElementById('prod-desc').value.trim();
-        const fileInput = document.getElementById('prod-media');
-        if (!prodName || !prodDesc) {
-          alert('Please fill in all product fields!');
-          return;
-        }
-        const addProduct = (mediaURL) => {
-          db.collection('businesses').doc(currentUser.businessId).update({
-            products: firebase.firestore.FieldValue.arrayUnion({
-              name: prodName,
-              desc: prodDesc,
-              photo: mediaURL,
-              views: 0
-            })
-          }).then(() => {
-            closeModal('add-product-modal');
-            showProfile();
-          }).catch(error => {
-            alert(`Error adding product: ${error.message}`);
-          });
+      useEffect(() => {
+        const fetchProducts = async () => {
+          setLoading(true);
+          const snapshot = await db.collection('products')
+            .where('title', '>=', search)
+            .where('title', '<=', search + '\uf8ff')
+            .get();
+          const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setProducts(productsData);
+          setLoading(false);
         };
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            addProduct(e.target.result);
-          };
-          reader.readAsDataURL(file);
-        } else {
-          addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
-        }
-      });
+        fetchProducts();
+      }, [search]);
 
-      document.getElementById('save-settings-btn').addEventListener('click', () => {
-        const newName = document.getElementById('settings-name').value.trim();
-        const newPhoto = document.getElementById('settings-photo').value.trim();
-        if (newName) {
-          currentUser.name = newName;
-          if (currentUser.type === 'business') {
-            db.collection('businesses').doc(currentUser.businessId).update({ name: newName });
-          }
-        }
-        currentUser.profilePhoto = newPhoto;
-        if (currentUser.type === 'business') {
-          db.collection('businesses').doc(currentUser.businessId).update({ displayPhoto: newPhoto });
-        }
-        db.collection('users').doc(currentUser.id).update({
-          name: newName,
-          profilePhoto: newPhoto
-        }).then(() => {
-          closeModal('settings-modal');
-          showProfile();
-        }).catch(error => {
-          alert(`Error saving settings: ${error.message}`);
-        });
-      });
-
-      // Auth State Listener
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          db.collection('users').doc(user.uid).get().then(doc => {
-            if (doc.exists) {
-              currentUser = doc.data();
-              updateUIForUser();
-              displayFeed();
-            }
-          }).catch(error => {
-            console.error('Error fetching user data:', error);
+      const addProduct = async () => {
+        const title = prompt('Product Title:');
+        const description = prompt('Description:');
+        const price = prompt('Price:');
+        if (title && description && price) {
+          await db.collection('products').add({
+            title,
+            description,
+            price: parseFloat(price),
+            vendorId: user.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
-        } else {
-          currentUser = null;
-          updateUIForUser();
-          displayFeed();
+          fetchProducts();
         }
-      });
+      };
 
-      // Initial Load
-      displayFeed();
-    });
+      return (
+        <div>
+          <TextField
+            label="Search Products"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              )
+            }}
+            fullWidth
+            margin="normal"
+          />
+          {userRole === 'vendor' && (
+            <Button variant="contained" color="primary" onClick={addProduct} style={{ marginBottom: '20px' }}>
+              Add Product
+            </Button>
+          )}
+          {loading ? (
+            <CircularProgress style={{ display: 'block', margin: '20px auto' }} />
+          ) : (
+            <Grid container spacing={3}>
+              {products.map(product => (
+                <Grid item xs={12} sm={6} md={4} key={product.id}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6">{product.title}</Typography>
+                      <Typography>{product.description}</Typography>
+                      <Typography color="textSecondary">${product.price}</Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button size="small" color="primary">View Details</Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </div>
+      );
+    }
+
+    // Profile Component
+    function Profile({ user, userRole }) {
+      const [anchorEl, setAnchorEl] = useState(null);
+      const [profileData, setProfileData] = useState({ name: '', bio: '' });
+
+      useEffect(() => {
+        if (user) {
+          db.collection('users').doc(user.uid).onSnapshot(doc => {
+            setProfileData(doc.data() || { name: '', bio: '' });
+          });
+        }
+      }, [user]);
+
+      const handleProfileUpdate = async () => {
+        const name = prompt('Enter your name:', profileData.name);
+        const bio = prompt('Enter your bio:', profileData.bio);
+        if (name && bio) {
+          await db.collection('users').doc(user.uid).update({ name, bio });
+        }
+      };
+
+      return (
+        <div>
+          <IconButton onClick={e => setAnchorEl(e.currentTarget)}>
+            <Avatar>{user.email[0]}</Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+          >
+            <MenuItem>
+              <Typography>{profileData.name || user.email}</Typography>
+            </MenuItem>
+            <MenuItem>
+              <Typography variant="body2" color="textSecondary">{profileData.bio || 'No bio yet'}</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleProfileUpdate}>Edit Profile</MenuItem>
+            <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
+          </Menu>
+        </div>
+      );
+    }
+
+    // Main App Component
+    function App() {
+      const [user, setUser] = useState(null);
+      const [userRole, setUserRole] = useState('customer');
+
+      useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => setUser(user));
+        return () => unsubscribe();
+      }, []);
+
+      return (
+        <div>
+          <AppBar position="static">
+            <Toolbar>
+              <Typography variant="h6" style={{ flexGrow: 1 }}>Multivendor Marketplace</Typography>
+              {user && <Profile user={user} userRole={userRole} />}
+            </Toolbar>
+          </AppBar>
+          <Container style={{ marginTop: '20px' }}>
+            {!user ? (
+              <Auth setUserRole={setUserRole} />
+            ) : (
+              <Products userRole={userRole} user={user} />
+            )}
+          </Container>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
