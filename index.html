@@ -1,723 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizFinder JA - Premium Multivendor Platform</title>
-  <!-- Chart.js for interactive graphs -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDK -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizFinder JA - Multivendor Platform</title>
+  <!-- Firebase SDK v9.6.1 (consistent with provided files) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <style>
-    /* CSS Variables for a Premium Look */
-    :root {
-      --primary-green: #2ecc71;
-      --secondary-green: #27ae60;
-      --light-bg: #f5f9fc;
-      --light-bg-alt: #e6f0fa;
-      --text-color: #333;
-      --muted-color: #7f8c8d;
-      --accent-blue: #3498db;
-      --accent-blue-hover: #2980b9;
-      --white: #fff;
-      --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      --transition: all 0.3s ease;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-
-    /* Base Styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Poppins', Arial, sans-serif;
-      background: linear-gradient(135deg, var(--light-bg), var(--light-bg-alt));
-      color: var(--text-color);
+      font-family: Arial, sans-serif;
       line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
+      background-color: #f4f4f4;
     }
-
-    /* Header */
     header {
-      background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
-      color: var(--white);
+      background-color: #2c3e50;
+      color: white;
+      padding: 15px 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 1.5rem 3rem;
-      box-shadow: var(--premium-shadow);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      align-items: center;
+      flex-wrap: wrap;
     }
-    #businessName {
-      font-size: 2rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
+    header h1 {
+      font-size: 24px;
     }
-    #businessName:hover { transform: scale(1.05); }
-    .header-buttons { display: flex; gap: 1.5rem; }
-    .header-buttons button {
-      background: var(--white);
-      color: var(--primary-green);
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: var(--transition);
-    }
-    .header-buttons button:hover {
-      background: var(--accent-blue);
-      color: var(--white);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-
-    /* Container */
-    .container {
-      max-width: 1300px;
-      margin: 3rem auto;
-      padding: 0 2rem;
-      animation: fadeIn 0.5s ease-in;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideIn {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(0); }
-    }
-
-    /* Search Bar */
-    .search-container {
-      margin-bottom: 2rem;
-      position: relative;
-      animation: fadeIn 0.7s ease-in;
-    }
-    #search-bar {
-      width: 100%;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.1rem;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      transition: var(--transition);
-    }
-    #search-bar:focus {
-      outline: none;
-      box-shadow: 0 5px 25px rgba(46,204,113,0.3);
-    }
-    #search-results-info {
-      margin-top: 0.75rem;
-      font-size: 0.95rem;
-      color: var(--muted-color);
-      text-align: center;
-    }
-
-    /* Feed Grid */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      animation: fadeIn 0.8s ease-in;
-    }
-    .business-card {
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      transition: var(--transition);
-      animation: slideIn 0.5s ease;
-    }
-    .business-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    }
-    .business-card h3 {
-      color: var(--primary-green);
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-    .business-image {
-      width: 180px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin: 0 auto 1.5rem;
-      display: block;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .letter-avatar {
-      width: 180px;
-      height: 180px;
+    .search-bar {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 5rem;
-      color: var(--white);
-      border-radius: 50%;
-      margin: 0 auto 1.5rem;
     }
-
-    /* Store Page */
-    .store-page {
-      background: var(--white);
-      padding: 2.5rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      animation: fadeIn 0.6s ease-in;
-    }
-    .store-container { display: flex; flex-direction: column; gap: 3rem; }
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-    .product-card {
-      background: var(--white);
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: var(--transition);
-    }
-    .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    .product-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .product-card:hover img { transform: scale(1.05); }
-
-    /* Profile Page */
-    .profile-container {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 3rem;
-      background: var(--white);
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      animation: fadeIn 0.6s ease-in;
-    }
-
-    /* Buttons */
-    button {
-      background: var(--primary-green);
-      color: var(--white);
+    #search-input {
+      padding: 8px;
+      width: 200px;
       border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 25px;
+      border-radius: 4px 0 0 4px;
+    }
+    #search-btn {
+      padding: 8px 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 0 4px 4px 0;
       cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: var(--transition);
+    }
+    #search-btn:hover {
+      background-color: #2980b9;
+    }
+    #nav-buttons button {
+      padding: 8px 12px;
+      margin-left: 10px;
+      background-color: #ecf0f1;
+      color: #2c3e50;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #nav-buttons button:hover {
+      background-color: #bdc3c7;
+    }
+    main {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    .section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+    }
+    input, textarea, select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
     }
     button:hover {
-      background: var(--secondary-green);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      background-color: #2980b9;
     }
-
-    /* Modals */
-    .modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: var(--white);
-      padding: 2.5rem;
-      border-radius: 20px;
-      box-shadow: var(--premium-shadow);
-      z-index: 1000;
-      max-width: 550px;
-      width: 90%;
-      display: none;
-      animation: modalPop 0.3s ease-out forwards;
+    .error {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
     }
-    @keyframes modalPop {
-      to { transform: translate(-50%, -50%) scale(1); }
+    .store-item, .product-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
     }
-    .modal h2 {
-      color: var(--primary-green);
-      font-size: 2rem;
-      margin-bottom: 2rem;
+    .store-item:last-child, .product-item:last-child {
+      border-bottom: none;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 1rem;
-      margin: 0.8rem 0;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--primary-green);
-      box-shadow: 0 4px 15px rgba(46,204,113,0.2);
-      outline: none;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      display: none;
-      font-size: 1.2rem;
-      color: var(--muted-color);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      header { flex-direction: column; padding: 1rem; }
-      .header-buttons { flex-wrap: wrap; justify-content: center; gap: 1rem; }
-      .container { padding: 0 1rem; margin: 1.5rem auto; }
-      .feed-grid { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .search-bar, #nav-buttons {
+        width: 100%;
+        margin-top: 10px;
+      }
+      #search-input {
+        width: calc(100% - 60px);
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <span id="businessName">BizFinder JA</span>
-    <div class="header-buttons">
-      <button id="profile-btn" style="display: none;">Profile</button>
-      <button id="login-btn">Login</button>
-      <button id="signup-btn">Sign Up</button>
+    <h1>BizFinder JA</h1>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search stores...">
+      <button id="search-btn">Search</button>
+    </div>
+    <div id="nav-buttons">
+      <!-- Dynamically populated based on auth state -->
     </div>
   </header>
-
-  <div class="container" id="main-content">
-    <div class="search-container">
-      <input type="text" id="search-bar" placeholder="Search businesses..." />
-      <div id="search-results-info"></div>
+  <main>
+    <div id="landing" class="section" style="display: block;">
+      <h2>Welcome to BizFinder JA</h2>
+      <p>Discover local businesses and explore their products.</p>
     </div>
-    <div id="feed" class="feed-grid"></div>
-    <div id="store-page" class="store-page" style="display: none;"></div>
-    <div id="profile-page" class="profile-page" style="display: none;"></div>
-    <div id="loading" class="loading">Loading...</div>
-  </div>
-
-  <!-- Modals -->
-  <div id="popup" class="modal">
-    <h2>Welcome to BizFinder JA!</h2>
-    <p>Sign up to join our vibrant community.</p>
-    <button id="business-btn">Sign Up as Business</button>
-    <button id="customer-btn">Sign Up as Customer</button>
-    <button id="feed-btn">Continue to Feed</button>
-  </div>
-
-  <div id="business-form" class="modal">
-    <h2>Business Sign-Up</h2>
-    <input type="text" id="biz-name" placeholder="Business Name" required />
-    <input type="email" id="biz-email" placeholder="Email" required />
-    <input type="password" id="biz-password" placeholder="Password" required />
-    <select id="biz-category">
-      <option value="Food & Drinks">Food & Drinks</option>
-      <option value="Fashion & Accessories">Fashion & Accessories</option>
-      <option value="Tech & Electronics">Tech & Electronics</option>
-      <option value="Home & Kitchen">Home & Kitchen</option>
-      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-    </select>
-    <input type="text" id="biz-product" placeholder="Featured Product Name" required />
-    <input type="text" id="biz-desc" placeholder="Short Description" required />
-    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
-    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
-    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
-    <button id="submit-business-btn">Submit</button>
-    <button class="close-btn" data-form="business-form">Close</button>
-  </div>
-
-  <div id="customer-form" class="modal">
-    <h2>Customer Sign-Up</h2>
-    <input type="text" id="cust-name" placeholder="Name" required />
-    <input type="email" id="cust-email" placeholder="Email" required />
-    <input type="password" id="cust-password" placeholder="Password" required />
-    <button id="submit-customer-btn">Submit</button>
-    <button class="close-btn" data-form="customer-form">Close</button>
-  </div>
-
-  <div id="login-form" class="modal">
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email" required />
-    <input type="password" id="login-password" placeholder="Password" required />
-    <button id="login-submit-btn">Login</button>
-    <button class="close-btn" data-form="login-form">Close</button>
-  </div>
-
-  <div id="settings-modal" class="modal">
-    <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name" required />
-    <input type="url" id="settings-photo" placeholder="Profile Photo URL" />
-    <button id="save-settings-btn">Save Settings</button>
-    <button class="close-btn" data-form="settings-modal">Close</button>
-  </div>
-
-  <div id="add-product-modal" class="modal">
-    <h2>Add Product</h2>
-    <input type="text" id="prod-name" placeholder="Product Name" required />
-    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="url" id="prod-photo" placeholder="Product Photo URL" />
-    <button id="submit-product-btn">Add Product</button>
-    <button class="close-btn" data-form="add-product-modal">Close</button>
-  </div>
+    <div id="login-form" class="section" style="display: none;">
+      <h2>Login</h2>
+      <form id="login-form-element">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" minlength="6" required>
+        <button type="submit">Login</button>
+        <p id="login-error" class="error"></p>
+      </form>
+    </div>
+    <div id="signup-form" class="section" style="display: none;">
+      <h2>Sign Up</h2>
+      <form id="signup-form-element">
+        <input type="text" id="signup-name" placeholder="Full Name" pattern="[A-Za-z ]{2,}" title="Name must be at least 2 letters" required>
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Password (min 6 chars)" minlength="6" required>
+        <select id="user-type" required>
+          <option value="" disabled selected>Select User Type</option>
+          <option value="customer">Customer</option>
+          <option value="business">Business</option>
+        </select>
+        <button type="submit">Sign Up</button>
+        <p id="signup-error" class="error"></p>
+      </form>
+    </div>
+    <div id="dashboard" class="section" style="display: none;">
+      <!-- Dynamically populated based on user type -->
+    </div>
+    <div id="search" class="section" style="display: none;">
+      <h2>Search Results</h2>
+      <div id="search-results"></div>
+    </div>
+    <div id="store-page" class="section" style="display: none;">
+      <button id="back-to-search">Back to Search</button>
+      <h2 id="store-name"></h2>
+      <p id="store-description"></p>
+      <h3>Products</h3>
+      <div id="store-products"></div>
+    </div>
+  </main>
 
   <script>
-    'use strict';
-    document.addEventListener('DOMContentLoaded', () => {
-      // Firebase Configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
-        authDomain: "bizfinder-7b1b6.firebaseapp.com",
-        projectId: "bizfinder-7b1b6",
-        storageBucket: "bizfinder-7b1b6.firebasestorage.app",
-        messagingSenderId: "953228556886",
-        appId: "1:953228556886:web:8c589d5a59a75045c959f7",
-        measurementId: "G-SW2BZ8LD07"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const db = firebase.firestore();
+    // Firebase Initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
+      authDomain: "bizfinder-7b1b6.firebaseapp.com",
+      projectId: "bizfinder-7b1b6",
+      storageBucket: "bizfinder-7b1b6.firebasestorage.app",
+      messagingSenderId: "953228556886",
+      appId: "1:953228556886:web:8c589d5a59a75045c959f7",
+      measurementId: "G-SW2BZ8LD07"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-      let currentUser = null;
-      let currentBusinesses = [];
+    // Utility Functions
+    function showSection(sectionId) {
+      const sections = ['landing', 'login-form', 'signup-form', 'dashboard', 'search', 'store-page'];
+      sections.forEach(id => {
+        document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+      });
+    }
 
-      // DOM Elements
-      const elements = {
-        popup: document.getElementById('popup'),
-        businessForm: document.getElementById('business-form'),
-        customerForm: document.getElementById('customer-form'),
-        loginForm: document.getElementById('login-form'),
-        feed: document.getElementById('feed'),
-        storePage: document.getElementById('store-page'),
-        profilePage: document.getElementById('profile-page'),
-        loading: document.getElementById('loading'),
-        profileBtn: document.getElementById('profile-btn'),
-        loginBtn: document.getElementById('login-btn'),
-        signupBtn: document.getElementById('signup-btn'),
-        searchBar: document.getElementById('search-bar'),
-        businessName: document.getElementById('businessName'),
-        settingsModal: document.getElementById('settings-modal'),
-        addProductModal: document.getElementById('add-product-modal')
-      };
+    function showError(elementId, message) {
+      document.getElementById(elementId).textContent = message;
+    }
 
-      // Helper Functions
-      const updateUI = () => {
-        elements.profileBtn.style.display = currentUser ? 'block' : 'none';
-        elements.loginBtn.style.display = currentUser ? 'none' : 'block';
-        elements.signupBtn.style.display = currentUser ? 'none' : 'block';
-      };
+    function clearErrors() {
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('signup-error').textContent = '';
+    }
 
-      const closeModal = (formId) => {
-        document.getElementById(formId).style.display = 'none';
-      };
+    // Authentication State Listener
+    auth.onAuthStateChanged(user => {
+      const navButtons = document.getElementById('nav-buttons');
+      if (user) {
+        navButtons.innerHTML = `
+          <button id="dashboard-btn">Dashboard</button>
+          <button id="logout-btn">Logout</button>
+        `;
+        document.getElementById('dashboard-btn').addEventListener('click', () => showSection('dashboard'));
+        document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
+        showSection('dashboard');
+        loadDashboard(user);
+      } else {
+        navButtons.innerHTML = `
+          <button id="login-btn">Login</button>
+          <button id="signup-btn">Sign Up</button>
+        `;
+        document.getElementById('login-btn').addEventListener('click', () => showSection('login-form'));
+        document.getElementById('signup-btn').addEventListener('click', () => showSection('signup-form'));
+        showSection('landing');
+      }
+    });
 
-      const getLetterAvatar = (name) => {
-        const letter = name.charAt(0).toUpperCase();
-        const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        return `<div class="letter-avatar" style="background:${color}">${letter}</div>`;
-      };
-
-      const isStoreOpen = (business) => {
-        const now = new Date();
-        const [openH] = (business.openingHour || '09:00').split(':').map(Number);
-        const [closeH] = (business.closingHour || '18:00').split(':').map(Number);
-        return now.getHours() >= openH && now.getHours() < closeH;
-      };
-
-      // Display Functions
-      const displayFeed = async () => {
-        elements.feed.style.display = 'block';
-        elements.storePage.style.display = 'none';
-        elements.profilePage.style.display = 'none';
-        elements.feed.innerHTML = '';
-        elements.loading.style.display = 'block';
-        try {
-          const snapshot = await db.collection('businesses').get();
-          currentBusinesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          elements.feed.innerHTML = currentBusinesses.map(b => `
-            <div class="business-card">
-              <h3>${b.name} <span class="status-indicator" style="background:${isStoreOpen(b) ? 'green' : 'red'};width:12px;height:12px;border-radius:50%;display:inline-block;"></span></h3>
-              ${b.displayPhoto ? `<img class="business-image" src="${b.displayPhoto}" alt="${b.name}">` : getLetterAvatar(b.name)}
-              <p><strong>Category:</strong> ${b.category}</p>
-              <p>${b.desc}</p>
-              <p><strong>Location:</strong> ${b.location}</p>
-              <button class="view-store-btn" data-id="${b.id}">View Store</button>
+    // Load Dashboard Based on User Type
+    async function loadDashboard(user) {
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) throw new Error('User data not found');
+        const userData = userDoc.data();
+        const dashboard = document.getElementById('dashboard');
+        if (userData.type === 'business') {
+          dashboard.innerHTML = `
+            <h2>Business Dashboard</h2>
+            <p>Welcome, ${userData.name}</p>
+            <button id="add-product-btn">Add Product</button>
+            <div id="product-form" style="display: none;">
+              <h3>Add New Product</h3>
+              <form id="product-form-element">
+                <input type="text" id="product-name" placeholder="Product Name" required>
+                <textarea id="product-desc" placeholder="Description" required></textarea>
+                <input type="number" id="product-price" placeholder="Price" min="0" step="0.01" required>
+                <button type="submit">Add Product</button>
+                <p id="product-error" class="error"></p>
+              </form>
             </div>
-          `).join('');
-          document.getElementById('search-results-info').textContent = `Found ${currentBusinesses.length} businesses`;
-        } catch (error) {
-          console.error('Error loading feed:', error);
-          alert('Failed to load businesses.');
-        } finally {
-          elements.loading.style.display = 'none';
-        }
-      };
-
-      const viewStore = async (bizId) => {
-        elements.feed.style.display = 'none';
-        elements.storePage.style.display = 'block';
-        elements.loading.style.display = 'block';
-        try {
-          const businessDoc = await db.collection('businesses').doc(bizId).get();
-          const business = { id: businessDoc.id, ...businessDoc.data() };
-          const products = await db.collection('businesses').doc(bizId).collection('products').get();
-          business.views = (business.views || 0) + 1;
-          await db.collection('businesses').doc(bizId).update({ views: business.views });
-          elements.storePage.innerHTML = `
-            <button class="back-to-feed-btn">Back to Feed</button>
-            <div class="store-container">
-              <div class="business-info">
-                <h3>${business.name}</h3>
-                ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
-                <p>${business.desc}</p>
-                <p>Views: ${business.views}</p>
-              </div>
-              <div class="products-section">
-                <h4>Products</h4>
-                <div class="products-grid">
-                  ${products.docs.map(p => `
-                    <div class="product-card">
-                      <img src="${p.data().photo || 'https://via.placeholder.com/300'}" alt="${p.data().name}">
-                      <div class="product-info">
-                        <p class="product-name">${p.data().name}</p>
-                        <p class="product-desc">${p.data().desc}</p>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
+            <h3>Your Products</h3>
+            <div id="business-products"></div>
           `;
-        } catch (error) {
-          console.error('Error loading store:', error);
-          alert('Failed to load store.');
-        } finally {
-          elements.loading.style.display = 'none';
-        }
-      };
-
-      const showProfile = async () => {
-        if (!currentUser) return;
-        elements.feed.style.display = 'none';
-        elements.storePage.style.display = 'none';
-        elements.profilePage.style.display = 'block';
-        elements.loading.style.display = 'block';
-        try {
-          const userDoc = await db.collection('users').doc(currentUser.id).get();
-          const userData = userDoc.data();
-          let content = `
-            <div class="profile-container">
-              <button id="back-btn">${userData.type === 'business' ? 'Back to Store' : 'Back to Feed'}</button>
-              <h3>${userData.name}</h3>
-              ${userData.profilePhoto ? `<img src="${userData.profilePhoto}" alt="${userData.name}">` : getLetterAvatar(userData.name)}
-              <p>${userData.email}</p>
-          `;
-          if (userData.type === 'business') {
-            const products = await db.collection('businesses').doc(userData.businessId).collection('products').get();
-            content += `
-              <button id="add-product-btn">Add Product</button>
-              <div class="product-list">
-                ${products.docs.map(p => `
-                  <div class="product-item">${p.data().name} - ${p.data().desc}</div>
-                `).join('')}
-              </div>
-            `;
-          }
-          content += `
-              <button id="settings-btn">Settings</button>
-              <button id="logout-btn">Logout</button>
-            </div>
-          `;
-          elements.profilePage.innerHTML = content;
-          document.getElementById('back-btn').addEventListener('click', () => 
-            userData.type === 'business' ? viewStore(userData.businessId) : displayFeed()
-          );
-          document.getElementById('add-product-btn')?.addEventListener('click', () => elements.addProductModal.style.display = 'block');
-          document.getElementById('settings-btn').addEventListener('click', () => elements.settingsModal.style.display = 'block');
-          document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
-        } catch (error) {
-          console.error('Error loading profile:', error);
-          alert('Failed to load profile.');
-        } finally {
-          elements.loading.style.display = 'none';
-        }
-      };
-
-      // Event Listeners
-      elements.businessName.addEventListener('click', displayFeed);
-      elements.loginBtn.addEventListener('click', () => elements.loginForm.style.display = 'block');
-      elements.signupBtn.addEventListener('click', () => elements.popup.style.display = 'block');
-      elements.profileBtn.addEventListener('click', showProfile);
-      elements.feedBtn.addEventListener('click', () => { elements.popup.style.display = 'none'; displayFeed(); });
-      elements.businessBtn.addEventListener('click', () => { elements.popup.style.display = 'none'; elements.businessForm.style.display = 'block'; });
-      elements.customerBtn.addEventListener('click', () => { elements.popup.style.display = 'none'; elements.customerForm.style.display = 'block'; });
-
-      document.body.addEventListener('click', (e) => {
-        if (e.target.classList.contains('view-store-btn')) viewStore(e.target.dataset.id);
-        if (e.target.classList.contains('back-to-feed-btn')) displayFeed();
-        if (e.target.classList.contains('close-btn')) closeModal(e.target.dataset.form);
-      });
-
-      document.getElementById('submit-business-btn').addEventListener('click', async () => {
-        const data = {
-          name: document.getElementById('biz-name').value,
-          email: document.getElementById('biz-email').value,
-          password: document.getElementById('biz-password').value,
-          category: document.getElementById('biz-category').value,
-          product: document.getElementById('biz-product').value,
-          desc: document.getElementById('biz-desc').value,
-          whatsapp: document.getElementById('biz-whatsapp').value,
-          instagram: document.getElementById('biz-instagram').value,
-          location: document.getElementById('biz-location').value
-        };
-        if (Object.values(data).some(v => !v)) {
-          alert('All fields are required!');
-          return;
-        }
-        try {
-          const userCredential = await auth.createUserWithEmailAndPassword(data.email, data.password);
-          const user = userCredential.user;
-          const businessData = {
-            name: data.name,
-            category: data.category,
-            featuredProduct: { name: data.product, desc: data.desc, photo: '' },
-            desc: data.desc,
-            whatsapp: data.whatsapp,
-            instagram: data.instagram,
-            location: data.location,
-            displayPhoto: '',
-            views: 0,
-            openingHour: '09:00',
-            closingHour: '18:00',
-            userId: user.uid
-          };
-          await Promise.all([
-            db.collection('businesses').doc(user.uid).set(businessData),
-            db.collection('users').doc(user.uid).set({ type: 'business', name: data.name, email: data.email, businessId: user.uid }),
-            db.collection('businesses').doc(user.uid).collection('products').add({ name: data.product, desc: data.desc, photo: '', views: 0 })
-          ]);
-          closeModal('business-form');
-        } catch (error) {
-          alert(`Signup failed: ${error.message}`);
-        }
-      });
-
-      document.getElementById('submit-customer-btn').addEventListener('click', async () => {
-        const data = {
-          name: document.getElementById('cust-name').value,
-          email: document.getElementById('cust-email').value,
-          password: document.getElementById('cust-password').value
-        };
-        if (Object.values(data).some(v => !v)) {
-          alert('All fields are required!');
-          return;
-        }
-        try {
-          const userCredential = await auth.createUserWithEmailAndPassword(data.email, data.password);
-          await db.collection('users').doc(userCredential.user.uid).set({
-            type: 'customer',
-            name: data.name,
-            email: data.email,
-            recentlyViewed: []
+          document.getElementById('add-product-btn').addEventListener('click', () => {
+            document.getElementById('product-form').style.display = 'block';
           });
-          closeModal('customer-form');
-        } catch (error) {
-          alert(`Signup failed: ${error.message}`);
-        }
-      });
-
-      document.getElementById('login-submit-btn').addEventListener('click', async () => {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        if (!email || !password) {
-          alert('Email and password are required!');
-          return;
-        }
-        try {
-          await auth.signInWithEmailAndPassword(email, password);
-          closeModal('login-form');
-        } catch (error) {
-          alert(`Login failed: ${error.message}`);
-        }
-      });
-
-      document.getElementById('submit-product-btn').addEventListener('click', async () => {
-        const data = {
-          name: document.getElementById('prod-name').value,
-          desc: document.getElementById('prod-desc').value,
-          photo: document.getElementById('prod-photo').value
-        };
-        if (!data.name || !data.desc) {
-          alert('Name and description are required!');
-          return;
-        }
-        try {
-          await db.collection('businesses').doc(currentUser.businessId).collection('products').add({
-            name: data.name,
-            desc: data.desc,
-            photo: data.photo || '',
-            views: 0
+          document.getElementById('product-form-element').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('product-name').value;
+            const desc = document.getElementById('product-desc').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            try {
+              await db.collection('stores').doc(user.uid).collection('products').add({
+                name,
+                description: desc,
+                price,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+              document.getElementById('product-form').style.display = 'none';
+              loadBusinessProducts(user.uid);
+            } catch (error) {
+              showError('product-error', error.message);
+            }
           });
-          closeModal('add-product-modal');
-          showProfile();
-        } catch (error) {
-          alert(`Error adding product: ${error.message}`);
-        }
-      });
-
-      document.getElementById('save-settings-btn').addEventListener('click', async () => {
-        const name = document.getElementById('settings-name').value;
-        const photo = document.getElementById('settings-photo').value;
-        if (!name) {
-          alert('Name is required!');
-          return;
-        }
-        try {
-          await db.collection('users').doc(currentUser.id).update({ name, profilePhoto: photo || '' });
-          if (currentUser.type === 'business') {
-            await db.collection('businesses').doc(currentUser.businessId).update({ name, displayPhoto: photo || '' });
-          }
-          currentUser.name = name;
-          currentUser.profilePhoto = photo;
-          closeModal('settings-modal');
-          showProfile();
-        } catch (error) {
-          alert(`Error updating settings: ${error.message}`);
-        }
-      });
-
-      // Auth State Listener
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          db.collection('users').doc(user.uid).get().then(doc => {
-            currentUser = { id: user.uid, ...doc.data() };
-            updateUI();
-            displayFeed();
-          });
+          loadBusinessProducts(user.uid);
         } else {
-          currentUser = null;
-          updateUI();
-          elements.popup.style.display = 'block';
-          displayFeed();
+          dashboard.innerHTML = `
+            <h2>Customer Dashboard</h2>
+            <p>Welcome, ${userData.name}</p>
+            <p>Start searching for stores using the search bar above!</p>
+          `;
         }
-      });
+      } catch (error) {
+        document.getElementById('dashboard').innerHTML = `<p class="error">Error loading dashboard: ${error.message}</p>`;
+      }
+    }
 
-      // Initial Load
-      displayFeed();
+    async function loadBusinessProducts(businessId) {
+      const productsDiv = document.getElementById('business-products');
+      productsDiv.innerHTML = 'Loading products...';
+      try {
+        const snapshot = await db.collection('stores').doc(businessId).collection('products').get();
+        productsDiv.innerHTML = '';
+        if (snapshot.empty) {
+          productsDiv.textContent = 'No products yet.';
+          return;
+        }
+        snapshot.forEach(doc => {
+          const product = doc.data();
+          const productElem = document.createElement('div');
+          productElem.className = 'product-item';
+          productElem.innerHTML = `<h4>${product.name}</h4><p>${product.description}</p><p>Price: $${product.price.toFixed(2)}</p>`;
+          productsDiv.appendChild(productElem);
+        });
+      } catch (error) {
+        productsDiv.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
+      }
+    }
+
+    // Search Functionality
+    document.getElementById('search-btn').addEventListener('click', async () => {
+      const query = document.getElementById('search-input').value.trim();
+      if (query.length < 2) {
+        alert('Please enter at least 2 characters to search.');
+        return;
+      }
+      showSection('search');
+      await performSearch(query);
+    });
+
+    async function performSearch(query) {
+      const resultsDiv = document.getElementById('search-results');
+      resultsDiv.innerHTML = 'Searching...';
+      try {
+        const snapshot = await db.collection('stores')
+          .where('name', '>=', query)
+          .where('name', '<=', query + '\uf8ff')
+          .limit(10)
+          .get();
+        resultsDiv.innerHTML = '';
+        if (snapshot.empty) {
+          resultsDiv.textContent = 'No stores found.';
+          return;
+        }
+        snapshot.forEach(doc => {
+          const store = doc.data();
+          const storeElem = document.createElement('div');
+          storeElem.className = 'store-item';
+          storeElem.innerHTML = `
+            <h3>${store.name}</h3>
+            <p>${store.description || 'No description available'}</p>
+            <button class="view-store" data-id="${doc.id}">View Store</button>
+          `;
+          resultsDiv.appendChild(storeElem);
+        });
+        document.querySelectorAll('.view-store').forEach(btn => {
+          btn.addEventListener('click', () => showStorePage(btn.getAttribute('data-id')));
+        });
+      } catch (error) {
+        resultsDiv.innerHTML = `<p class="error">Error searching stores: ${error.message}</p>`;
+      }
+    }
+
+    // Store Page
+    async function showStorePage(storeId) {
+      showSection('store-page');
+      const storeName = document.getElementById('store-name');
+      const storeDesc = document.getElementById('store-description');
+      const productsDiv = document.getElementById('store-products');
+      storeName.textContent = 'Loading...';
+      storeDesc.textContent = '';
+      productsDiv.innerHTML = '';
+      try {
+        const storeDoc = await db.collection('stores').doc(storeId).get();
+        if (!storeDoc.exists) throw new Error('Store not found');
+        const store = storeDoc.data();
+        storeName.textContent = store.name;
+        storeDesc.textContent = store.description || 'No description available';
+        const productsSnapshot = await db.collection('stores').doc(storeId).collection('products').get();
+        if (productsSnapshot.empty) {
+          productsDiv.textContent = 'No products available.';
+        } else {
+          productsSnapshot.forEach(doc => {
+            const product = doc.data();
+            const productElem = document.createElement('div');
+            productElem.className = 'product-item';
+            productElem.innerHTML = `
+              <h4>${product.name}</h4>
+              <p>${product.description}</p>
+              <p>Price: $${product.price.toFixed(2)}</p>
+            `;
+            productsDiv.appendChild(productElem);
+          });
+        }
+      } catch (error) {
+        storeName.textContent = 'Error';
+        storeDesc.textContent = `Failed to load store: ${error.message}`;
+      }
+      document.getElementById('back-to-search').onclick = () => showSection('search');
+    }
+
+    // Login Handler
+    document.getElementById('login-form-element').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        showError('login-error', error.message);
+      }
+    });
+
+    // Signup Handler
+    document.getElementById('signup-form-element').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const userType = document.getElementById('user-type').value;
+      if (!userType) {
+        showError('signup-error', 'Please select a user type.');
+        return;
+      }
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        await db.collection('users').doc(user.uid).set({
+          name,
+          email,
+          type: userType,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        if (userType === 'business') {
+          await db.collection('stores').doc(user.uid).set({
+            name: `${name}'s Store`,
+            description: 'A new store on BizFinder JA',
+            ownerId: user.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } catch (error) {
+        showError('signup-error', error.message);
+      }
     });
   </script>
 </body>
