@@ -1,109 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BizFinder JA - Jamaican Business Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizFinder JA</title>
+  <!-- Chart.js for interactive graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* CSS Variables for Consistency */
+    /* CSS Variables */
     :root {
       --primary-green: #2ecc71;
       --secondary-green: #27ae60;
       --light-bg: #f5f9fc;
-      --dark-bg: #1e3c72;
+      --light-bg-alt: #e6f0fa;
       --text-color: #333;
-      --white: #fff;
-      --accent-blue: #3498db;
       --muted-color: #7f8c8d;
+      --accent-blue: #3498db;
+      --accent-blue-hover: #2980b9;
+      --white: #fff;
+      --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
+      --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-
-    /* Base Styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--light-bg);
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--light-bg), var(--light-bg-alt));
       color: var(--text-color);
       line-height: 1.6;
       min-height: 100vh;
     }
-
-    /* Sticky Header */
+    
+    /* Header using flexbox for a clean layout */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
       color: var(--white);
-      padding: 1rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
     }
-    header h1 { font-size: 1.5rem; }
+    #businessName {
+      cursor: pointer;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 1rem;
+    }
     .header-buttons button {
       background: var(--white);
       color: var(--primary-green);
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
       cursor: pointer;
-      margin-left: 0.5rem;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
     }
-    .header-buttons button:hover { background: #e0e0e0; }
-
-    /* Profile Button */
-    #profile-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--accent-blue);
-      color: var(--white);
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .header-buttons button:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-
-    /* Main Container */
-    .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-
-    /* Business Listings */
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
+    
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
     }
-    .business-card {
+    
+    /* Mobile Optimization */
+    @media (max-width: 1024px) {
+      .container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+      }
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hot-products {
+        padding: 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+      }
+      .hot-product-grid {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        animation: mobileSlide 15s infinite ease-in-out;
+      }
+      .hot-product-item {
+        flex: 0 0 auto;
+        width: 45%; /* Two items per row on mobile */
+        margin: 0.25rem 0;
+        padding: 0.5rem;
+      }
+    }
+    
+    /* Search Bar */
+    .search-container {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    #search-bar {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      font-size: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #search-bar:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #search-results-info {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    /* Cards and Pages */
+    .business-card,
+    .store-page,
+    .profile-page {
       background: var(--white);
       padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
+      margin-bottom: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-    .business-card h3 { color: var(--primary-green); margin-bottom: 0.5rem; }
-    .business-card .category { font-style: italic; color: var(--muted-color); }
-    .business-card img, .business-card .avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin: 1rem auto;
-      display: block;
+    .business-card:hover,
+    .store-page:hover,
+    .profile-page:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    .business-card h3,
+    .store-page h3,
+    .profile-page h3 {
+      margin-bottom: 1rem;
+      color: var(--primary-green);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .business-card .category,
+    .store-page .category {
+      font-style: italic;
+      color: var(--muted-color);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    /* For business images, use circular display */
+    .business-image {
+      width: 150px;
+      height: 150px;
       object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .avatar {
-      background: var(--accent-blue);
-      color: var(--white);
+    /* Letter avatar with fixed dimensions */
+    .letter-avatar {
+      width: 150px;
+      height: 150px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 4rem;
+      color: var(--white);
+      border-radius: 50%;
+      margin-bottom: 1rem;
     }
-    .contact a { color: var(--accent-blue); margin: 0 0.5rem; text-decoration: none; }
-    .contact a:hover { text-decoration: underline; }
-    .views { color: var(--muted-color); font-size: 0.9rem; }
-
-    /* Modals */
+    
+    /* Status Indicator for store hours */
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-left: 5px;
+    }
+    
+    /* Contact Links */
+    .contact a {
+      margin-right: 1rem;
+      text-decoration: none;
+      color: var(--accent-blue);
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .contact a:hover {
+      color: var(--accent-blue-hover);
+    }
+    .views {
+      font-size: 0.875rem;
+      color: var(--muted-color);
+      margin-top: 0.75rem;
+    }
+    
+    /* Global Button Styles */
+    button {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    button:hover {
+      background: var(--secondary-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    
+    /* Modal Styles */
     .modal {
       position: fixed;
       top: 50%;
@@ -111,359 +243,1422 @@
       transform: translate(-50%, -50%);
       background: var(--white);
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
       z-index: 1000;
-      display: none;
+      text-align: center;
       max-width: 500px;
       width: 90%;
+      display: none;
     }
-    .modal h2 { color: var(--primary-green); margin-bottom: 1rem; }
-    .modal input, .modal select {
+    .modal h2 {
+      color: var(--primary-green);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    input,
+    select,
+    textarea {
+      display: block;
       width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    .modal button { margin-top: 1rem; }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    .modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    
+    /* Hot Products Banner - Premium Design for PC and Mobile Slideshow */
+    .hot-products {
+      background: var(--premium-bg);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: var(--premium-shadow);
+      border-left: 8px solid var(--primary-green);
+      position: relative;
+      overflow: hidden;
+    }
+    .hot-products h3 {
+      width: 100%;
+      font-size: 1.5rem;
+      color: var(--primary-green);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .hot-products .hot-product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+      animation: pcSlide 20s infinite ease-in-out;
+    }
+    @media (min-width: 1025px) {
+      .hot-products .hot-product-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .hot-product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+    .hot-product-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .hot-product-item img {
+      width: 80px;
+      height: 80px;
+      margin-right: 1rem;
+      border-radius: 8px;
+      object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
+    }
+    .hot-product-item span {
+      font-size: 1rem;
+      color: var(--text-color);
+      flex-grow: 1;
+      font-weight: 500;
+    }
+    .hot-product-item::after {
+      content: "🔥";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      animation: firePulse 1.5s infinite ease-in-out;
+    }
 
-    /* Store Page */
-    .store-page { display: none; }
+    /* Fire Emoji and Slide Animations */
+    @keyframes firePulse {
+      0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+      50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+    }
+    @keyframes pcSlide {
+      0%, 10% { transform: translateX(0); }
+      20%, 30% { transform: translateX(-33.33%); }
+      40%, 50% { transform: translateX(-66.66%); }
+      60%, 70% { transform: translateX(-100%); }
+      80%, 90% { transform: translateX(-66.66%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes mobileSlide {
+      0%, 25% { transform: translateX(0); }
+      50%, 75% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Hot Product Popup - Premium View */
+    #hot-product-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--premium-bg);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 2000;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      display: none;
+    }
+    #hot-product-popup img {
+      width: 150px;
+      height: 150px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      loading: lazy;
+    }
+    #hot-product-popup h3 {
+      color: var(--primary-green);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    #hot-product-popup p {
+      font-size: 1rem;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+    }
+    #hot-product-popup .views {
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      margin-bottom: 1rem;
+    }
+    #hot-product-popup button {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+    #hot-product-popup button:hover {
+      background: var(--secondary-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    #hot-product-popup .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted-color);
+    }
+
+    /* Loading Spinner */
+    .loading {
+      text-align: center;
+      padding: 1.5rem;
+      display: none;
+      color: var(--muted-color);
+      font-size: 1rem;
+    }
+    
+    /* Feed Grid */
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* Store Page Layout */
+    .store-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 1rem;
+    }
+    .business-info {
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 1rem;
+    }
+    .business-info h3 {
+      margin-bottom: 0.5rem;
+    }
+    .business-info img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+      loading: lazy; /* Lazy loading for performance */
+    }
+    .products-section {
+      width: 100%;
+    }
+    .products-section h4 {
+      margin-bottom: 1rem;
+      color: var(--primary-green);
+      font-size: 1.5rem;
+      text-align: center;
+    }
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+      gap: 1.5rem;
     }
     .product-card {
       background: var(--white);
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     .product-card img {
       width: 100%;
-      height: 150px;
       object-fit: cover;
-      border-radius: 5px;
+      height: 150px;
+      loading: lazy; /* Lazy loading for performance */
     }
-
-    /* Hot Products */
-    .hot-products {
-      margin-top: 2rem;
+    .product-info {
       padding: 1rem;
-      background: var(--white);
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
     }
-    .hot-products h3 { color: var(--primary-green); margin-bottom: 1rem; }
+    .product-name {
+      font-size: 1.1rem;
+      color: var(--primary-green);
+      margin-bottom: 0.5rem;
+    }
+    .product-desc {
+      font-size: 0.95rem;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+    .product-views {
+      font-size: 0.85rem;
+      color: var(--muted-color);
+    }
+    
+    /* Profile Page Enhancements */
+    .profile-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--premium-shadow);
+      text-align: center;
+    }
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .profile-header img,
+    .profile-header .letter-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      loading: lazy; /* Lazy loading for performance */
+    }
+    .profile-details {
+      margin-bottom: 1.5rem;
+    }
+    .product-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-item-actions button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+    
+    /* Settings Modal - Intuitive and Foolproof */
+    #settings-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #settings-modal h2 {
+      color: var(--primary-green);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    #settings-modal input {
+      width: 100%;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #settings-modal input:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #settings-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #settings-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
+    #settings-modal .tooltip {
+      font-size: 0.8rem;
+      color: var(--muted-color);
+      margin-top: 0.25rem;
+    }
+    
+    /* Add Product Modal */
+    #add-product-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #add-product-modal input, #add-product-modal textarea {
+      width: 100%;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #add-product-modal input:focus, #add-product-modal textarea:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #add-product-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #add-product-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
 
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      header { flex-direction: column; gap: 1rem; }
-      .header-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-      .feed-grid, .products-grid { grid-template-columns: 1fr; }
+    /* Edit Product Modal */
+    #edit-product-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #edit-product-modal input, #edit-product-modal textarea {
+      width: 100%;
+      margin: 0.75rem 0;
+      padding: 0.875rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #edit-product-modal input:focus, #edit-product-modal textarea:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+    }
+    #edit-product-modal .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    #edit-product-modal button {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+    }
+
+    /* Manage Products Modal */
+    #manage-products-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: var(--premium-shadow);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
+    }
+    #manage-products-modal .product-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #manage-products-modal .product-item {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #manage-products-modal .product-item-actions button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
-    <h1>BizFinder JA</h1>
+    <span id="businessName">BizFinder JA</span>
     <div class="header-buttons">
-      <button id="profile-btn" style="display:none;">B</button>
+      <button id="profile-btn">Profile</button>
       <button id="login-btn">Login</button>
       <button id="signup-btn">Sign Up</button>
     </div>
   </header>
 
-  <!-- Main Content -->
   <div class="container" id="main-content">
+    <div class="search-container">
+      <input type="text" id="search-bar" placeholder="Search businesses..." />
+      <div id="search-results-info"></div>
+    </div>
+    <div id="hot-products" class="hot-products">
+      <div class="hot-product-grid"></div>
+    </div>
     <div id="feed" class="feed-grid"></div>
-    <div id="store-page" class="store-page"></div>
-    <div id="hot-products" class="hot-products" style="display:none;"></div>
+    <div id="store-page" class="store-page" style="display: none;"></div>
+    <div id="profile-page" class="profile-page" style="display: none;"></div>
+    <div id="loading" class="loading">Loading...</div>
   </div>
 
   <!-- Modals -->
-  <div id="signup-modal" class="modal">
-    <h2>Welcome to BizFinder JA</h2>
-    <button id="business-signup-btn">Sign Up as Business</button>
-    <button id="customer-signup-btn">Sign Up as Customer</button>
-    <button id="close-signup">Continue to Feed</button>
+  <div id="popup" class="modal">
+    <h2>Welcome to BizFinder JA!</h2>
+    <p>Sign up to join our vibrant community.</p>
+    <button id="business-btn">Sign Up as Business</button>
+    <button id="customer-btn">Sign Up as Customer</button>
+    <button id="feed-btn">Continue to Feed</button>
   </div>
 
   <div id="business-form" class="modal">
     <h2>Business Sign-Up</h2>
-    <input type="text" id="biz-name" placeholder="Business Name" required>
+    <input type="text" id="biz-name" placeholder="Business Name" required />
+    <input type="email" id="biz-email" placeholder="Email" required />
+    <input type="password" id="biz-password" placeholder="Password" required />
     <select id="biz-category">
       <option value="Food & Drinks">Food & Drinks</option>
       <option value="Fashion & Accessories">Fashion & Accessories</option>
       <option value="Tech & Electronics">Tech & Electronics</option>
+      <option value="Home & Kitchen">Home & Kitchen</option>
+      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
     </select>
-    <input type="text" id="biz-product" placeholder="Featured Product Name" required>
-    <input type="text" id="biz-desc" placeholder="Short Description" required>
-    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required>
-    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required>
-    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required>
-    <button id="submit-business">Submit</button>
-    <button class="close-btn" data-modal="business-form">Close</button>
+    <input type="text" id="biz-product" placeholder="Featured Product Name" required />
+    <input type="text" id="biz-desc" placeholder="Short Description" required />
+    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
+    <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
+    <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
+    <button id="submit-business-btn">Submit</button>
+    <button class="close-btn" data-form="business-form">Close</button>
   </div>
 
   <div id="customer-form" class="modal">
     <h2>Customer Sign-Up</h2>
-    <input type="text" id="cust-name" placeholder="Name" required>
-    <input type="email" id="cust-email" placeholder="Email" required>
-    <input type="password" id="cust-password" placeholder="Password" required>
-    <button id="submit-customer">Submit</button>
-    <button class="close-btn" data-modal="customer-form">Close</button>
+    <input type="text" id="cust-name" placeholder="Name" required />
+    <input type="email" id="cust-email" placeholder="Email" required />
+    <input type="password" id="cust-password" placeholder="Password" required />
+    <button id="submit-customer-btn">Submit</button>
+    <button class="close-btn" data-form="customer-form">Close</button>
   </div>
 
   <div id="login-form" class="modal">
     <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email" required>
-    <input type="password" id="login-password" placeholder="Password" required>
-    <button id="submit-login">Login</button>
-    <button class="close-btn" data-modal="login-form">Close</button>
+    <input type="email" id="login-email" placeholder="Email" required />
+    <input type="password" id="login-password" placeholder="Password" required />
+    <button id="login-submit-btn">Login</button>
+    <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal">
+    <h2>Settings</h2>
+    <input type="text" id="settings-name" placeholder="Your Name (e.g., John Doe)" required />
+    <input type="url" id="settings-photo" placeholder="Profile Photo URL (e.g., https://example.com/photo.jpg)" />
+    <div class="tooltip">Enter a valid URL starting with http:// or https://, or leave blank for letter avatar.</div>
+    <button id="save-settings-btn">Save Settings</button>
+    <button id="reset-settings-btn">Reset to Default</button>
+    <div id="settings-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
+    <button class="close-btn" data-form="settings-modal">Close</button>
+  </div>
+
+  <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
-    <input type="text" id="prod-name" placeholder="Product Name" required>
-    <input type="text" id="prod-desc" placeholder="Description" required>
-    <input type="number" id="prod-price" placeholder="Price" step="0.01" required>
-    <button id="submit-product">Add Product</button>
-    <button class="close-btn" data-modal="add-product-modal">Close</button>
+    <input type="text" id="prod-name" placeholder="Product Name" required />
+    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <input type="file" id="prod-media" accept="image/*,video/*" />
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
+    <button id="submit-product-btn">Add Product</button>
+    <div id="add-product-error" class="error">Please fill in all required fields!</div>
+    <button class="close-btn" data-form="add-product-modal">Close</button>
   </div>
 
-  <!-- JavaScript -->
+  <!-- Edit Product Modal -->
+  <div id="edit-product-modal" class="modal">
+    <h2>Edit Product</h2>
+    <input type="text" id="edit-prod-name" placeholder="Product Name" required />
+    <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
+    <input type="url" id="edit-prod-photo" placeholder="Photo URL (e.g., https://example.com/photo.jpg)" />
+    <button id="save-product-btn">Save Changes</button>
+    <div id="edit-product-error" class="error">Please fill in all required fields or provide a valid photo URL.</div>
+    <button class="close-btn" data-form="edit-product-modal">Close</button>
+  </div>
+
+  <!-- Manage Products Modal -->
+  <div id="manage-products-modal" class="modal">
+    <h2>Manage Products</h2>
+    <div class="product-list" id="manage-product-list"></div>
+    <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
+  </div>
+
+  <!-- Hot Product Popup -->
+  <div id="hot-product-popup" class="modal">
+    <button class="close-btn" data-form="hot-product-popup">×</button>
+    <img id="hot-product-img" alt="Product Image">
+    <h3 id="hot-product-name"></h3>
+    <p id="hot-product-desc"></p>
+    <p class="views" id="hot-product-views"></p>
+    <button id="view-store-btn">View Store</button>
+  </div>
+
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
-      // Data
-      let businesses = JSON.parse(localStorage.getItem('businesses')) || [];
-      let users = JSON.parse(localStorage.getItem('users')) || [];
+      /*** Data Initialization ***/
+      let displayedCount = 6;
+      let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+      let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
       let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+      let currentBusinesses = businesses;
+      
+      // Ensure dummy businesses have opening/closing hours and products
+      businesses = businesses.map(b => {
+        if (!b.openingHour) b.openingHour = "09:00";
+        if (!b.closingHour) b.closingHour = "18:00";
+        if (!b.products || b.products.length === 0) {
+          b.products = [{
+            name: `Default Product`,
+            desc: `Default description`,
+            photo: '',
+            views: 0
+          }];
+        }
+        return b;
+      });
 
-      // DOM Elements
+      /*** DOM Elements ***/
+      const popup = document.getElementById('popup');
+      const businessForm = document.getElementById('business-form');
+      const customerForm = document.getElementById('customer-form');
+      const loginForm = document.getElementById('login-form');
       const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
+      const profilePage = document.getElementById('profile-page');
       const hotProducts = document.getElementById('hot-products');
+      const loading = document.getElementById('loading');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
       const signupBtn = document.getElementById('signup-btn');
+      const searchBar = document.getElementById('search-bar');
+      const businessName = document.getElementById('businessName');
+      const settingsModal = document.getElementById('settings-modal');
+      const addProductModal = document.getElementById('add-product-modal');
+      const editProductModal = document.getElementById('edit-product-modal');
+      const manageProductsModal = document.getElementById('manage-products-modal');
+      const manageProductList = document.getElementById('manage-product-list');
+      const hotProductGrid = document.querySelector('.hot-product-grid') || hotProducts.querySelector('.hot-product-grid');
+      const hotProductPopup = document.getElementById('hot-product-popup');
 
-      // Initial Dummy Data
-      if (!businesses.length) {
-        businesses = [
-          { id: 1, name: "Taste of Mobay", category: "Food & Drinks", products: [{ name: "Jerk Chicken", desc: "Authentic Jamaican jerk chicken.", price: "15.00", views: 0 }], desc: "Authentic Jamaican cuisine.", whatsapp: "876551234", instagram: "tasteofmobay", location: "Montego Bay", views: 0 },
-          { id: 2, name: "Rasta Threads", category: "Fashion & Accessories", products: [{ name: "Handmade Apparel", desc: "Unique Jamaican clothing.", price: "25.00", views: 0 }], desc: "Vibrant fashion inspired by Jamaica.", whatsapp: "876551235", instagram: "rastathreads", location: "Kingston", views: 0 }
-        ];
-        localStorage.setItem('businesses', JSON.stringify(businesses));
-      }
-
-      // Helper Functions
-      function updateLocalStorage() {
-        localStorage.setItem('businesses', JSON.stringify(businesses));
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      }
-
-      function updateUI() {
-        if (currentUser) {
-          loginBtn.style.display = 'none';
-          signupBtn.style.display = 'none';
-          profileBtn.style.display = 'block';
-          profileBtn.textContent = currentUser.name.charAt(0).toUpperCase();
-        } else {
-          loginBtn.style.display = 'block';
-          signupBtn.style.display = 'block';
-          profileBtn.style.display = 'none';
+      /*** Helper Functions ***/
+      function generateDummyBusinesses(count) {
+        const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
+        const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
+        const dummyBusinesses = [];
+        for (let i = 0; i < count; i++) {
+          const category = categories[Math.floor(Math.random() * categories.length)];
+          const location = locations[Math.floor(Math.random() * locations.length)];
+          dummyBusinesses.push({
+            id: Date.now() + i,
+            name: `Business ${i + 1}`,
+            category,
+            products: [{
+              name: `Product ${i + 1}`,
+              desc: `Description for product ${i + 1}`,
+              photo: '',
+              views: 0
+            }],
+            desc: `Description for business ${i + 1}.`,
+            whatsapp: `876555${String(i).padStart(4, '0')}`,
+            instagram: `business${i + 1}`,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          });
         }
-        displayFeed();
+        return dummyBusinesses;
+      }
+      
+      function updateLocalStorage() {
+        try {
+          localStorage.setItem('businesses', JSON.stringify(businesses));
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        } catch (e) {
+          console.error('LocalStorage error:', e);
+          alert('Storage limit reached or unavailable. Some data may not be saved.');
+        }
+      }
+      
+      function updateUIForUser() {
+        profileBtn.style.display = currentUser ? 'block' : 'none';
+        loginBtn.style.display = currentUser ? 'none' : 'block';
+        signupBtn.style.display = currentUser ? 'none' : 'block';
+      }
+      
+      function closeModal(formId) {
+        const modal = document.getElementById(formId);
+        if (modal) {
+          modal.style.display = 'none';
+          const error = document.getElementById(`${formId}-error`);
+          if (error) error.style.display = 'none';
+        }
+      }
+      
+      function getLetterAvatar(name) {
+        const firstName = name.split(" ")[0];
+        const letter = firstName.charAt(0).toUpperCase();
+        const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
+      }
+      
+      function isStoreOpen(business) {
+        const now = new Date();
+        const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
+        const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
+        const openDate = new Date(now);
+        openDate.setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now);
+        closeDate.setHours(closeH, closeM, 0, 0);
+        return now >= openDate && now <= closeDate;
+      }
+      
+      function isValidUrl(url) {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
       }
 
-      function displayFeed() {
-        feed.style.display = 'grid';
+      /*** UI Rendering Functions ***/
+      const displayFeed = () => {
+        console.time('displayFeed');
+        feed.style.display = 'block';
         storePage.style.display = 'none';
-        hotProducts.style.display = 'block';
-        feed.innerHTML = '';
-        businesses.forEach(biz => {
-          const card = document.createElement('div');
-          card.className = 'business-card';
-          card.innerHTML = `
-            <h3>${biz.name}</h3>
-            <p class="category">${biz.category}</p>
-            <div class="avatar">${biz.name.charAt(0)}</div>
-            <p><strong>Featured:</strong> ${biz.products[0].name}</p>
-            <p>${biz.desc}</p>
-            <p><strong>Location:</strong> ${biz.location}</p>
-            <div class="contact">
-              <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
-              <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
-            </div>
-            <p class="views">Views: ${biz.views}</p>
-            <button class="view-store" data-id="${biz.id}">View Details</button>
-          `;
-          feed.appendChild(card);
-        });
+        profilePage.style.display = 'none';
+        feed.innerHTML = '<div class="feed-grid"></div>';
+        const gridContainer = feed.querySelector('.feed-grid');
+        const businessesToShow = currentBusinesses.slice(0, window.innerWidth >= 1024 ? currentBusinesses.length : displayedCount);
+        const totalResults = currentBusinesses.length;
+        const info = document.getElementById('search-results-info');
+        if (totalResults === 0) {
+          info.textContent = 'No results found.';
+          gridContainer.innerHTML = '';
+        } else {
+          info.textContent = `Found ${totalResults} results, showing ${businessesToShow.length}`;
+          businessesToShow.forEach(business => {
+            const featuredProduct = business.products && business.products.length > 0 
+              ? business.products[0] 
+              : { name: 'No product', photo: '' };
+            const card = document.createElement('div');
+            card.className = 'business-card';
+            card.innerHTML = `
+              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">`
+                : getLetterAvatar(business.name)}
+              <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}" loading="lazy">` : ''}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+              </div>
+              <p class="views">Views: ${business.views}</p>
+              <button class="view-store-btn" data-id="${business.id}">View Store</button>
+            `;
+            gridContainer.appendChild(card);
+          });
+        }
         displayHotProducts();
-      }
+        console.timeEnd('displayFeed');
+      };
+      
+      const displayHotProducts = () => {
+        if (!hotProductGrid) return; // Safety check
+        const hotCount = window.innerWidth >= 1024 ? 6 : 2;
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
+        hotProductGrid.innerHTML = '';
+        if (hot.length === 0) {
+          hotProductGrid.innerHTML = '<p>No hot products available.</p>';
+          return;
+        }
+        hot.forEach((biz, index) => {
+          const product = biz.products && biz.products.length > 0 
+            ? biz.products[0] 
+            : { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
+          const item = document.createElement('div');
+          item.className = 'hot-product-item';
+          item.setAttribute('data-biz-id', biz.id);
+          item.setAttribute('data-product-name', product.name);
+          item.innerHTML = `
+            <img src="${product.photo}" alt="${product.name}" loading="lazy">
+            <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
+          `;
+          hotProductGrid.appendChild(item);
+        });
+        // Add click event listeners after rendering
+        document.querySelectorAll('.hot-product-item').forEach(item => {
+          item.addEventListener('click', () => showHotProductPopup(item.getAttribute('data-biz-id'), item.getAttribute('data-product-name')));
+        });
+      };
 
-      function displayHotProducts() {
-        hotProducts.innerHTML = '<h3>Hot Products</h3>';
-        const hot = businesses.slice(0, 2);
-        hot.forEach(biz => {
-          hotProducts.innerHTML += `<p>${biz.name} - ${biz.products[0].name} (Views: ${biz.views})</p>`;
+      const showHotProductPopup = (bizId, productName) => {
+        if (!hotProductPopup) return;
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        const product = business.products.find(p => p.name === productName);
+        if (!product) return;
+        document.getElementById('hot-product-img').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
+        document.getElementById('hot-product-name').textContent = product.name;
+        document.getElementById('hot-product-desc').textContent = product.desc || 'No description available';
+        document.getElementById('hot-product-views').textContent = `Views: ${business.views}`;
+        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
+        hotProductPopup.style.display = 'block';
+      };
+      
+      const showProfile = () => {
+        if (!currentUser) return;
+        feed.style.display = 'none';
+        storePage.style.display = 'none';
+        profilePage.style.display = 'block';
+        let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
+        let profileContent = `
+          <div class="profile-container">
+            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
+            <div class="profile-header">
+        `;
+        if (currentUser.profilePhoto) {
+          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy" />`;
+        } else {
+          profileContent += getLetterAvatar(currentUser.name);
+        }
+        profileContent += `
+              <h3>${currentUser.name}</h3>
+              <p>${currentUser.email}</p>
+            </div>
+            <div class="profile-details">
+        `;
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (!business) return;
+          profileContent += `
+            <h4>Business Metrics</h4>
+            <p>Total Views: ${business.views}</p>
+            <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0]?.name || 'No products'}</p>
+            <button id="add-product-btn">Add Product</button>
+            <button id="manage-products-btn">Manage Products</button>
+            <div class="product-list" id="profile-product-list">
+              ${business.products.map(p => `
+                <div class="product-item">
+                  <span>${p.name} - ${p.desc}</span>
+                  <div class="product-item-actions">
+                    <button class="edit-product-btn" data-id="${p.name}">Edit</button>
+                    <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+                  </div>
+                </div>
+              `).join('') || '<p>No products available.</p>'}
+            </div>
+            <div style="margin-top: 1rem; height:300px;">
+              <canvas id="viewsChart"></canvas>
+            </div>
+          `;
+        } else if (currentUser.type === 'customer') {
+          profileContent += `
+            <h4>Recent Activity</h4>
+            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
+              ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') 
+              : '<p>No recent views.</p>'}
+          `;
+        }
+        profileContent += `
+            </div>
+            <button id="settings-btn">Settings</button>
+            <button id="logout-btn">Logout</button>
+          </div>
+        `;
+        profilePage.innerHTML = profileContent;
+        // Attach settings and product management event listeners after rendering the profile
+        const settingsBtn = document.getElementById('settings-btn');
+        if (settingsBtn) {
+          settingsBtn.addEventListener('click', openSettingsModal);
+        }
+        if (currentUser.type === 'business') {
+          initViewsChart();
+          const addProductBtn = document.getElementById('add-product-btn');
+          const manageProductsBtn = document.getElementById('manage-products-btn');
+          if (addProductBtn) addProductBtn.addEventListener('click', openAddProductModal);
+          if (manageProductsBtn) manageProductsBtn.addEventListener('click', openManageProductsModal);
+          document.querySelectorAll('.edit-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+          });
+          document.querySelectorAll('.delete-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+                deleteProduct(btn.getAttribute('data-id'));
+              }
+            });
+          });
+        }
+      };
+      
+      function initViewsChart() {
+        const ctx = document.getElementById('viewsChart')?.getContext('2d');
+        if (!ctx) return;
+        const labels = [];
+        const dataPoints = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
+          dataPoints.push(Math.floor(Math.random() * 100));
+        }
+        const minVal = Math.min(...dataPoints);
+        const maxVal = Math.max(...dataPoints);
+        const pointColors = dataPoints.map(val => {
+          const ratio = (val - minVal) / (maxVal - minVal || 1);
+          const r = Math.round(255 * ratio);
+          const b = Math.round(255 * (1 - ratio));
+          return `rgb(${r},0,${b})`;
+        });
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Daily Views',
+              data: dataPoints,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46,204,113,0.1)',
+              fill: true,
+              tension: 0.3,
+              pointBackgroundColor: pointColors,
+              pointRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true, position: 'top' } },
+            scales: {
+              x: { title: { display: true, text: 'Date' } },
+              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
+            }
+          }
         });
       }
+      
+      const openAddProductModal = () => {
+        if (addProductModal) {
+          addProductModal.style.display = 'block';
+          document.getElementById('add-product-error').style.display = 'none';
+        }
+      };
 
-      function showStore(bizId) {
-        const biz = businesses.find(b => b.id === bizId);
-        if (!biz) return;
-        biz.views++;
+      const openSettingsModal = () => {
+        if (settingsModal) {
+          settingsModal.style.display = 'block';
+          document.getElementById('settings-name').value = currentUser?.name || "";
+          document.getElementById('settings-photo').value = currentUser?.profilePhoto || "";
+          document.getElementById('settings-error').style.display = 'none';
+        }
+      };
+
+      const openManageProductsModal = () => {
+        if (!manageProductsModal || !manageProductList) return;
+        const business = businesses.find(b => b.id === currentUser?.id);
+        if (!business) return;
+        manageProductList.innerHTML = business.products.map(p => `
+          <div class="product-item">
+            <span>${p.name} - ${p.desc}</span>
+            <div class="product-item-actions">
+              <button class="edit-product-btn" data-id="${p.name}">Edit</button>
+              <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+            </div>
+          </div>
+        `).join('') || '<p>No products available.</p>';
+        manageProductsModal.style.display = 'block';
+        document.querySelectorAll('.edit-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
+        });
+        document.querySelectorAll('.delete-product-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
+              deleteProduct(btn.getAttribute('data-id'));
+            }
+          });
+        });
+      };
+
+      const editProduct = productId => {
+        if (!editProductModal) return;
+        const business = businesses.find(b => b.id === currentUser?.id);
+        const product = business?.products.find(p => p.name === productId);
+        if (product) {
+          document.getElementById('edit-prod-name').value = product.name;
+          document.getElementById('edit-prod-desc').value = product.desc;
+          document.getElementById('edit-prod-photo').value = product.photo;
+          editProductModal.style.display = 'block';
+          document.getElementById('edit-product-error').style.display = 'none';
+        }
+      };
+
+      const saveEditedProduct = () => {
+        const productId = document.getElementById('edit-prod-name').value.trim();
+        const prodDesc = document.getElementById('edit-prod-desc').value.trim();
+        const prodPhoto = document.getElementById('edit-prod-photo').value.trim();
+        const error = document.getElementById('edit-product-error');
+
+        if (!productId || !prodDesc) {
+          error.style.display = 'block';
+          return;
+        }
+        if (prodPhoto && !isValidUrl(prodPhoto)) {
+          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.style.display = 'block';
+          return;
+        }
+
+        const business = businesses.find(b => b.id === currentUser?.id);
+        const oldProduct = business?.products.find(p => p.name === productId);
+        if (oldProduct) {
+          oldProduct.desc = prodDesc;
+          oldProduct.photo = prodPhoto || '';
+          updateLocalStorage();
+          closeModal('edit-product-modal');
+          showProfile();
+        }
+      };
+
+      const deleteProduct = productId => {
+        const business = businesses.find(b => b.id === currentUser?.id);
+        if (business) {
+          business.products = business.products.filter(p => p.name !== productId);
+          updateLocalStorage();
+          if (manageProductsModal && manageProductsModal.style.display === 'block') {
+            openManageProductsModal();
+          } else {
+            showProfile();
+          }
+        }
+      };
+      
+      document.getElementById('submit-product-btn').addEventListener('click', () => {
+        const prodName = document.getElementById('prod-name').value.trim();
+        const prodDesc = document.getElementById('prod-desc').value.trim();
+        const fileInput = document.getElementById('prod-media');
+        const error = document.getElementById('add-product-error');
+
+        if (!prodName || !prodDesc) {
+          error.style.display = 'block';
+          return;
+        }
+
+        const addProduct = (mediaURL) => {
+          const business = businesses.find(b => b.id === currentUser?.id);
+          if (business) {
+            business.products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
+            updateLocalStorage();
+            closeModal('add-product-modal');
+            showProfile();
+          }
+        };
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            addProduct(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
+        }
+      });
+      
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        const newName = document.getElementById('settings-name').value.trim();
+        const newPhoto = document.getElementById('settings-photo').value.trim();
+        const error = document.getElementById('settings-error');
+
+        if (!newName) {
+          error.style.display = 'block';
+          return;
+        }
+        if (newPhoto && !isValidUrl(newPhoto)) {
+          error.textContent = 'Please provide a valid photo URL (e.g., https://example.com/photo.jpg)';
+          error.style.display = 'block';
+          return;
+        }
+
+        currentUser.name = newName;
+        currentUser.profilePhoto = newPhoto || '';
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.name = newName;
+            business.displayPhoto = newPhoto || '';
+          }
+        }
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
+      });
+
+      document.getElementById('reset-settings-btn').addEventListener('click', () => {
+        currentUser.name = `User_${Date.now()}`; // Default name
+        currentUser.profilePhoto = '';
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.name = currentUser.name;
+            business.displayPhoto = '';
+          }
+        }
+        updateLocalStorage();
+        closeModal('settings-modal');
+        showProfile();
+      });
+      
+      document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
+      
+      document.getElementById('view-store-btn').addEventListener('click', () => {
+        const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
+        if (bizId) {
+          viewStore(bizId);
+          closeModal('hot-product-popup');
+        }
+      });
+
+      document.querySelector('.close-btn[data-form="hot-product-popup"]')?.addEventListener('click', () => {
+        closeModal('hot-product-popup');
+      });
+      
+      /*** Event Handlers ***/
+      document.getElementById('business-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        businessForm.style.display = 'block';
+      });
+      document.getElementById('customer-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        customerForm.style.display = 'block';
+      });
+      document.getElementById('feed-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        displayFeed();
+      });
+      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
+      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
+      profileBtn.addEventListener('click', showProfile);
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.id === 'back-to-feed') {
+          displayFeed();
+        }
+        if (event.target.id === 'back-to-store') {
+          viewStore(currentUser?.id);
+        }
+        if (event.target.classList.contains('back-to-feed-btn')) {
+          displayFeed();
+        }
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
+        }
+        if (event.target.id === 'logout-btn') {
+          currentUser = null;
+          localStorage.removeItem('currentUser');
+          updateUIForUser();
+          displayFeed();
+        }
+        if (event.target.classList.contains('close-btn')) {
+          closeModal(event.target.getAttribute('data-form'));
+        }
+      });
+      
+      businessName.addEventListener('click', () => {
+        if (feed.style.display === 'block') {
+          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+          displayedCount = 6;
+          displayFeed();
+        } else {
+          displayFeed();
+        }
+      });
+      
+      // Debounce search input
+      let searchTimeout;
+      searchBar.addEventListener('keyup', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const query = searchBar.value.toLowerCase().trim();
+          if (query) {
+            currentBusinesses = businesses.filter(biz => 
+              biz.name.toLowerCase().includes(query) ||
+              biz.category.toLowerCase().includes(query) ||
+              biz.location.toLowerCase().includes(query) ||
+              (biz.products && biz.products.some(product => 
+                product.name.toLowerCase().includes(query) ||
+                product.desc.toLowerCase().includes(query)
+              ))
+            );
+          } else {
+            currentBusinesses = businesses;
+          }
+          displayedCount = 6;
+          displayFeed();
+        }, 300); // 300ms debounce delay
+      });
+      
+      window.addEventListener('scroll', () => {
+        if (feed.style.display === 'block' && window.innerWidth < 1024 && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
+          loading.style.display = 'block';
+          setTimeout(() => {
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
+            displayFeed();
+            loading.style.display = 'none';
+          }, 500);
+        }
+      });
+      
+      document.getElementById('submit-business-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('biz-name').value.trim();
+          const email = document.getElementById('biz-email').value.trim();
+          const password = document.getElementById('biz-password').value.trim();
+          const category = document.getElementById('biz-category').value;
+          const product = document.getElementById('biz-product').value.trim();
+          const desc = document.getElementById('biz-desc').value.trim();
+          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+          const instagram = document.getElementById('biz-instagram').value.trim();
+          const location = document.getElementById('biz-location').value.trim();
+    
+          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+          if (!/^(876)\d{7}$/.test(whatsapp)) {
+            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+          }
+    
+          const business = {
+            id: Date.now(),
+            name,
+            category,
+            products: [{
+              name: product,
+              desc,
+              photo: '',
+              views: 0
+            }],
+            desc,
+            whatsapp,
+            instagram,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          };
+          const user = { id: business.id, type: 'business', name, email, password };
+    
+          businesses.push(business);
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('business-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('submit-customer-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('cust-name').value.trim();
+          const email = document.getElementById('cust-email').value.trim();
+          const password = document.getElementById('cust-password').value.trim();
+    
+          if (!name || !email || !password) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+    
+          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('customer-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('login-submit-btn').addEventListener('click', () => {
+        try {
+          const email = document.getElementById('login-email').value.trim();
+          const password = document.getElementById('login-password').value.trim();
+    
+          if (!email || !password) {
+            throw new Error('Please enter both email and password!');
+          }
+    
+          const foundUser = users.find(u => u.email === email && u.password === password);
+          if (foundUser) {
+            currentUser = foundUser;
+            updateLocalStorage();
+            closeModal('login-form');
+            updateUIForUser();
+            displayFeed();
+          } else {
+            throw new Error('Invalid email or password!');
+          }
+        } catch (error) {
+          alert(`An error occurred while logging in: ${error.message}`);
+        }
+      });
+      
+      const viewStore = bizId => {
+        console.time('viewStore');
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        business.views++;
+        if (currentUser && currentUser.type === 'customer') {
+          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
+          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
+          updateLocalStorage();
+        }
         updateLocalStorage();
         feed.style.display = 'none';
         storePage.style.display = 'block';
-        hotProducts.style.display = 'none';
+        profilePage.style.display = 'none';
         storePage.innerHTML = `
-          <button id="back-to-feed">Back to Feed</button>
-          <h2>${biz.name}</h2>
-          <p>${biz.category}</p>
-          <div class="avatar">${biz.name.charAt(0)}</div>
-          <p>${biz.desc}</p>
-          <p><strong>Location:</strong> ${biz.location}</p>
-          <div class="contact">
-            <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
-            <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
-          </div>
-          <p class="views">Views: ${biz.views}</p>
-          <h3>Products</h3>
-          <div class="products-grid">
-            ${biz.products.map((p, i) => `
-              <div class="product-card">
-                <img src="https://via.placeholder.com/150" alt="${p.name}">
-                <p><strong>${p.name}</strong></p>
-                <p>${p.desc}</p>
-                <p>Price: $${p.price}</p>
-                <p>Views: ${p.views}</p>
-                ${currentUser && currentUser.type === 'business' && currentUser.id === biz.id ? `
-                  <button class="edit-product" data-index="${i}">Edit</button>
-                  <button class="delete-product" data-index="${i}">Delete</button>
-                ` : ''}
+          <button class="back-to-feed-btn">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">`
+                : getLetterAvatar(business.name)}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
               </div>
-            `).join('')}
+              <p class="views">Views: ${business.views}</p>
+            </div>
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${business.products.map(p => `
+                  <div class="product-card">
+                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" loading="lazy">
+                    <div class="product-info">
+                      <p class="product-name">${p.name}</p>
+                      <p class="product-desc">${p.desc}</p>
+                      <p class="product-views">Views: ${p.views}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
           </div>
-          ${currentUser && currentUser.type === 'business' && currentUser.id === biz.id ? '<button id="add-product-btn">Add Product</button>' : ''}
         `;
+        console.timeEnd('viewStore');
+      };
+      
+      if (!currentUser) {
+        popup.style.display = 'block';
+      } else {
+        updateUIForUser();
       }
-
-      // Event Listeners
-      document.getElementById('signup-btn').addEventListener('click', () => {
-        document.getElementById('signup-modal').style.display = 'block';
-      });
-
-      document.getElementById('business-signup-btn').addEventListener('click', () => {
-        document.getElementById('signup-modal').style.display = 'none';
-        document.getElementById('business-form').style.display = 'block';
-      });
-
-      document.getElementById('customer-signup-btn').addEventListener('click', () => {
-        document.getElementById('signup-modal').style.display = 'none';
-        document.getElementById('customer-form').style.display = 'block';
-      });
-
-      document.getElementById('close-signup').addEventListener('click', () => {
-        document.getElementById('signup-modal').style.display = 'none';
-        displayFeed();
-      });
-
-      document.getElementById('login-btn').addEventListener('click', () => {
-        document.getElementById('login-form').style.display = 'block';
-      });
-
-      document.getElementById('submit-business').addEventListener('click', () => {
-        const biz = {
-          id: Date.now(),
-          name: document.getElementById('biz-name').value,
-          category: document.getElementById('biz-category').value,
-          products: [{ name: document.getElementById('biz-product').value, desc: document.getElementById('biz-desc').value, price: "10.00", views: 0 }],
-          desc: document.getElementById('biz-desc').value,
-          whatsapp: document.getElementById('biz-whatsapp').value,
-          instagram: document.getElementById('biz-instagram').value,
-          location: document.getElementById('biz-location').value,
-          views: 0
-        };
-        businesses.push(biz);
-        currentUser = { id: biz.id, type: 'business', name: biz.name, email: 'biz@example.com', password: 'pass' };
-        updateLocalStorage();
-        document.getElementById('business-form').style.display = 'none';
-        updateUI();
-      });
-
-      document.getElementById('submit-customer').addEventListener('click', () => {
-        currentUser = {
-          id: Date.now(),
-          type: 'customer',
-          name: document.getElementById('cust-name').value,
-          email: document.getElementById('cust-email').value,
-          password: document.getElementById('cust-password').value
-        };
-        users.push(currentUser);
-        updateLocalStorage();
-        document.getElementById('customer-form').style.display = 'none';
-        updateUI();
-      });
-
-      document.getElementById('submit-login').addEventListener('click', () => {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        currentUser = users.find(u => u.email === email && u.password === password) || null;
-        if (currentUser) {
-          updateLocalStorage();
-          document.getElementById('login-form').style.display = 'none';
-          updateUI();
-        } else {
-          alert('Invalid credentials');
-        }
-      });
-
-      document.getElementById('submit-product').addEventListener('click', () => {
-        if (!currentUser || currentUser.type !== 'business') return;
-        const biz = businesses.find(b => b.id === currentUser.id);
-        biz.products.push({
-          name: document.getElementById('prod-name').value,
-          desc: document.getElementById('prod-desc').value,
-          price: document.getElementById('prod-price').value,
-          views: 0
-        });
-        updateLocalStorage();
-        document.getElementById('add-product-modal').style.display = 'none';
-        showStore(biz.id);
-      });
-
-      document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('close-btn')) {
-          document.getElementById(e.target.dataset.modal).style.display = 'none';
-        }
-        if (e.target.classList.contains('view-store')) {
-          showStore(parseInt(e.target.dataset.id));
-        }
-        if (e.target.id === 'back-to-feed') {
-          displayFeed();
-        }
-        if (e.target.id === 'add-product-btn') {
-          document.getElementById('add-product-modal').style.display = 'block';
-        }
-        if (e.target.classList.contains('delete-product')) {
-          const biz = businesses.find(b => b.id === currentUser.id);
-          biz.products.splice(e.target.dataset.index, 1);
-          updateLocalStorage();
-          showStore(biz.id);
-        }
-      });
-
-      // Initial Setup
-      updateUI();
+      displayFeed();
     });
   </script>
 </body>
