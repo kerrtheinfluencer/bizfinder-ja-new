@@ -4,15 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BizFinder JA</title>
-  <!-- Chart.js for interactive graphs -->
+  <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
-  <!-- Stripe SDK -->
-  <script src="https://js.stripe.com/v3/"></script>
   <style>
     /* CSS Variables */
     :root {
@@ -25,8 +18,6 @@
       --accent-blue: #3498db;
       --accent-blue-hover: #2980b9;
       --white: #fff;
-      --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
-      --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
     
     /* Reset and Base Styles */
@@ -43,7 +34,7 @@
       min-height: 100vh;
     }
     
-    /* Header */
+    /* Header using flexbox for a clean layout */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
       color: var(--white);
@@ -85,7 +76,7 @@
     }
     
     /* Mobile Optimization */
-    @media (max-width: 1024px) {
+    @media (max-width: 600px) {
       .container {
         margin: 1rem auto;
         padding: 0 1rem;
@@ -97,23 +88,6 @@
       .header-buttons {
         flex-wrap: wrap;
         justify-content: center;
-      }
-      .hot-products {
-        padding: 1rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-      .hot-product-grid {
-        display: flex;
-        flex-direction: row;
-        gap: 0.5rem;
-        animation: mobileSlide 15s infinite ease-in-out;
-      }
-      .hot-product-item {
-        flex: 0 0 auto;
-        width: 45%;
-        margin: 0.25rem 0;
-        padding: 0.5rem;
       }
     }
     
@@ -176,6 +150,7 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
+    /* For business images, use circular display */
     .business-image {
       width: 150px;
       height: 150px;
@@ -184,6 +159,7 @@
       margin-bottom: 1rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    /* Letter avatar with fixed dimensions */
     .letter-avatar {
       width: 150px;
       height: 150px;
@@ -196,7 +172,7 @@
       margin-bottom: 1rem;
     }
     
-    /* Status Indicator */
+    /* Status Indicator for store hours */
     .status-indicator {
       display: inline-block;
       width: 10px;
@@ -249,7 +225,7 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: var(--premium-shadow);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
@@ -263,8 +239,7 @@
       font-weight: 600;
     }
     input,
-    select,
-    textarea {
+    select {
       display: block;
       width: 100%;
       margin: 0.75rem 0;
@@ -275,158 +250,53 @@
       transition: border-color 0.3s, box-shadow 0.3s;
     }
     input:focus,
-    select:focus,
-    textarea:focus {
+    select:focus {
       border-color: var(--primary-green);
       outline: none;
       box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
-    .modal .error {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
     
-    /* Hot Products */
+    /* Hot Products Banner */
     .hot-products {
-      background: var(--premium-bg);
-      padding: 1.5rem;
-      border-radius: 15px;
-      margin-bottom: 2rem;
-      box-shadow: var(--premium-shadow);
-      border-left: 8px solid var(--primary-green);
-      position: relative;
-      overflow: hidden;
+      background: linear-gradient(135deg, var(--white), var(--light-bg));
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 5px solid var(--primary-green);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
     }
     .hot-products h3 {
-      font-size: 1.5rem;
+      width: 100%;
+      font-size: 1.2rem;
       color: var(--primary-green);
-      margin-bottom: 1rem;
-      font-weight: 700;
-      text-align: center;
-    }
-    .hot-products .hot-product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      padding: 1rem;
-      animation: pcSlide 20s infinite ease-in-out;
-    }
-    @media (min-width: 1025px) {
-      .hot-products .hot-product-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      margin-bottom: 0.75rem;
+      font-weight: 600;
     }
     .hot-product-item {
-      background: var(--white);
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      cursor: pointer;
-    }
-    .hot-product-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      margin: 0.5rem;
+      padding: 0.5rem;
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     .hot-product-item img {
-      width: 80px;
-      height: 80px;
-      margin-right: 1rem;
-      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      margin-right: 0.75rem;
+      border-radius: 4px;
       object-fit: cover;
-      loading: lazy;
     }
     .hot-product-item span {
-      font-size: 1rem;
-      color: var(--text-color);
-      flex-grow: 1;
-      font-weight: 500;
-    }
-    .hot-product-item::after {
-      content: "🔥";
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.5rem;
-      animation: firePulse 1.5s infinite ease-in-out;
-    }
-
-    /* Animations */
-    @keyframes firePulse {
-      0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
-      50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
-    }
-    @keyframes pcSlide {
-      0%, 10% { transform: translateX(0); }
-      20%, 30% { transform: translateX(-33.33%); }
-      40%, 50% { transform: translateX(-66.66%); }
-      60%, 70% { transform: translateX(-100%); }
-      80%, 90% { transform: translateX(-66.66%); }
-      100% { transform: translateX(0); }
-    }
-    @keyframes mobileSlide {
-      0%, 25% { transform: translateX(0); }
-      50%, 75% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-
-    /* Hot Product Popup */
-    #hot-product-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--premium-bg);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      z-index: 2000;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      display: none;
-    }
-    #hot-product-popup img {
-      width: 150px;
-      height: 150px;
-      border-radius: 10px;
-      object-fit: cover;
-      margin-bottom: 1rem;
-      loading: lazy;
-    }
-    #hot-product-popup h3 {
-      color: var(--primary-green);
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    #hot-product-popup p {
-      font-size: 1rem;
-      color: var(--text-color);
-      margin-bottom: 1rem;
-    }
-    #hot-product-popup .views {
       font-size: 0.9rem;
-      color: var(--muted-color);
-      margin-bottom: 1rem;
+      color: #34495e;
     }
-    #hot-product-popup .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--muted-color);
-    }
-
+    
     /* Loading Spinner */
     .loading {
       text-align: center;
@@ -443,7 +313,7 @@
       gap: 1.5rem;
     }
     
-    /* Store Page */
+    /* Store Page Layout */
     .store-container {
       display: flex;
       flex-direction: column;
@@ -454,6 +324,18 @@
       text-align: center;
       border-bottom: 1px solid #ddd;
       padding-bottom: 1rem;
+    }
+    .business-info h3 {
+      margin-bottom: 0.5rem;
+    }
+    .business-info img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+    }
+    .products-section {
+      width: 100%;
     }
     .products-section h4 {
       margin-bottom: 1rem;
@@ -481,7 +363,6 @@
       width: 100%;
       object-fit: cover;
       height: 150px;
-      loading: lazy;
     }
     .product-info {
       padding: 1rem;
@@ -502,14 +383,14 @@
       color: var(--muted-color);
     }
     
-    /* Profile Page */
+    /* Profile Page Enhancements */
     .profile-container {
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
       background: var(--white);
       border-radius: 12px;
-      box-shadow: var(--premium-shadow);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
       text-align: center;
     }
     .profile-header {
@@ -521,39 +402,17 @@
     }
     .profile-header img,
     .profile-header .letter-avatar {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      loading: lazy;
     }
-    .product-list {
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .product-item {
-      background: var(--white);
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .product-item-actions button {
-      margin-left: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
+    .profile-details {
+      margin-bottom: 1.5rem;
     }
     
-    /* Additional Modal Styles */
-    #settings-modal, #add-product-modal, #edit-product-modal, #manage-products-modal {
-      max-width: 500px;
-      width: 90%;
-    }
-    #payment-modal {
+    /* Settings Modal */
+    #settings-modal {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -561,16 +420,29 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: var(--premium-shadow);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
       z-index: 1000;
       text-align: center;
       max-width: 500px;
       width: 90%;
       display: none;
     }
-    #payment-modal input {
-      width: 100%;
-      margin: 0.75rem 0;
+    
+    /* Add Product Modal */
+    #add-product-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      display: none;
     }
   </style>
 </head>
@@ -578,7 +450,7 @@
   <header>
     <span id="businessName">BizFinder JA</span>
     <div class="header-buttons">
-      <button id="profile-btn" style="display: none;">Profile</button>
+      <button id="profile-btn">Profile</button>
       <button id="login-btn">Login</button>
       <button id="signup-btn">Sign Up</button>
     </div>
@@ -589,10 +461,7 @@
       <input type="text" id="search-bar" placeholder="Search businesses..." />
       <div id="search-results-info"></div>
     </div>
-    <div id="hot-products" class="hot-products">
-      <h3>Hot Products</h3>
-      <div class="hot-product-grid"></div>
-    </div>
+    <div id="hot-products" class="hot-products"></div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
     <div id="profile-page" class="profile-page" style="display: none;"></div>
@@ -625,9 +494,7 @@
     <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
     <input type="text" id="biz-instagram" placeholder="Instagram Handle (e.g., tasteofmobay)" required />
     <input type="text" id="biz-location" placeholder="Location (e.g., Montego Bay)" required />
-    <input type="file" id="biz-photo" accept="image/*" />
     <button id="submit-business-btn">Submit</button>
-    <div id="business-form-error" class="error"></div>
     <button class="close-btn" data-form="business-form">Close</button>
   </div>
 
@@ -637,7 +504,6 @@
     <input type="email" id="cust-email" placeholder="Email" required />
     <input type="password" id="cust-password" placeholder="Password" required />
     <button id="submit-customer-btn">Submit</button>
-    <div id="customer-form-error" class="error"></div>
     <button class="close-btn" data-form="customer-form">Close</button>
   </div>
 
@@ -646,578 +512,786 @@
     <input type="email" id="login-email" placeholder="Email" required />
     <input type="password" id="login-password" placeholder="Password" required />
     <button id="login-submit-btn">Login</button>
-    <div id="login-form-error" class="error"></div>
     <button class="close-btn" data-form="login-form">Close</button>
   </div>
 
+  <!-- Settings Modal -->
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name" required />
-    <input type="file" id="settings-photo" accept="image/*" />
+    <input type="text" id="settings-name" placeholder="Your Name" />
+    <input type="text" id="settings-photo" placeholder="Profile Photo URL (leave empty for letter avatar)" />
     <button id="save-settings-btn">Save Settings</button>
-    <div id="settings-error" class="error"></div>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
 
+  <!-- Add Product Modal -->
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
-    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="number" id="prod-price" placeholder="Price (JMD)" required />
-    <input type="file" id="prod-media" accept="image/*" />
+    <input type="text" id="prod-desc" placeholder="Product Description" required />
+    <input type="file" id="prod-media" accept="image/*,video/*" />
+    <p style="font-size:0.8rem; color:var(--muted-color);">Upload an image or video (max 1 minute)</p>
     <button id="submit-product-btn">Add Product</button>
-    <div id="add-product-error" class="error"></div>
     <button class="close-btn" data-form="add-product-modal">Close</button>
-  </div>
-
-  <div id="edit-product-modal" class="modal">
-    <h2>Edit Product</h2>
-    <input type="text" id="edit-prod-name" placeholder="Product Name" required />
-    <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="number" id="edit-prod-price" placeholder="Price (JMD)" required />
-    <input type="file" id="edit-prod-media" accept="image/*" />
-    <button id="save-product-btn">Save Changes</button>
-    <div id="edit-product-error" class="error"></div>
-    <button class="close-btn" data-form="edit-product-modal">Close</button>
-  </div>
-
-  <div id="manage-products-modal" class="modal">
-    <h2>Manage Products</h2>
-    <div class="product-list" id="manage-product-list"></div>
-    <button class="close-btn" data-form="manage-products-modal">Close</button>
-  </div>
-
-  <div id="hot-product-popup" class="modal">
-    <button class="close-btn" data-form="hot-product-popup">×</button>
-    <img id="hot-product-img" alt="Product Image">
-    <h3 id="hot-product-name"></h3>
-    <p id="hot-product-desc"></p>
-    <p class="views" id="hot-product-views"></p>
-    <button id="view-store-btn">View Store</button>
-  </div>
-
-  <div id="payment-modal" class="modal">
-    <h2>Checkout</h2>
-    <input type="text" id="cardholder-name" placeholder="Cardholder Name" required />
-    <div id="card-element"></div>
-    <button id="submit-payment-btn">Pay Now</button>
-    <div id="payment-error" class="error"></div>
-    <button class="close-btn" data-form="payment-modal">Close</button>
   </div>
 
   <script>
     'use strict';
-
-    // Firebase Configuration (Replace with your own Firebase config)
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-    const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY'); // Replace with your Stripe key
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    let currentUser = null;
-    let businesses = [];
-    let currentBusinesses = [];
-
-    // Mount Stripe card element
     document.addEventListener('DOMContentLoaded', () => {
-      cardElement.mount('#card-element');
-    });
-
-    // Helper Functions
-    function closeModal(formId) {
-      const modal = document.getElementById(formId);
-      if (modal) {
-        modal.style.display = 'none';
-        const error = document.getElementById(`${formId}-error`);
-        if (error) error.style.display = 'none';
-      }
-    }
-
-    function getLetterAvatar(name) {
-      const letter = name.charAt(0).toUpperCase();
-      const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
-    }
-
-    function isStoreOpen(business) {
-      const now = new Date();
-      const [openH, openM] = business.openingHour.split(":").map(Number);
-      const [closeH, closeM] = business.closingHour.split(":").map(Number);
-      const openDate = new Date(now).setHours(openH, openM, 0, 0);
-      const closeDate = new Date(now).setHours(closeH, closeM, 0, 0);
-      return now >= openDate && now <= closeDate;
-    }
-
-    async function uploadFile(file, path) {
-      const ref = storage.ref().child(path);
-      await ref.put(file);
-      return await ref.getDownloadURL();
-    }
-
-    // UI Updates
-    function updateUIForUser() {
-      document.getElementById('profile-btn').style.display = currentUser ? 'block' : 'none';
-      document.getElementById('login-btn').style.display = currentUser ? 'none' : 'block';
-      document.getElementById('signup-btn').style.display = currentUser ? 'none' : 'block';
-    }
-
-    // Fetch Businesses
-    async function fetchBusinesses() {
-      try {
-        const snapshot = await db.collection('businesses').get();
-        businesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        currentBusinesses = businesses;
-        displayFeed();
-      } catch (error) {
-        console.error('Error fetching businesses:', error);
-        alert('Failed to load businesses.');
-      }
-    }
-
-    // Display Feed
-    async function displayFeed() {
-      const feed = document.getElementById('feed');
-      feed.style.display = 'block';
-      document.getElementById('store-page').style.display = 'none';
-      document.getElementById('profile-page').style.display = 'none';
-      feed.innerHTML = '<div class="feed-grid"></div>';
-      const grid = feed.querySelector('.feed-grid');
-      const info = document.getElementById('search-results-info');
-      info.textContent = `Found ${currentBusinesses.length} results`;
+      /*** Data Initialization ***/
+      let displayedCount = 6;
+      let businesses = JSON.parse(localStorage.getItem('businesses')) || generateDummyBusinesses(50);
+      let users = Array.isArray(JSON.parse(localStorage.getItem('users'))) ? JSON.parse(localStorage.getItem('users')) : [];
+      let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+      let currentBusinesses = businesses;
       
-      currentBusinesses.forEach(business => {
-        const product = business.products[0] || { name: 'No product', photo: '' };
-        const card = document.createElement('div');
-        card.className = 'business-card';
-        card.innerHTML = `
-          <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-          <p class="category">${business.category}</p>
-          ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
-          <p><strong>Featured Product:</strong> ${product.name}</p>
-          ${product.photo ? `<img src="${product.photo}" alt="${product.name}" loading="lazy">` : ''}
-          <p>${business.desc}</p>
-          <p><strong>Location:</strong> ${business.location}</p>
-          <div class="contact">
-            <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-            <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-          </div>
-          <p class="views">Views: ${business.views}</p>
-          <button class="view-store-btn" data-id="${business.id}">View Store</button>
-        `;
-        grid.appendChild(card);
+      // Ensure dummy businesses have opening/closing hours
+      businesses = businesses.map(b => {
+        if (!b.openingHour) b.openingHour = "09:00";
+        if (!b.closingHour) b.closingHour = "18:00";
+        return b;
       });
-      displayHotProducts();
-    }
 
-    // Display Hot Products
-    function displayHotProducts() {
-      const grid = document.querySelector('.hot-product-grid');
-      const hot = businesses.sort((a, b) => b.views - a.views).slice(0, 6);
-      grid.innerHTML = '';
-      hot.forEach(biz => {
-        const product = biz.products[0] || { name: 'No product', photo: '' };
-        const item = document.createElement('div');
-        item.className = 'hot-product-item';
-        item.innerHTML = `
-          <img src="${product.photo || 'https://via.placeholder.com/80'}" alt="${product.name}" loading="lazy">
-          <span>${biz.name} - ${product.name}</span>
-        `;
-        item.addEventListener('click', () => showHotProductPopup(biz.id, product));
-        grid.appendChild(item);
-      });
-    }
-
-    // Show Hot Product Popup
-    function showHotProductPopup(bizId, product) {
-      const popup = document.getElementById('hot-product-popup');
-      document.getElementById('hot-product-img').src = product.photo || 'https://via.placeholder.com/150';
-      document.getElementById('hot-product-name').textContent = product.name;
-      document.getElementById('hot-product-desc').textContent = product.desc;
-      document.getElementById('hot-product-views').textContent = `Views: ${businesses.find(b => b.id === bizId).views}`;
-      document.getElementById('view-store-btn').onclick = () => { viewStore(bizId); closeModal('hot-product-popup'); };
-      popup.style.display = 'block';
-    }
-
-    // View Store
-    async function viewStore(bizId) {
-      const business = businesses.find(b => b.id === bizId);
-      if (!business) return;
-      business.views++;
-      await db.collection('businesses').doc(bizId).update({ views: business.views });
-      if (currentUser && currentUser.type === 'customer') {
-        const userRef = db.collection('users').doc(currentUser.uid);
-        const recentlyViewed = currentUser.recentlyViewed || [];
-        recentlyViewed.unshift({ id: bizId, name: business.name });
-        await userRef.update({ recentlyViewed: recentlyViewed.slice(0, 10) });
-      }
+      /*** DOM Elements ***/
+      const popup = document.getElementById('popup');
+      const businessForm = document.getElementById('business-form');
+      const customerForm = document.getElementById('customer-form');
+      const loginForm = document.getElementById('login-form');
+      const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
-      storePage.style.display = 'block';
-      document.getElementById('feed').style.display = 'none';
-      document.getElementById('profile-page').style.display = 'none';
-      storePage.innerHTML = `
-        <button class="back-to-feed-btn">Back to Feed</button>
-        <div class="store-container">
-          <div class="business-info">
-            <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-            <p class="category">${business.category}</p>
-            ${business.displayPhoto ? `<img src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
-            <p>${business.desc}</p>
-            <p><strong>Location:</strong> ${business.location}</p>
-            <div class="contact">
-              <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-              <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-            </div>
-            <p class="views">Views: ${business.views}</p>
-          </div>
-          <div class="products-section">
-            <h4>Products</h4>
-            <div class="products-grid">
-              ${business.products.map(p => `
-                <div class="product-card">
-                  <img src="${p.photo || 'https://via.placeholder.com/150'}" alt="${p.name}" loading="lazy">
-                  <div class="product-info">
-                    <p class="product-name">${p.name}</p>
-                    <p class="product-desc">${p.desc}</p>
-                    <p class="product-views">Price: J$${p.price}</p>
-                    <button class="buy-now-btn" data-id="${bizId}" data-product="${p.name}">Buy Now</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-      `;
-      document.querySelectorAll('.buy-now-btn').forEach(btn => {
-        btn.addEventListener('click', () => initiatePayment(bizId, btn.getAttribute('data-product')));
-      });
-    }
-
-    // Show Profile
-    async function showProfile() {
-      if (!currentUser) return;
       const profilePage = document.getElementById('profile-page');
-      profilePage.style.display = 'block';
-      document.getElementById('feed').style.display = 'none';
-      document.getElementById('store-page').style.display = 'none';
-      let content = `
-        <div class="profile-container">
-          <button id="back-to-${currentUser.type === 'business' ? 'store' : 'feed'}">Back to ${currentUser.type === 'business' ? 'Store' : 'Feed'}</button>
-          <div class="profile-header">
-            ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy">` : getLetterAvatar(currentUser.name)}
-            <h3>${currentUser.name}</h3>
-            <p>${currentUser.email}</p>
-          </div>
-      `;
-      if (currentUser.type === 'business') {
-        const business = businesses.find(b => b.id === currentUser.uid);
-        content += `
-          <div class="profile-details">
+      const hotProducts = document.getElementById('hot-products');
+      const loading = document.getElementById('loading');
+      const profileBtn = document.getElementById('profile-btn');
+      const loginBtn = document.getElementById('login-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      const searchBar = document.getElementById('search-bar');
+      const businessName = document.getElementById('businessName');
+      
+      /*** Helper Functions ***/
+      function generateDummyBusinesses(count) {
+        const categories = ['Food & Drinks', 'Fashion & Accessories', 'Tech & Electronics', 'Home & Kitchen', 'Beauty & Personal Care'];
+        const locations = ['Montego Bay', 'Kingston', 'Ocho Rios', 'Negril', 'Mandeville'];
+        const dummyBusinesses = [];
+        for (let i = 0; i < count; i++) {
+          const category = categories[Math.floor(Math.random() * categories.length)];
+          const location = locations[Math.floor(Math.random() * locations.length)];
+          dummyBusinesses.push({
+            id: Date.now() + i,
+            name: `Business ${i + 1}`,
+            category,
+            products: [{
+              name: `Product ${i + 1}`,
+              desc: `Description for product ${i + 1}`,
+              photo: '',
+              views: 0
+            }],
+            desc: `Description for business ${i + 1}.`,
+            whatsapp: `876555${String(i).padStart(4, '0')}`,
+            instagram: `business${i + 1}`,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          });
+        }
+        return dummyBusinesses;
+      }
+      
+      function updateLocalStorage() {
+        localStorage.setItem('businesses', JSON.stringify(businesses));
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      }
+      
+      function updateUIForUser() {
+        profileBtn.style.display = currentUser ? 'block' : 'none';
+        loginBtn.style.display = currentUser ? 'none' : 'block';
+        signupBtn.style.display = currentUser ? 'none' : 'block';
+      }
+      
+      function closeModal(formId) {
+        document.getElementById(formId).style.display = 'none';
+      }
+      
+      function getLetterAvatar(name) {
+        const firstName = name.split(" ")[0];
+        const letter = firstName.charAt(0).toUpperCase();
+        const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
+      }
+      
+      function isStoreOpen(business) {
+        const now = new Date();
+        const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
+        const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
+        const openDate = new Date(now);
+        openDate.setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now);
+        closeDate.setHours(closeH, closeM, 0, 0);
+        return now >= openDate && now <= closeDate;
+      }
+      
+      /*** UI Rendering Functions ***/
+      const displayFeed = () => {
+        feed.style.display = 'block';
+        storePage.style.display = 'none';
+        profilePage.style.display = 'none';
+        feed.innerHTML = '<div class="feed-grid"></div>';
+        const gridContainer = feed.querySelector('.feed-grid');
+        const businessesToShow = currentBusinesses.slice(0, displayedCount);
+        const totalResults = currentBusinesses.length;
+        const info = document.getElementById('search-results-info');
+        if (totalResults === 0) {
+          info.textContent = 'No results found.';
+          gridContainer.innerHTML = '';
+        } else {
+          info.textContent = `Found ${totalResults} results, showing first ${businessesToShow.length}`;
+          businessesToShow.forEach(business => {
+            const featuredProduct = business.products && business.products.length > 0 
+              ? business.products[0] 
+              : { name: 'No product', photo: '' };
+            const card = document.createElement('div');
+            card.className = 'business-card';
+            card.innerHTML = `
+              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                : getLetterAvatar(business.name)}
+              <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
+              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+              </div>
+              <p class="views">Views: ${business.views}</p>
+              <button class="view-store-btn" data-id="${business.id}">View Store</button>
+            `;
+            gridContainer.appendChild(card);
+          });
+        }
+        displayHotProducts();
+      };
+      
+      const displayHotProducts = () => {
+        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 3);
+        hotProducts.innerHTML = '<h3>Hot Products</h3>';
+        hot.forEach(biz => {
+          const product = biz.products[0];
+          hotProducts.innerHTML += `
+            <div class="hot-product-item">
+              <img src="${product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${product.name}">
+              <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
+            </div>
+          `;
+        });
+      };
+      
+      const showProfile = () => {
+        if (!currentUser) return;
+        feed.style.display = 'none';
+        storePage.style.display = 'none';
+        profilePage.style.display = 'block';
+        let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
+        let profileContent = `
+          <div class="profile-container">
+            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
+            <div class="profile-header">
+        `;
+        if (currentUser.profilePhoto) {
+          profileContent += `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" />`;
+        } else {
+          profileContent += getLetterAvatar(currentUser.name);
+        }
+        profileContent += `
+              <h3>${currentUser.name}</h3>
+              <p>${currentUser.email}</p>
+            </div>
+            <div class="profile-details">
+        `;
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          profileContent += `
             <h4>Business Metrics</h4>
             <p>Total Views: ${business.views}</p>
+            <p>Hot Product: ${business.products.sort((a, b) => b.views - a.views)[0].name}</p>
             <button id="add-product-btn">Add Product</button>
-            <button id="manage-products-btn">Manage Products</button>
-            <div class="product-list">
-              ${business.products.map(p => `
-                <div class="product-item">
-                  <span>${p.name} - J$${p.price}</span>
-                  <div class="product-item-actions">
-                    <button class="edit-product-btn" data-id="${p.name}">Edit</button>
-                    <button class="delete-product-btn" data-id="${p.name}">Delete</button>
-                  </div>
-                </div>
-              `).join('')}
+            <div style="margin-top: 1rem; height:300px;">
+              <canvas id="viewsChart"></canvas>
             </div>
-            <canvas id="viewsChart"></canvas>
+          `;
+        } else if (currentUser.type === 'customer') {
+          profileContent += `
+            <h4>Recent Activity</h4>
+            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
+              ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') 
+              : '<p>No recent views.</p>'}
+          `;
+        }
+        profileContent += `
+            </div>
+            <button id="settings-btn">Settings</button>
+            <button id="logout-btn">Logout</button>
           </div>
         `;
-      } else {
-        content += `
-          <div class="profile-details">
-            <h4>Recently Viewed</h4>
-            ${currentUser.recentlyViewed ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>No recent views.</p>'}
-          </div>
-        `;
-      }
-      content += `
-          <button id="settings-btn">Settings</button>
-          <button id="logout-btn">Logout</button>
-        </div>
-      `;
-      profilePage.innerHTML = content;
-      if (currentUser.type === 'business') initViewsChart();
-    }
-
-    // Initialize Chart
-    function initViewsChart() {
-      const ctx = document.getElementById('viewsChart').getContext('2d');
-      const business = businesses.find(b => b.id === currentUser.uid);
-      const data = Array(7).fill(0).map((_, i) => business.views - i * 10); // Mock data
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Array(7).fill(0).map((_, i) => `Day ${i + 1}`),
-          datasets: [{ label: 'Views', data, borderColor: '#2ecc71', fill: true }]
-        },
-        options: { responsive: true }
-      });
-    }
-
-    // Payment Processing
-    async function initiatePayment(bizId, productName) {
-      const business = businesses.find(b => b.id === bizId);
-      const product = business.products.find(p => p.name === productName);
-      const paymentModal = document.getElementById('payment-modal');
-      paymentModal.style.display = 'block';
-      document.getElementById('submit-payment-btn').onclick = async () => {
-        const cardholderName = document.getElementById('cardholder-name').value;
-        const { paymentIntent, error } = await stripe.createPaymentIntent({
-          amount: product.price * 100, // Convert to cents
-          currency: 'jmd',
-          payment_method_data: {
-            billing_details: { name: cardholderName }
-          }
-        });
-        if (error) {
-          document.getElementById('payment-error').textContent = error.message;
-          document.getElementById('payment-error').style.display = 'block';
-        } else {
-          closeModal('payment-modal');
-          alert('Payment successful!');
+        profilePage.innerHTML = profileContent;
+        // Attach settings event listener after rendering the profile
+        const settingsBtn = document.getElementById('settings-btn');
+        if (settingsBtn) {
+          settingsBtn.addEventListener('click', () => {
+            document.getElementById('settings-modal').style.display = 'block';
+            document.getElementById('settings-name').value = currentUser.name || "";
+            document.getElementById('settings-photo').value = currentUser.profilePhoto || "";
+          });
+        }
+        if (currentUser.type === 'business') {
+          initViewsChart();
         }
       };
-    }
-
-    // Event Listeners
-    auth.onAuthStateChanged(user => {
-      currentUser = user ? { uid: user.uid, email: user.email, ...user.metadata } : null;
-      updateUIForUser();
-      if (user) fetchUserData();
-      else document.getElementById('popup').style.display = 'block';
-      fetchBusinesses();
-    });
-
-    async function fetchUserData() {
-      const doc = await db.collection('users').doc(currentUser.uid).get();
-      if (doc.exists) Object.assign(currentUser, doc.data());
-    }
-
-    document.getElementById('business-btn').addEventListener('click', () => {
-      closeModal('popup');
-      document.getElementById('business-form').style.display = 'block';
-    });
-
-    document.getElementById('customer-btn').addEventListener('click', () => {
-      closeModal('popup');
-      document.getElementById('customer-form').style.display = 'block';
-    });
-
-    document.getElementById('feed-btn').addEventListener('click', () => {
-      closeModal('popup');
-      displayFeed();
-    });
-
-    document.getElementById('login-btn').addEventListener('click', () => {
-      document.getElementById('login-form').style.display = 'block';
-    });
-
-    document.getElementById('signup-btn').addEventListener('click', () => {
-      document.getElementById('popup').style.display = 'block';
-    });
-
-    document.getElementById('profile-btn').addEventListener('click', showProfile);
-
-    document.getElementById('submit-business-btn').addEventListener('click', async () => {
-      try {
-        const name = document.getElementById('biz-name').value;
-        const email = document.getElementById('biz-email').value;
-        const password = document.getElementById('biz-password').value;
-        const category = document.getElementById('biz-category').value;
-        const product = document.getElementById('biz-product').value;
-        const desc = document.getElementById('biz-desc').value;
-        const whatsapp = document.getElementById('biz-whatsapp').value;
-        const instagram = document.getElementById('biz-instagram').value;
-        const location = document.getElementById('biz-location').value;
-        const photoFile = document.getElementById('biz-photo').files[0];
-        if (!name || !email || !password || !product) throw new Error('All fields are required');
-        
-        const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        const photoURL = photoFile ? await uploadFile(photoFile, `businesses/${user.uid}/profile.jpg`) : '';
-        const business = {
-          id: user.uid,
-          name,
-          category,
-          products: [{ name: product, desc, photo: '', price: 0, views: 0 }],
-          desc,
-          whatsapp,
-          instagram,
-          location,
-          displayPhoto: photoURL,
-          views: 0,
-          openingHour: '09:00',
-          closingHour: '18:00'
-        };
-        await db.collection('businesses').doc(user.uid).set(business);
-        await db.collection('users').doc(user.uid).set({ name, type: 'business', profilePhoto: photoURL });
-        closeModal('business-form');
-      } catch (error) {
-        document.getElementById('business-form-error').textContent = error.message;
-        document.getElementById('business-form-error').style.display = 'block';
-      }
-    });
-
-    document.getElementById('submit-customer-btn').addEventListener('click', async () => {
-      try {
-        const name = document.getElementById('cust-name').value;
-        const email = document.getElementById('cust-email').value;
-        const password = document.getElementById('cust-password').value;
-        if (!name || !email || !password) throw new Error('All fields are required');
-        
-        const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(user.uid).set({ name, type: 'customer', recentlyViewed: [] });
-        closeModal('customer-form');
-      } catch (error) {
-        document.getElementById('customer-form-error').textContent = error.message;
-        document.getElementById('customer-form-error').style.display = 'block';
-      }
-    });
-
-    document.getElementById('login-submit-btn').addEventListener('click', async () => {
-      try {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        await auth.signInWithEmailAndPassword(email, password);
-        closeModal('login-form');
-      } catch (error) {
-        document.getElementById('login-form-error').textContent = error.message;
-        document.getElementById('login-form-error').style.display = 'block';
-      }
-    });
-
-    document.getElementById('submit-product-btn').addEventListener('click', async () => {
-      try {
-        const name = document.getElementById('prod-name').value;
-        const desc = document.getElementById('prod-desc').value;
-        const price = parseFloat(document.getElementById('prod-price').value);
-        const file = document.getElementById('prod-media').files[0];
-        if (!name || !desc || !price) throw new Error('All fields are required');
-        
-        const photoURL = file ? await uploadFile(file, `products/${currentUser.uid}/${name}.jpg`) : '';
-        const product = { name, desc, photo: photoURL, price, views: 0 };
-        const businessRef = db.collection('businesses').doc(currentUser.uid);
-        const business = businesses.find(b => b.id === currentUser.uid);
-        business.products.push(product);
-        await businessRef.update({ products: business.products });
-        closeModal('add-product-modal');
-        showProfile();
-      } catch (error) {
-        document.getElementById('add-product-error').textContent = error.message;
-        document.getElementById('add-product-error').style.display = 'block';
-      }
-    });
-
-    document.getElementById('save-settings-btn').addEventListener('click', async () => {
-      try {
-        const name = document.getElementById('settings-name').value;
-        const file = document.getElementById('settings-photo').files[0];
-        if (!name) throw new Error('Name is required');
-        
-        const photoURL = file ? await uploadFile(file, `users/${currentUser.uid}/profile.jpg`) : currentUser.profilePhoto;
-        await db.collection('users').doc(currentUser.uid).update({ name, profilePhoto: photoURL });
-        if (currentUser.type === 'business') {
-          await db.collection('businesses').doc(currentUser.uid).update({ name, displayPhoto: photoURL });
+      
+      function initViewsChart() {
+        const ctx = document.getElementById('viewsChart').getContext('2d');
+        const labels = [];
+        const dataPoints = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
+          dataPoints.push(Math.floor(Math.random() * 100));
         }
-        currentUser.name = name;
-        currentUser.profilePhoto = photoURL;
-        closeModal('settings-modal');
-        showProfile();
-      } catch (error) {
-        document.getElementById('settings-error').textContent = error.message;
-        document.getElementById('settings-error').style.display = 'block';
+        const minVal = Math.min(...dataPoints);
+        const maxVal = Math.max(...dataPoints);
+        const pointColors = dataPoints.map(val => {
+          const ratio = (val - minVal) / (maxVal - minVal || 1);
+          const r = Math.round(255 * ratio);
+          const b = Math.round(255 * (1 - ratio));
+          return `rgb(${r},0,${b})`;
+        });
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Daily Views',
+              data: dataPoints,
+              borderColor: '#2ecc71',
+              backgroundColor: 'rgba(46,204,113,0.1)',
+              fill: true,
+              tension: 0.3,
+              pointBackgroundColor: pointColors,
+              pointRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true, position: 'top' } },
+            scales: {
+              x: { title: { display: true, text: 'Date' } },
+              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
+            }
+          }
+        });
       }
-    });
-
-    document.body.addEventListener('click', async e => {
-      if (e.target.classList.contains('close-btn')) closeModal(e.target.getAttribute('data-form'));
-      if (e.target.id === 'logout-btn') await auth.signOut();
-      if (e.target.id === 'settings-btn') {
-        document.getElementById('settings-modal').style.display = 'block';
-        document.getElementById('settings-name').value = currentUser.name;
-      }
-      if (e.target.id === 'add-product-btn') document.getElementById('add-product-modal').style.display = 'block';
-      if (e.target.id === 'manage-products-btn') {
-        const business = businesses.find(b => b.id === currentUser.uid);
-        document.getElementById('manage-product-list').innerHTML = business.products.map(p => `
-          <div class="product-item">
-            <span>${p.name} - J$${p.price}</span>
-            <div class="product-item-actions">
-              <button class="edit-product-btn" data-id="${p.name}">Edit</button>
-              <button class="delete-product-btn" data-id="${p.name}">Delete</button>
-            </div>
-          </div>
-        `).join('');
-        document.getElementById('manage-products-modal').style.display = 'block';
-      }
-      if (e.target.classList.contains('edit-product-btn')) {
-        const name = e.target.getAttribute('data-id');
-        const business = businesses.find(b => b.id === currentUser.uid);
-        const product = business.products.find(p => p.name === name);
-        document.getElementById('edit-prod-name').value = product.name;
-        document.getElementById('edit-prod-desc').value = product.desc;
-        document.getElementById('edit-prod-price').value = product.price;
-        document.getElementById('edit-product-modal').style.display = 'block';
-        document.getElementById('save-product-btn').onclick = async () => {
-          try {
-            const newName = document.getElementById('edit-prod-name').value;
-            const desc = document.getElementById('edit-prod-desc').value;
-            const price = parseFloat(document.getElementById('edit-prod-price').value);
-            const file = document.getElementById('edit-prod-media').files[0];
-            const photoURL = file ? await uploadFile(file, `products/${currentUser.uid}/${newName}.jpg`) : product.photo;
-            product.name = newName;
-            product.desc = desc;
-            product.price = price;
-            product.photo = photoURL;
-            await db.collection('businesses').doc(currentUser.uid).update({ products: business.products });
-            closeModal('edit-product-modal');
+      
+      const openAddProductModal = () => {
+        document.getElementById('add-product-modal').style.display = 'block';
+      };
+      
+      document.getElementById('submit-product-btn').addEventListener('click', () => {
+        const prodName = document.getElementById('prod-name').value.trim();
+        const prodDesc = document.getElementById('prod-desc').value.trim();
+        const fileInput = document.getElementById('prod-media');
+        if (!prodName || !prodDesc) {
+          alert('Please fill in all product fields!');
+          return;
+        }
+        const addProduct = (mediaURL) => {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) {
+            business.products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
+            updateLocalStorage();
+            closeModal('add-product-modal');
             showProfile();
-          } catch (error) {
-            document.getElementById('edit-product-error').textContent = error.message;
-            document.getElementById('edit-product-error').style.display = 'block';
           }
         };
-      }
-      if (e.target.classList.contains('delete-product-btn')) {
-        const name = e.target.getAttribute('data-id');
-        const business = businesses.find(b => b.id === currentUser.uid);
-        business.products = business.products.filter(p => p.name !== name);
-        await db.collection('businesses').doc(currentUser.uid).update({ products: business.products });
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            addProduct(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          addProduct('https://via.placeholder.com/300x200.png?text=Product+Photo');
+        }
+      });
+      
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        const newName = document.getElementById('settings-name').value.trim();
+        const newPhoto = document.getElementById('settings-photo').value.trim();
+        if (newName) {
+          currentUser.name = newName;
+          if (currentUser.type === 'business') {
+            const business = businesses.find(b => b.id === currentUser.id);
+            if (business) business.name = newName;
+          }
+        }
+        currentUser.profilePhoto = newPhoto;
+        if (currentUser.type === 'business') {
+          const business = businesses.find(b => b.id === currentUser.id);
+          if (business) business.displayPhoto = newPhoto;
+        }
+        updateLocalStorage();
+        closeModal('settings-modal');
         showProfile();
+      });
+      
+      /*** Event Handlers ***/
+      document.getElementById('business-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        businessForm.style.display = 'block';
+      });
+      document.getElementById('customer-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        customerForm.style.display = 'block';
+      });
+      document.getElementById('feed-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        displayFeed();
+      });
+      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
+      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
+      profileBtn.addEventListener('click', showProfile);
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.id === 'back-to-feed') {
+          displayFeed();
+        }
+        if (event.target.id === 'back-to-store') {
+          viewStore(currentUser.id);
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
+        }
+      });
+      
+      businessName.addEventListener('click', () => {
+        if (feed.style.display === 'block') {
+          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+          displayedCount = 6;
+          displayFeed();
+        } else {
+          displayFeed();
+        }
+      });
+      
+      document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          closeModal(btn.getAttribute('data-form'));
+        });
+      });
+      
+      searchBar.addEventListener('keyup', () => {
+        const query = searchBar.value.toLowerCase().trim();
+        if (query) {
+          currentBusinesses = businesses.filter(biz => 
+            biz.name.toLowerCase().includes(query) ||
+            biz.category.toLowerCase().includes(query) ||
+            biz.location.toLowerCase().includes(query) ||
+            (biz.products && biz.products.some(product => 
+              product.name.toLowerCase().includes(query) ||
+              product.desc.toLowerCase().includes(query)
+            ))
+          );
+        } else {
+          currentBusinesses = businesses;
+        }
+        displayedCount = 6;
+        displayFeed();
+      });
+      
+      window.addEventListener('scroll', () => {
+        if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
+          loading.style.display = 'block';
+          setTimeout(() => {
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
+            displayFeed();
+            loading.style.display = 'none';
+          }, 500);
+        }
+      });
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
+      });
+      
+      document.getElementById('submit-business-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('biz-name').value.trim();
+          const email = document.getElementById('biz-email').value.trim();
+          const password = document.getElementById('biz-password').value.trim();
+          const category = document.getElementById('biz-category').value;
+          const product = document.getElementById('biz-product').value.trim();
+          const desc = document.getElementById('biz-desc').value.trim();
+          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+          const instagram = document.getElementById('biz-instagram').value.trim();
+          const location = document.getElementById('biz-location').value.trim();
+    
+          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+          if (!/^(876)\d{7}$/.test(whatsapp)) {
+            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+          }
+    
+          const business = {
+            id: Date.now(),
+            name,
+            category,
+            products: [{
+              name: product,
+              desc,
+              photo: '',
+              views: 0
+            }],
+            desc,
+            whatsapp,
+            instagram,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          };
+          const user = { id: business.id, type: 'business', name, email, password };
+    
+          businesses.push(business);
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('business-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('submit-customer-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('cust-name').value.trim();
+          const email = document.getElementById('cust-email').value.trim();
+          const password = document.getElementById('cust-password').value.trim();
+    
+          if (!name || !email || !password) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+    
+          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('customer-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('login-submit-btn').addEventListener('click', () => {
+        try {
+          const email = document.getElementById('login-email').value.trim();
+          const password = document.getElementById('login-password').value.trim();
+    
+          if (!email || !password) {
+            throw new Error('Please enter both email and password!');
+          }
+    
+          const foundUser = users.find(u => u.email === email && u.password === password);
+          if (foundUser) {
+            currentUser = foundUser;
+            updateLocalStorage();
+            closeModal('login-form');
+            updateUIForUser();
+            displayFeed();
+          } else {
+            throw new Error('Invalid email or password!');
+          }
+        } catch (error) {
+          alert(`An error occurred while logging in: ${error.message}`);
+        }
+      });
+      
+      const viewStore = bizId => {
+        const business = businesses.find(b => b.id == bizId);
+        if (!business) return;
+        business.views++;
+        if (currentUser && currentUser.type === 'customer') {
+          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
+          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
+          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
+          updateLocalStorage();
+        }
+        updateLocalStorage();
+        feed.style.display = 'none';
+        storePage.style.display = 'block';
+        profilePage.style.display = 'none';
+        storePage.innerHTML = `
+          <button onclick="displayFeed()">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
+              <p class="category">${business.category}</p>
+              ${business.displayPhoto 
+                ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">`
+                : getLetterAvatar(business.name)}
+              <p>${business.desc}</p>
+              <p><strong>Location:</strong> ${business.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
+              </div>
+              <p class="views">Views: ${business.views}</p>
+            </div>
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${business.products.map(p => `
+                  <div class="product-card">
+                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
+                    <div class="product-info">
+                      <p class="product-name">${p.name}</p>
+                      <p class="product-desc">${p.desc}</p>
+                      <p class="product-views">Views: ${p.views}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      };
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.id === 'logout-btn') {
+          currentUser = null;
+          localStorage.removeItem('currentUser');
+          updateUIForUser();
+          displayFeed();
+        }
+        if (event.target.id === 'add-product-btn') {
+          openAddProductModal();
+        }
+      });
+      
+      if (!currentUser) {
+        popup.style.display = 'block';
+      } else {
+        updateUIForUser();
       }
-      if (e.target.classList.contains('view-store-btn')) viewStore(e.target.getAttribute('data-id'));
-      if (e.target.id === 'back-to-feed') displayFeed();
-      if (e.target.id === 'back-to-store') viewStore(currentUser.uid);
-    });
-
-    document.getElementById('search-bar').addEventListener('keyup', () => {
-      const query = document.getElementById('search-bar').value.toLowerCase();
-      currentBusinesses = businesses.filter(b => 
-        b.name.toLowerCase().includes(query) || 
-        b.category.toLowerCase().includes(query) || 
-        b.products.some(p => p.name.toLowerCase().includes(query))
-      );
       displayFeed();
+      
+      // Event Listeners for dynamic elements
+      
+      document.getElementById('business-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        businessForm.style.display = 'block';
+      });
+      document.getElementById('customer-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        customerForm.style.display = 'block';
+      });
+      document.getElementById('feed-btn').addEventListener('click', () => {
+        popup.style.display = 'none';
+        displayFeed();
+      });
+      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
+      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
+      profileBtn.addEventListener('click', showProfile);
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.id === 'back-to-feed') {
+          displayFeed();
+        }
+        if (event.target.id === 'back-to-store') {
+          viewStore(currentUser.id);
+        }
+      });
+      
+      businessName.addEventListener('click', () => {
+        if (feed.style.display === 'block') {
+          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
+          displayedCount = 6;
+          displayFeed();
+        } else {
+          displayFeed();
+        }
+      });
+      
+      document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          closeModal(btn.getAttribute('data-form'));
+        });
+      });
+      
+      searchBar.addEventListener('keyup', () => {
+        const query = searchBar.value.toLowerCase().trim();
+        if (query) {
+          currentBusinesses = businesses.filter(biz => 
+            biz.name.toLowerCase().includes(query) ||
+            biz.category.toLowerCase().includes(query) ||
+            biz.location.toLowerCase().includes(query) ||
+            (biz.products && biz.products.some(product => 
+              product.name.toLowerCase().includes(query) ||
+              product.desc.toLowerCase().includes(query)
+            ))
+          );
+        } else {
+          currentBusinesses = businesses;
+        }
+        displayedCount = 6;
+        displayFeed();
+      });
+      
+      window.addEventListener('scroll', () => {
+        if (feed.style.display === 'block' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && displayedCount < currentBusinesses.length) {
+          loading.style.display = 'block';
+          setTimeout(() => {
+            displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
+            displayFeed();
+            loading.style.display = 'none';
+          }, 500);
+        }
+      });
+      
+      document.body.addEventListener('click', event => {
+        if (event.target.classList.contains('view-store-btn')) {
+          viewStore(event.target.getAttribute('data-id'));
+        }
+      });
+      
+      document.getElementById('submit-business-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('biz-name').value.trim();
+          const email = document.getElementById('biz-email').value.trim();
+          const password = document.getElementById('biz-password').value.trim();
+          const category = document.getElementById('biz-category').value;
+          const product = document.getElementById('biz-product').value.trim();
+          const desc = document.getElementById('biz-desc').value.trim();
+          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+          const instagram = document.getElementById('biz-instagram').value.trim();
+          const location = document.getElementById('biz-location').value.trim();
+    
+          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+          if (!/^(876)\d{7}$/.test(whatsapp)) {
+            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
+          }
+    
+          const business = {
+            id: Date.now(),
+            name,
+            category,
+            products: [{
+              name: product,
+              desc,
+              photo: '',
+              views: 0
+            }],
+            desc,
+            whatsapp,
+            instagram,
+            location,
+            displayPhoto: '',
+            views: 0,
+            openingHour: "09:00",
+            closingHour: "18:00"
+          };
+          const user = { id: business.id, type: 'business', name, email, password };
+    
+          businesses.push(business);
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('business-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('submit-customer-btn').addEventListener('click', () => {
+        try {
+          const name = document.getElementById('cust-name').value.trim();
+          const email = document.getElementById('cust-email').value.trim();
+          const password = document.getElementById('cust-password').value.trim();
+    
+          if (!name || !email || !password) {
+            throw new Error('Please fill in all fields!');
+          }
+          if (!/\S+@\S+\.\S+/.test(email)) {
+            throw new Error('Please enter a valid email address!');
+          }
+    
+          const user = { id: Date.now(), type: 'customer', name, email, password, recentlyViewed: [] };
+          users.push(user);
+          currentUser = user;
+          updateLocalStorage();
+    
+          closeModal('customer-form');
+          updateUIForUser();
+          displayFeed();
+        } catch (error) {
+          alert(`An error occurred while signing up: ${error.message}`);
+        }
+      });
+      
+      document.getElementById('login-submit-btn').addEventListener('click', () => {
+        try {
+          const email = document.getElementById('login-email').value.trim();
+          const password = document.getElementById('login-password').value.trim();
+    
+          if (!email || !password) {
+            throw new Error('Please enter both email and password!');
+          }
+    
+          const foundUser = users.find(u => u.email === email && u.password === password);
+          if (foundUser) {
+            currentUser = foundUser;
+            updateLocalStorage();
+            closeModal('login-form');
+            updateUIForUser();
+            displayFeed();
+          } else {
+            throw new Error('Invalid email or password!');
+          }
+        } catch (error) {
+          alert(`An error occurred while logging in: ${error.message}`);
+        }
+      });
     });
   </script>
 </body>
