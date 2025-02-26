@@ -7,10 +7,10 @@
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
   <style>
     /* CSS Variables */
     :root {
@@ -67,12 +67,11 @@
       cursor: pointer;
       font-weight: 500;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      transition: background 0.3s, transform 0.2s;
     }
     .header-buttons button:hover {
       background: #f8f9fa;
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
 
     /* Container */
@@ -92,13 +91,11 @@
       border: 2px solid #ddd;
       border-radius: 25px;
       font-size: 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: border-color 0.3s, box-shadow 0.3s;
+      transition: border-color 0.3s;
     }
     #search-bar:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     #search-results-info {
       margin-top: 0.5rem;
@@ -108,50 +105,39 @@
     }
 
     /* Cards and Pages */
-    .business-card,
-    .store-page,
-    .profile-page {
+    .business-card, .store-page, .profile-page {
       background: var(--white);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s;
     }
-    .business-card:hover {
+    .business-card:hover, .store-page:hover, .profile-page:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
-    .business-card h3 {
+    .business-card h3, .store-page h3, .profile-page h3 {
       margin-bottom: 1rem;
       color: var(--primary-green);
       font-size: 1.5rem;
-      font-weight: 600;
     }
-    .business-card .category {
+    .category {
       font-style: italic;
       color: var(--muted-color);
       margin-bottom: 1rem;
-      font-size: 0.9rem;
     }
-    .business-image {
+    .business-image, .letter-avatar {
       width: 150px;
       height: 150px;
-      object-fit: cover;
       border-radius: 50%;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .letter-avatar {
-      width: 150px;
-      height: 150px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 4rem;
       color: var(--white);
-      border-radius: 50%;
-      margin-bottom: 1rem;
     }
     .status-indicator {
       display: inline-block;
@@ -164,8 +150,6 @@
       margin-right: 1rem;
       text-decoration: none;
       color: var(--accent-blue);
-      font-size: 0.9rem;
-      transition: color 0.3s;
     }
     .contact a:hover {
       color: var(--accent-blue-hover);
@@ -184,14 +168,11 @@
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      transition: background 0.3s, transform 0.2s;
     }
     button:hover {
       background: var(--secondary-green);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
 
     /* Modals */
@@ -215,18 +196,15 @@
       margin-bottom: 1.5rem;
     }
     input, select, textarea {
-      display: block;
       width: 100%;
       margin: 0.75rem 0;
       padding: 0.875rem;
       border: 2px solid #ddd;
       border-radius: 8px;
-      font-size: 1rem;
     }
     input:focus, select:focus, textarea:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     .modal .error {
       color: #e74c3c;
@@ -235,14 +213,13 @@
       display: none;
     }
 
-    /* Featured Products Section */
+    /* Hot Products */
     .hot-products {
       background: var(--premium-bg);
       padding: 1.5rem;
       border-radius: 15px;
       margin-bottom: 2rem;
       box-shadow: var(--premium-shadow);
-      border-left: 8px solid var(--primary-green);
     }
     .hot-products h3 {
       font-size: 1.5rem;
@@ -252,19 +229,8 @@
     }
     .hot-product-grid {
       display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
-      padding: 1rem;
-    }
-    @media (min-width: 1025px) {
-      .hot-product-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, auto);
-      }
-    }
-    @media (max-width: 1024px) {
-      .hot-product-grid {
-        grid-template-columns: 1fr;
-      }
     }
     .hot-product-item {
       background: var(--white);
@@ -273,23 +239,37 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       text-align: center;
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s;
     }
     .hot-product-item:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     .hot-product-item img {
       width: 100%;
-      height: 120px;
+      height: 100px;
       object-fit: cover;
       border-radius: 8px;
       margin-bottom: 0.5rem;
     }
     .hot-product-item span {
-      font-size: 1rem;
-      color: var(--text-color);
+      font-size: 0.9rem;
       font-weight: 500;
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 1024px) {
+      header { flex-direction: column; gap: 1rem; }
+      .container { margin: 1rem auto; padding: 0 1rem; }
+      .hot-product-grid {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 1rem;
+      }
+      .hot-product-item {
+        flex: 0 0 80%;
+        width: 80%;
+      }
     }
 
     /* Feed Grid */
@@ -305,13 +285,7 @@
       flex-direction: column;
       gap: 2rem;
     }
-    .business-info {
-      text-align: center;
-    }
-    .products-section h4 {
-      color: var(--primary-green);
-      margin-bottom: 1rem;
-    }
+    .business-info { text-align: center; }
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -329,9 +303,7 @@
     }
     .product-info {
       padding: 1rem;
-    }
-    .product-name {
-      color: var(--primary-green);
+      text-align: center;
     }
 
     /* Profile Page */
@@ -339,10 +311,6 @@
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
-      background: var(--white);
-      border-radius: 12px;
-      box-shadow: var(--premium-shadow);
-      text-align: center;
     }
     .profile-header {
       display: flex;
@@ -381,7 +349,7 @@
       <div id="search-results-info"></div>
     </div>
     <div id="hot-products" class="hot-products">
-      <h3>Featured Products</h3>
+      <h3>Hot Products</h3>
       <div class="hot-product-grid"></div>
     </div>
     <div id="feed" class="feed-grid"></div>
@@ -446,7 +414,6 @@
   </div>
 
   <script>
-    'use strict';
     document.addEventListener('DOMContentLoaded', () => {
       // Firebase Initialization
       const firebaseConfig = {
@@ -463,7 +430,8 @@
       const db = firebase.firestore();
       const storage = firebase.storage();
 
-      // Data
+      // State
+      let businesses = [];
       let currentUser = null;
       let currentBusinesses = [];
 
@@ -476,31 +444,12 @@
       const storePage = document.getElementById('store-page');
       const profilePage = document.getElementById('profile-page');
       const hotProductGrid = document.querySelector('.hot-product-grid');
+      const searchBar = document.getElementById('search-bar');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
       const signupBtn = document.getElementById('signup-btn');
-      const searchBar = document.getElementById('search-bar');
       const businessName = document.getElementById('businessName');
       const addProductModal = document.getElementById('add-product-modal');
-
-      // Authentication State
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          db.collection('users').doc(user.uid).get().then(doc => {
-            if (doc.exists) {
-              currentUser = doc.data();
-              currentUser.id = user.uid;
-              updateUIForUser();
-              displayFeed();
-            }
-          }).catch(error => console.error('Error fetching user:', error));
-        } else {
-          currentUser = null;
-          updateUIForUser();
-          displayFeed();
-          popup.style.display = 'block';
-        }
-      });
 
       // Helper Functions
       function updateUIForUser() {
@@ -522,210 +471,192 @@
 
       function isStoreOpen(business) {
         const now = new Date();
-        const [openH, openM] = business.openingHour.split(":").map(Number);
-        const [closeH, closeM] = business.closingHour.split(":").map(Number);
-        const openDate = new Date(now).setHours(openH, openM, 0, 0);
-        const closeDate = new Date(now).setHours(closeH, closeM, 0, 0);
+        const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
+        const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
+        const openDate = new Date(now); openDate.setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now); closeDate.setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
 
-      // UI Rendering
-      const displayFeed = async () => {
+      // Fetch Businesses from Firestore
+      async function fetchBusinesses() {
+        const snapshot = await db.collection('businesses').get();
+        businesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        currentBusinesses = businesses;
+        displayFeed();
+      }
+
+      // Display Feed
+      function displayFeed() {
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
-        feed.innerHTML = '<div class="feed-grid"></div>';
-        const gridContainer = feed.querySelector('.feed-grid');
-        try {
-          const snapshot = await db.collection('businesses').get();
-          currentBusinesses = snapshot.docs.map(doc => doc.data());
-          const info = document.getElementById('search-results-info');
-          info.textContent = `Found ${currentBusinesses.length} results`;
-          currentBusinesses.forEach(business => {
-            const featuredProduct = business.products[0] || { name: 'No product', photo: '' };
-            const card = document.createElement('div');
-            card.className = 'business-card';
-            card.innerHTML = `
-              <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
-              <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}" loading="lazy">` : ''}
-              <p>${business.desc}</p>
-              <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
-              <button class="view-store-btn" data-id="${business.id}">View Store</button>
-            `;
-            gridContainer.appendChild(card);
-          });
-          displayHotProducts();
-        } catch (error) {
-          console.error('Error fetching businesses:', error);
-          alert('Failed to load businesses.');
-        }
-      };
+        feed.innerHTML = '';
+        currentBusinesses.forEach(biz => {
+          const card = document.createElement('div');
+          card.className = 'business-card';
+          card.innerHTML = `
+            <h3>${biz.name} <span class="status-indicator" style="background: ${isStoreOpen(biz) ? 'green' : 'red'};"></span></h3>
+            <p class="category">${biz.category}</p>
+            ${biz.displayPhoto ? `<img class="business-image" src="${biz.displayPhoto}" alt="${biz.name}">` : getLetterAvatar(biz.name)}
+            <p><strong>Featured Product:</strong> ${biz.products[0].name}</p>
+            ${biz.products[0].photo ? `<img src="${biz.products[0].photo}" alt="${biz.products[0].name}">` : ''}
+            <p>${biz.desc}</p>
+            <p><strong>Location:</strong> ${biz.location}</p>
+            <div class="contact">
+              <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
+              <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
+            </div>
+            <p class="views">Views: ${biz.views}</p>
+            <button class="view-store-btn" data-id="${biz.id}">View Store</button>
+          `;
+          feed.appendChild(card);
+        });
+        displayHotProducts();
+      }
 
-      const displayHotProducts = () => {
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, 6);
+      // Display Hot Products
+      function displayHotProducts() {
+        const hotCount = window.innerWidth >= 1024 ? 6 : 3;
+        const hot = [...businesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
         hotProductGrid.innerHTML = '';
         hot.forEach(biz => {
-          const product = biz.products[0] || { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
+          const product = biz.products[0];
           const item = document.createElement('div');
           item.className = 'hot-product-item';
           item.innerHTML = `
-            <img src="${product.photo}" alt="${product.name}" loading="lazy">
+            <img src="${product.photo || 'https://via.placeholder.com/100'}" alt="${product.name}">
             <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
           `;
           item.addEventListener('click', () => viewStore(biz.id));
           hotProductGrid.appendChild(item);
         });
-      };
+      }
 
-      const viewStore = async (bizId) => {
-        try {
-          const businessDoc = await db.collection('businesses').doc(bizId).get();
-          if (!businessDoc.exists) return;
-          const business = businessDoc.data();
-          await db.collection('businesses').doc(bizId).update({ views: firebase.firestore.FieldValue.increment(1) });
-          business.views += 1;
-          if (currentUser && currentUser.type === 'customer') {
-            await db.collection('users').doc(currentUser.id).update({
-              recentlyViewed: firebase.firestore.FieldValue.arrayUnion({ id: bizId, name: business.name })
-            });
-          }
-          feed.style.display = 'none';
-          storePage.style.display = 'block';
-          profilePage.style.display = 'none';
-          storePage.innerHTML = `
-            <button class="back-to-feed-btn">Back to Feed</button>
-            <div class="store-container">
-              <div class="business-info">
-                <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-                <p class="category">${business.category}</p>
-                ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}" loading="lazy">` : getLetterAvatar(business.name)}
-                <p>${business.desc}</p>
-                <p><strong>Location:</strong> ${business.location}</p>
-                <div class="contact">
-                  <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                  <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-                </div>
-                <p class="views">Views: ${business.views}</p>
+      // View Store
+      function viewStore(bizId) {
+        const biz = businesses.find(b => b.id === bizId);
+        if (!biz) return;
+        biz.views++;
+        db.collection('businesses').doc(biz.id).update({ views: biz.views });
+        feed.style.display = 'none';
+        storePage.style.display = 'block';
+        profilePage.style.display = 'none';
+        storePage.innerHTML = `
+          <button class="back-to-feed-btn">Back to Feed</button>
+          <div class="store-container">
+            <div class="business-info">
+              <h3>${biz.name} <span class="status-indicator" style="background: ${isStoreOpen(biz) ? 'green' : 'red'};"></span></h3>
+              ${biz.displayPhoto ? `<img class="business-image" src="${biz.displayPhoto}" alt="${biz.name}">` : getLetterAvatar(biz.name)}
+              <p>${biz.desc}</p>
+              <p><strong>Location:</strong> ${biz.location}</p>
+              <div class="contact">
+                <a href="https://wa.me/${biz.whatsapp}" target="_blank">WhatsApp</a>
+                <a href="https://instagram.com/${biz.instagram}" target="_blank">Instagram</a>
               </div>
-              <div class="products-section">
-                <h4>Products</h4>
-                <div class="products-grid">
-                  ${business.products.map(p => `
-                    <div class="product-card">
-                      <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}" loading="lazy">
-                      <div class="product-info">
-                        <p class="product-name">${p.name}</p>
-                        <p class="product-desc">${p.desc}</p>
-                        <p class="product-views">Views: ${p.views}</p>
-                      </div>
+              <p class="views">Views: ${biz.views}</p>
+            </div>
+            <div class="products-section">
+              <h4>Products</h4>
+              <div class="products-grid">
+                ${biz.products.map(p => `
+                  <div class="product-card">
+                    <img src="${p.photo || 'https://via.placeholder.com/150'}" alt="${p.name}">
+                    <div class="product-info">
+                      <p class="product-name">${p.name}</p>
+                      <p class="product-desc">${p.desc}</p>
+                      <p class="product-views">Views: ${p.views}</p>
                     </div>
-                  `).join('')}
-                </div>
+                  </div>
+                `).join('')}
               </div>
             </div>
-          `;
-        } catch (error) {
-          console.error('Error viewing store:', error);
-          alert('Failed to load store.');
-        }
-      };
+          </div>
+        `;
+        document.querySelector('.back-to-feed-btn').addEventListener('click', displayFeed);
+      }
 
-      const showProfile = async () => {
+      // Show Profile
+      function showProfile() {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
-        let content = `
+        const biz = businesses.find(b => b.id === currentUser.id);
+        profilePage.innerHTML = `
           <div class="profile-container">
-            <button id="back-to-feed">Back to Feed</button>
+            <button id="back-to-feed">${currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed'}</button>
             <div class="profile-header">
-              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}" loading="lazy">` : getLetterAvatar(currentUser.name)}
+              ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}">` : getLetterAvatar(currentUser.name)}
               <h3>${currentUser.name}</h3>
+              <p>${currentUser.email}</p>
             </div>
-            <div class="profile-details">
-        `;
-        if (currentUser.type === 'business') {
-          const businessDoc = await db.collection('businesses').doc(currentUser.businessId).get();
-          const business = businessDoc.data();
-          content += `
-            <h4>Business Metrics</h4>
-            <p>Total Views: ${business.views}</p>
-            <button id="add-product-btn">Add Product</button>
-            <div class="product-list">
-              ${business.products.map(p => `
-                <div class="product-item">
-                  <span>${p.name} - ${p.desc}</span>
-                </div>
-              `).join('')}
-            </div>
-          `;
-        } else {
-          const userDoc = await db.collection('users').doc(currentUser.id).get();
-          const recentlyViewed = userDoc.data().recentlyViewed || [];
-          content += `
-            <h4>Recent Activity</h4>
-            ${recentlyViewed.map(item => `<p>${item.name}</p>`).join('') || '<p>No recent views.</p>'}
-          `;
-        }
-        content += `
-            </div>
+            ${currentUser.type === 'business' && biz ? `
+              <p>Total Views: ${biz.views}</p>
+              <button id="add-product-btn">Add Product</button>
+              <div class="product-list">
+                ${biz.products.map(p => `
+                  <div class="product-item">
+                    <span>${p.name} - ${p.desc}</span>
+                    <div><button class="delete-product-btn" data-id="${p.name}">Delete</button></div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : currentUser.type === 'customer' ? `
+              <p>Recently Viewed:</p>
+              ${currentUser.recentlyViewed?.map(item => `<p>${item.name}</p>`).join('') || 'None'}
+            ` : ''}
             <button id="logout-btn">Logout</button>
           </div>
         `;
-        profilePage.innerHTML = content;
-        document.getElementById('add-product-btn')?.addEventListener('click', () => addProductModal.style.display = 'block');
-      };
+        document.getElementById('back-to-feed').addEventListener('click', () => currentUser.type === 'business' ? viewStore(currentUser.id) : displayFeed());
+        document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
+        if (currentUser.type === 'business') {
+          document.getElementById('add-product-btn').addEventListener('click', () => addProductModal.style.display = 'block');
+          document.querySelectorAll('.delete-product-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              biz.products = biz.products.filter(p => p.name !== btn.dataset.id);
+              db.collection('businesses').doc(biz.id).update({ products: biz.products });
+              showProfile();
+            });
+          });
+        }
+      }
 
-      // Event Handlers
+      // Event Listeners
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         businessForm.style.display = 'block';
       });
-
       document.getElementById('customer-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         customerForm.style.display = 'block';
       });
-
       document.getElementById('feed-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         displayFeed();
       });
-
       loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
       signupBtn.addEventListener('click', () => popup.style.display = 'block');
       profileBtn.addEventListener('click', showProfile);
+      businessName.addEventListener('click', displayFeed);
 
       document.getElementById('submit-business-btn').addEventListener('click', async () => {
+        const name = document.getElementById('biz-name').value.trim();
+        const email = document.getElementById('biz-email').value.trim();
+        const password = document.getElementById('biz-password').value.trim();
+        const category = document.getElementById('biz-category').value;
+        const product = document.getElementById('biz-product').value.trim();
+        const desc = document.getElementById('biz-desc').value.trim();
+        const whatsapp = document.getElementById('biz-whatsapp').value.trim();
+        const instagram = document.getElementById('biz-instagram').value.trim();
+        const location = document.getElementById('biz-location').value.trim();
+
         try {
-          const name = document.getElementById('biz-name').value.trim();
-          const email = document.getElementById('biz-email').value.trim();
-          const password = document.getElementById('biz-password').value.trim();
-          const category = document.getElementById('biz-category').value;
-          const product = document.getElementById('biz-product').value.trim();
-          const desc = document.getElementById('biz-desc').value.trim();
-          const whatsapp = document.getElementById('biz-whatsapp').value.trim();
-          const instagram = document.getElementById('biz-instagram').value.trim();
-          const location = document.getElementById('biz-location').value.trim();
-
-          if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('All fields are required!');
-          }
-
           const userCredential = await auth.createUserWithEmailAndPassword(email, password);
           const user = userCredential.user;
-
-          const businessRef = db.collection('businesses').doc();
-          await businessRef.set({
-            id: businessRef.id,
+          const business = {
+            id: user.uid,
             name,
             category,
             products: [{ name: product, desc, photo: '', views: 0 }],
@@ -736,99 +667,92 @@
             displayPhoto: '',
             views: 0,
             openingHour: "09:00",
-            closingHour: "18:00",
-            ownerUid: user.uid
-          });
-
-          await db.collection('users').doc(user.uid).set({
-            uid: user.uid,
-            name,
-            type: 'business',
-            businessId: businessRef.id
-          });
-
+            closingHour: "18:00"
+          };
+          await db.collection('businesses').doc(user.uid).set(business);
+          currentUser = { id: user.uid, type: 'business', name, email };
+          updateUIForUser();
           closeModal('business-form');
-          displayFeed();
+          fetchBusinesses();
         } catch (error) {
-          alert(`Sign-up error: ${error.message}`);
+          alert(`Error: ${error.message}`);
         }
       });
 
       document.getElementById('submit-customer-btn').addEventListener('click', async () => {
+        const name = document.getElementById('cust-name').value.trim();
+        const email = document.getElementById('cust-email').value.trim();
+        const password = document.getElementById('cust-password').value.trim();
+
         try {
-          const name = document.getElementById('cust-name').value.trim();
-          const email = document.getElementById('cust-email').value.trim();
-          const password = document.getElementById('cust-password').value.trim();
-
-          if (!name || !email || !password) {
-            throw new Error('All fields are required!');
-          }
-
           const userCredential = await auth.createUserWithEmailAndPassword(email, password);
           const user = userCredential.user;
-
-          await db.collection('users').doc(user.uid).set({
-            uid: user.uid,
-            name,
-            type: 'customer',
-            recentlyViewed: []
-          });
-
+          const customer = { id: user.uid, type: 'customer', name, email, recentlyViewed: [] };
+          await db.collection('users').doc(user.uid).set(customer);
+          currentUser = customer;
+          updateUIForUser();
           closeModal('customer-form');
-          displayFeed();
+          fetchBusinesses();
         } catch (error) {
-          alert(`Sign-up error: ${error.message}`);
+          alert(`Error: ${error.message}`);
         }
       });
 
       document.getElementById('login-submit-btn').addEventListener('click', async () => {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+
         try {
-          const email = document.getElementById('login-email').value.trim();
-          const password = document.getElementById('login-password').value.trim();
-          await auth.signInWithEmailAndPassword(email, password);
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          const user = userCredential.user;
+          const businessDoc = await db.collection('businesses').doc(user.uid).get();
+          if (businessDoc.exists) {
+            currentUser = { id: user.uid, type: 'business', name: businessDoc.data().name, email };
+          } else {
+            const customerDoc = await db.collection('users').doc(user.uid).get();
+            if (customerDoc.exists) {
+              currentUser = customerDoc.data();
+            } else {
+              throw new Error('User data not found');
+            }
+          }
+          updateUIForUser();
           closeModal('login-form');
+          fetchBusinesses();
         } catch (error) {
-          alert(`Login error: ${error.message}`);
+          alert(`Error: ${error.message}`);
         }
       });
 
       document.getElementById('submit-product-btn').addEventListener('click', async () => {
+        const prodName = document.getElementById('prod-name').value.trim();
+        const prodDesc = document.getElementById('prod-desc').value.trim();
+        const fileInput = document.getElementById('prod-media');
+
         try {
-          const prodName = document.getElementById('prod-name').value.trim();
-          const prodDesc = document.getElementById('prod-desc').value.trim();
-          const fileInput = document.getElementById('prod-media');
-          if (!prodName || !prodDesc) throw new Error('Name and description required!');
-          
-          let photoURL = 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-          if (fileInput.files[0]) {
+          let mediaURL = '';
+          if (fileInput.files && fileInput.files[0]) {
             const file = fileInput.files[0];
-            const storageRef = storage.ref(`products/${Date.now()}_${file.name}`);
+            const storageRef = storage.ref(`products/${currentUser.id}/${file.name}`);
             await storageRef.put(file);
-            photoURL = await storageRef.getDownloadURL();
+            mediaURL = await storageRef.getDownloadURL();
+          } else {
+            mediaURL = 'https://via.placeholder.com/150';
           }
 
-          await db.collection('businesses').doc(currentUser.businessId).update({
-            products: firebase.firestore.FieldValue.arrayUnion({ name: prodName, desc: prodDesc, photo: photoURL, views: 0 })
-          });
-
+          const biz = businesses.find(b => b.id === currentUser.id);
+          biz.products.push({ name: prodName, desc: prodDesc, photo: mediaURL, views: 0 });
+          await db.collection('businesses').doc(currentUser.id).update({ products: biz.products });
           closeModal('add-product-modal');
           showProfile();
         } catch (error) {
-          alert(`Error adding product: ${error.message}`);
+          alert(`Error: ${error.message}`);
         }
       });
 
-      document.body.addEventListener('click', event => {
-        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
-        if (event.target.classList.contains('back-to-feed-btn') || event.target.id === 'back-to-feed') displayFeed();
-        if (event.target.id === 'logout-btn') auth.signOut();
-        if (event.target.classList.contains('close-btn')) closeModal(event.target.getAttribute('data-form'));
-      });
-
-      searchBar.addEventListener('keyup', async () => {
+      searchBar.addEventListener('keyup', () => {
         const query = searchBar.value.toLowerCase().trim();
-        const snapshot = await db.collection('businesses').get();
-        currentBusinesses = snapshot.docs.map(doc => doc.data()).filter(biz =>
+        currentBusinesses = businesses.filter(biz =>
           biz.name.toLowerCase().includes(query) ||
           biz.category.toLowerCase().includes(query) ||
           biz.location.toLowerCase().includes(query) ||
@@ -837,7 +761,37 @@
         displayFeed();
       });
 
-      businessName.addEventListener('click', displayFeed);
+      document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(btn.dataset.form));
+      });
+
+      feed.addEventListener('click', (e) => {
+        if (e.target.classList.contains('view-store-btn')) {
+          viewStore(e.target.dataset.id);
+        }
+      });
+
+      // Authentication State Listener
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection('businesses').doc(user.uid).get().then(doc => {
+            if (doc.exists) {
+              currentUser = { id: user.uid, type: 'business', name: doc.data().name, email: user.email };
+            } else {
+              db.collection('users').doc(user.uid).get().then(doc => {
+                currentUser = doc.exists ? doc.data() : null;
+              });
+            }
+            updateUIForUser();
+            fetchBusinesses();
+          });
+        } else {
+          currentUser = null;
+          updateUIForUser();
+          popup.style.display = 'block';
+          fetchBusinesses();
+        }
+      });
     });
   </script>
 </body>
