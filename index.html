@@ -7,9 +7,9 @@
   <!-- Chart.js for interactive graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <style>
     /* CSS Variables */
     :root {
@@ -22,16 +22,10 @@
       --accent-blue: #3498db;
       --accent-blue-hover: #2980b9;
       --white: #fff;
-      --premium-bg: linear-gradient(135deg, #ffffff, #f0f8ff);
       --premium-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
-
     /* Reset and Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Poppins', Arial, sans-serif;
       background: linear-gradient(135deg, var(--light-bg), var(--light-bg-alt));
@@ -39,7 +33,6 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-
     /* Header */
     header {
       background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
@@ -50,13 +43,8 @@
       padding: 1rem 2rem;
       font-size: 1.5rem;
     }
-    #businessName {
-      cursor: pointer;
-    }
-    .header-buttons {
-      display: flex;
-      gap: 1rem;
-    }
+    #businessName { cursor: pointer; }
+    .header-buttons { display: flex; gap: 1rem; }
     .header-buttons button {
       background: var(--white);
       color: var(--primary-green);
@@ -65,22 +53,18 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      transition: background 0.3s, transform 0.2s;
     }
     .header-buttons button:hover {
       background: #f8f9fa;
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-
     /* Container */
     .container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1.5rem;
     }
-
     /* Search Bar */
     .search-container {
       margin-bottom: 1.5rem;
@@ -91,13 +75,11 @@
       border: 2px solid #ddd;
       border-radius: 25px;
       font-size: 1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: border-color 0.3s, box-shadow 0.3s;
+      transition: border-color 0.3s;
     }
     #search-bar:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     #search-results-info {
       margin-top: 0.5rem;
@@ -105,7 +87,6 @@
       color: var(--muted-color);
       text-align: center;
     }
-
     /* Cards and Pages */
     .business-card,
     .store-page,
@@ -115,13 +96,12 @@
       margin-bottom: 1.5rem;
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s;
     }
     .business-card:hover,
     .store-page:hover,
     .profile-page:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
     .business-card h3,
     .store-page h3,
@@ -129,33 +109,22 @@
       margin-bottom: 1rem;
       color: var(--primary-green);
       font-size: 1.5rem;
-      font-weight: 600;
     }
-    .business-card .category,
-    .store-page .category {
-      font-style: italic;
-      color: var(--muted-color);
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
-    }
-    .business-image {
+    .business-image,
+    .profile-header img,
+    .profile-header .letter-avatar {
       width: 150px;
       height: 150px;
       object-fit: cover;
       border-radius: 50%;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .letter-avatar {
-      width: 150px;
-      height: 150px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 4rem;
       color: var(--white);
-      border-radius: 50%;
-      margin-bottom: 1rem;
     }
     .status-indicator {
       display: inline-block;
@@ -164,23 +133,7 @@
       border-radius: 50%;
       margin-left: 5px;
     }
-    .contact a {
-      margin-right: 1rem;
-      text-decoration: none;
-      color: var(--accent-blue);
-      font-size: 0.9rem;
-      transition: color 0.3s;
-    }
-    .contact a:hover {
-      color: var(--accent-blue-hover);
-    }
-    .views {
-      font-size: 0.875rem;
-      color: var(--muted-color);
-      margin-top: 0.75rem;
-    }
-
-    /* Buttons */
+    /* Global Button Styles */
     button {
       background: var(--primary-green);
       color: var(--white);
@@ -188,17 +141,12 @@
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      transition: background 0.3s;
     }
     button:hover {
       background: var(--secondary-green);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-
-    /* Modals */
+    /* Modal Styles */
     .modal {
       position: fixed;
       top: 50%;
@@ -217,7 +165,6 @@
     .modal h2 {
       color: var(--primary-green);
       margin-bottom: 1.5rem;
-      font-size: 1.8rem;
     }
     input,
     select,
@@ -228,159 +175,24 @@
       padding: 0.875rem;
       border: 2px solid #ddd;
       border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
     }
     input:focus,
     select:focus,
     textarea:focus {
       border-color: var(--primary-green);
       outline: none;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
-    .modal .error {
-      color: #e74c3c;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
-
-    /* Hot Products Section */
-    .hot-products {
-      background: var(--premium-bg);
-      padding: 1.5rem;
-      border-radius: 15px;
-      margin-bottom: 2rem;
-      box-shadow: var(--premium-shadow);
-      border-left: 8px solid var(--primary-green);
-      overflow: hidden;
-    }
-    .hot-products h3 {
-      font-size: 1.5rem;
-      color: var(--primary-green);
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-    .hot-product-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      padding: 1rem;
-    }
-    .hot-product-item {
-      background: var(--white);
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-    }
-    .hot-product-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .hot-product-item img {
-      width: 80px;
-      height: 80px;
-      margin-right: 1rem;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-    .hot-product-item span {
-      font-size: 1rem;
-      color: var(--text-color);
-      flex-grow: 1;
-      font-weight: 500;
-    }
-    .hot-product-item::after {
-      content: "🔥";
-      font-size: 1.5rem;
-    }
-
-    /* Mobile Hot Products */
-    @media (max-width: 1024px) {
-      .container {
-        margin: 1rem auto;
-        padding: 0 1rem;
-      }
-      header {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .hot-product-grid {
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
-        overflow-x: auto;
-        animation: mobileSlide 15s infinite ease-in-out;
-      }
-      .hot-product-item {
-        flex: 0 0 80%;
-        width: 80%;
-        margin: 0.25rem 0;
-        padding: 1rem;
-        text-align: center;
-      }
-      .hot-product-item img {
-        width: 100%;
-        height: 120px;
-        margin-bottom: 0.5rem;
-      }
-    }
-
-    @keyframes mobileSlide {
-      0%, 25% { transform: translateX(0); }
-      50%, 75% { transform: translateX(-100%); }
-      100% { transform: translateX(0); }
-    }
-
-    /* Hot Product Popup */
-    #hot-product-popup {
-      background: var(--premium-bg);
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: var(--premium-shadow);
-      z-index: 2000;
-      max-width: 400px;
-    }
-    #hot-product-popup img {
-      width: 150px;
-      height: 150px;
-      border-radius: 10px;
-      object-fit: cover;
-      margin-bottom: 1rem;
-    }
-    #hot-product-popup .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: var(--muted-color);
-    }
-
     /* Feed Grid */
     .feed-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
-
     /* Store Page */
     .store-container {
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      padding: 1rem;
-    }
-    .business-info {
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 1rem;
     }
     .products-grid {
       display: grid;
@@ -391,7 +203,6 @@
       background: var(--white);
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
     }
     .product-card img {
       width: 100%;
@@ -402,25 +213,11 @@
       padding: 1rem;
       text-align: center;
     }
-
     /* Profile Page */
     .profile-container {
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
-    }
-    .profile-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .profile-header img,
-    .profile-header .letter-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
     }
     .product-list {
       margin-top: 1rem;
@@ -429,7 +226,6 @@
       gap: 1rem;
     }
     .product-item {
-      background: var(--white);
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -443,7 +239,7 @@
   <header>
     <span id="businessName">BizFinder JA</span>
     <div class="header-buttons">
-      <button id="profile-btn">Profile</button>
+      <button id="profile-btn" style="display: none;">Profile</button>
       <button id="login-btn">Login</button>
       <button id="signup-btn">Sign Up</button>
     </div>
@@ -453,10 +249,6 @@
     <div class="search-container">
       <input type="text" id="search-bar" placeholder="Search businesses..." />
       <div id="search-results-info"></div>
-    </div>
-    <div id="hot-products" class="hot-products">
-      <h3>Hot Products</h3>
-      <div class="hot-product-grid"></div>
     </div>
     <div id="feed" class="feed-grid"></div>
     <div id="store-page" class="store-page" style="display: none;"></div>
@@ -481,13 +273,11 @@
       <option value="Food & Drinks">Food & Drinks</option>
       <option value="Fashion & Accessories">Fashion & Accessories</option>
       <option value="Tech & Electronics">Tech & Electronics</option>
-      <option value="Home & Kitchen">Home & Kitchen</option>
-      <option value="Beauty & Personal Care">Beauty & Personal Care</option>
     </select>
-    <input type="text" id="biz-product" placeholder="Featured Product Name" required />
-    <input type="text" id="biz-desc" placeholder="Short Description" required />
-    <input type="text" id="biz-whatsapp" placeholder="WhatsApp Number (e.g., 876551234)" required />
-    <input type="text" id="biz-instagram" placeholder="Instagram Handle" required />
+    <input type="text" id="biz-product" placeholder="Featured Product" required />
+    <input type="text" id="biz-desc" placeholder="Description" required />
+    <input type="text" id="biz-whatsapp" placeholder="WhatsApp (e.g., 876551234)" required />
+    <input type="text" id="biz-instagram" placeholder="Instagram" required />
     <input type="text" id="biz-location" placeholder="Location" required />
     <button id="submit-business-btn">Submit</button>
     <button class="close-btn" data-form="business-form">Close</button>
@@ -512,53 +302,25 @@
 
   <div id="settings-modal" class="modal">
     <h2>Settings</h2>
-    <input type="text" id="settings-name" placeholder="Your Name" required />
-    <input type="url" id="settings-photo" placeholder="Profile Photo URL" />
-    <button id="save-settings-btn">Save Settings</button>
-    <button id="reset-settings-btn">Reset to Default</button>
-    <div id="settings-error" class="error">Please fill in all required fields or provide a valid URL.</div>
+    <input type="text" id="settings-name" placeholder="Name" required />
+    <input type="url" id="settings-photo" placeholder="Photo URL" />
+    <button id="save-settings-btn">Save</button>
     <button class="close-btn" data-form="settings-modal">Close</button>
   </div>
 
   <div id="add-product-modal" class="modal">
     <h2>Add Product</h2>
     <input type="text" id="prod-name" placeholder="Product Name" required />
-    <textarea id="prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="url" id="prod-photo" placeholder="Product Photo URL" />
-    <button id="submit-product-btn">Add Product</button>
-    <div id="add-product-error" class="error">Please fill in all required fields!</div>
+    <textarea id="prod-desc" placeholder="Description" required></textarea>
+    <input type="url" id="prod-photo" placeholder="Photo URL" />
+    <button id="submit-product-btn">Add</button>
     <button class="close-btn" data-form="add-product-modal">Close</button>
-  </div>
-
-  <div id="edit-product-modal" class="modal">
-    <h2>Edit Product</h2>
-    <input type="text" id="edit-prod-name" placeholder="Product Name" required />
-    <textarea id="edit-prod-desc" placeholder="Product Description" rows="3" required></textarea>
-    <input type="url" id="edit-prod-photo" placeholder="Photo URL" />
-    <button id="save-product-btn">Save Changes</button>
-    <div id="edit-product-error" class="error">Please fill in all required fields or provide a valid URL.</div>
-    <button class="close-btn" data-form="edit-product-modal">Close</button>
-  </div>
-
-  <div id="manage-products-modal" class="modal">
-    <h2>Manage Products</h2>
-    <div class="product-list" id="manage-product-list"></div>
-    <button id="close-manage-products-btn" class="close-btn" data-form="manage-products-modal">Close</button>
-  </div>
-
-  <div id="hot-product-popup" class="modal">
-    <button class="close-btn" data-form="hot-product-popup">×</button>
-    <img id="hot-product-img" alt="Product Image">
-    <h3 id="hot-product-name"></h3>
-    <p id="hot-product-desc"></p>
-    <p class="views" id="hot-product-views"></p>
-    <button id="view-store-btn">View Store</button>
   </div>
 
   <script>
     'use strict';
     document.addEventListener('DOMContentLoaded', () => {
-      // Firebase Initialization
+      // Initialize Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyBPk2blB_5XsrF8Biw01GxQjtY-A8RMeBI",
         authDomain: "bizfinder-7b1b6.firebaseapp.com",
@@ -572,12 +334,6 @@
       const auth = firebase.auth();
       const db = firebase.firestore();
 
-      // Data Initialization
-      let businesses = [];
-      let currentUser = null;
-      let currentBusinesses = [];
-      let displayedCount = 6;
-
       // DOM Elements
       const popup = document.getElementById('popup');
       const businessForm = document.getElementById('business-form');
@@ -586,7 +342,6 @@
       const feed = document.getElementById('feed');
       const storePage = document.getElementById('store-page');
       const profilePage = document.getElementById('profile-page');
-      const hotProductGrid = document.querySelector('.hot-product-grid');
       const profileBtn = document.getElementById('profile-btn');
       const loginBtn = document.getElementById('login-btn');
       const signupBtn = document.getElementById('signup-btn');
@@ -594,10 +349,9 @@
       const businessName = document.getElementById('businessName');
       const settingsModal = document.getElementById('settings-modal');
       const addProductModal = document.getElementById('add-product-modal');
-      const editProductModal = document.getElementById('edit-product-modal');
-      const manageProductsModal = document.getElementById('manage-products-modal');
-      const manageProductList = document.getElementById('manage-product-list');
-      const hotProductPopup = document.getElementById('hot-product-popup');
+
+      let currentUser = null;
+      let currentBusinesses = [];
 
       // Helper Functions
       function updateUIForUser() {
@@ -607,17 +361,11 @@
       }
 
       function closeModal(formId) {
-        const modal = document.getElementById(formId);
-        if (modal) {
-          modal.style.display = 'none';
-          const error = modal.querySelector('.error');
-          if (error) error.style.display = 'none';
-        }
+        document.getElementById(formId).style.display = 'none';
       }
 
       function getLetterAvatar(name) {
-        const firstName = name.split(" ")[0];
-        const letter = firstName.charAt(0).toUpperCase();
+        const letter = name.charAt(0).toUpperCase();
         const colors = ["#f39c12", "#e74c3c", "#8e44ad", "#3498db", "#1abc9c"];
         const color = colors[Math.floor(Math.random() * colors.length)];
         return `<div class="letter-avatar" style="background:${color};">${letter}</div>`;
@@ -627,149 +375,108 @@
         const now = new Date();
         const [openH, openM] = (business.openingHour || "09:00").split(":").map(Number);
         const [closeH, closeM] = (business.closingHour || "18:00").split(":").map(Number);
-        const openDate = new Date(now);
-        openDate.setHours(openH, openM, 0, 0);
-        const closeDate = new Date(now);
-        closeDate.setHours(closeH, closeM, 0, 0);
+        const openDate = new Date(now).setHours(openH, openM, 0, 0);
+        const closeDate = new Date(now).setHours(closeH, closeM, 0, 0);
         return now >= openDate && now <= closeDate;
       }
 
-      function isValidUrl(url) {
-        try {
-          new URL(url);
-          return true;
-        } catch {
-          return false;
+      // Authentication State Listener
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection('users').doc(user.uid).get().then(doc => {
+            if (doc.exists) {
+              currentUser = { uid: user.uid, ...doc.data() };
+              updateUIForUser();
+              displayFeed();
+            } else {
+              console.error('User document not found');
+            }
+          }).catch(error => console.error('Error fetching user:', error));
+        } else {
+          currentUser = null;
+          updateUIForUser();
+          displayFeed();
         }
-      }
+      });
 
-      async function fetchBusinesses() {
-        const snapshot = await db.collection('users').where('type', '==', 'business').get();
-        return snapshot.docs.map(doc => doc.data());
-      }
-
-      // UI Rendering Functions
+      // Display Feed
       const displayFeed = async () => {
         feed.style.display = 'block';
         storePage.style.display = 'none';
         profilePage.style.display = 'none';
         feed.innerHTML = '<div class="feed-grid"></div>';
         const gridContainer = feed.querySelector('.feed-grid');
-        businesses = await fetchBusinesses();
-        currentBusinesses = businesses;
-        const businessesToShow = currentBusinesses.slice(0, window.innerWidth >= 1024 ? currentBusinesses.length : displayedCount);
-        const totalResults = currentBusinesses.length;
-        const info = document.getElementById('search-results-info');
-        if (totalResults === 0) {
-          info.textContent = 'No results found.';
-          gridContainer.innerHTML = '';
-        } else {
-          info.textContent = `Found ${totalResults} results, showing ${businessesToShow.length}`;
-          businessesToShow.forEach(business => {
-            const featuredProduct = business.products[0] || { name: 'No product', photo: '' };
+        try {
+          const snapshot = await db.collection('users').where('type', '==', 'business').get();
+          currentBusinesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const query = searchBar.value.toLowerCase().trim();
+          const filteredBusinesses = query
+            ? currentBusinesses.filter(biz =>
+                biz.name.toLowerCase().includes(query) ||
+                biz.category.toLowerCase().includes(query) ||
+                biz.location.toLowerCase().includes(query))
+            : currentBusinesses;
+          document.getElementById('search-results-info').textContent =
+            `Found ${filteredBusinesses.length} results`;
+          filteredBusinesses.forEach(business => {
             const card = document.createElement('div');
             card.className = 'business-card';
             card.innerHTML = `
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
+              <p>${business.category}</p>
               ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
-              <p><strong>Featured Product:</strong> ${featuredProduct.name}</p>
-              ${featuredProduct.photo ? `<img src="${featuredProduct.photo}" alt="${featuredProduct.name}">` : ''}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
+              <p>Views: ${business.views || 0}</p>
               <button class="view-store-btn" data-id="${business.id}">View Store</button>
             `;
             gridContainer.appendChild(card);
           });
+        } catch (error) {
+          console.error('Error fetching businesses:', error);
         }
-        displayHotProducts();
       };
 
-      const displayHotProducts = () => {
-        const hotCount = window.innerWidth >= 1024 ? 6 : Infinity;
-        const hot = [...currentBusinesses].sort((a, b) => b.views - a.views).slice(0, hotCount);
-        hotProductGrid.innerHTML = '';
-        if (hot.length === 0) {
-          hotProductGrid.innerHTML = '<p>No hot products available.</p>';
-          return;
-        }
-        hot.forEach(biz => {
-          const product = biz.products[0] || { name: 'No product', photo: 'https://via.placeholder.com/300x200.png?text=No+Product' };
-          const item = document.createElement('div');
-          item.className = 'hot-product-item';
-          item.setAttribute('data-biz-id', biz.id);
-          item.setAttribute('data-product-name', product.name);
-          item.innerHTML = `
-            <img src="${product.photo}" alt="${product.name}">
-            <span>${biz.name} - ${product.name} (Views: ${biz.views})</span>
-          `;
-          hotProductGrid.appendChild(item);
-          item.addEventListener('click', () => showHotProductPopup(biz.id, product.name));
-        });
-      };
-
-      const showHotProductPopup = (bizId, productName) => {
-        const business = currentBusinesses.find(b => b.id == bizId);
-        if (!business) return;
-        const product = business.products.find(p => p.name === productName) || { name: 'No product', desc: 'No description', photo: '' };
-        document.getElementById('hot-product-img').src = product.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo';
-        document.getElementById('hot-product-name').textContent = product.name;
-        document.getElementById('hot-product-desc').textContent = product.desc;
-        document.getElementById('hot-product-views').textContent = `Views: ${business.views}`;
-        document.getElementById('view-store-btn').setAttribute('data-id', bizId);
-        hotProductPopup.style.display = 'block';
-      };
-
-      const viewStore = async bizId => {
-        const businessDoc = await db.collection('users').doc(bizId).get();
-        if (!businessDoc.exists) {
-          alert('Business not found');
-          return;
-        }
-        const business = businessDoc.data();
+      // View Store
+      const viewStore = async (bizId) => {
+        const doc = await db.collection('users').doc(bizId).get();
+        if (!doc.exists) return;
+        const business = { id: doc.id, ...doc.data() };
         business.views = (business.views || 0) + 1;
         await db.collection('users').doc(bizId).update({ views: business.views });
         if (currentUser && currentUser.type === 'customer') {
-          currentUser.recentlyViewed = currentUser.recentlyViewed || [];
-          currentUser.recentlyViewed.unshift({ id: business.id, name: business.name });
-          currentUser.recentlyViewed = currentUser.recentlyViewed.slice(0, 10);
-          await db.collection('users').doc(currentUser.id).update({ recentlyViewed: currentUser.recentlyViewed });
+          const recentlyViewed = currentUser.recentlyViewed || [];
+          recentlyViewed.unshift({ id: business.id, name: business.name });
+          await db.collection('users').doc(currentUser.uid).update({
+            recentlyViewed: recentlyViewed.slice(0, 10)
+          });
         }
-        businesses = businesses.map(b => b.id === bizId ? business : b);
-        currentBusinesses = currentBusinesses.map(b => b.id === bizId ? business : b);
         feed.style.display = 'none';
         storePage.style.display = 'block';
         profilePage.style.display = 'none';
+        const productsSnapshot = await db.collection('users').doc(bizId).collection('products').get();
+        const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         storePage.innerHTML = `
           <button class="back-to-feed-btn">Back to Feed</button>
           <div class="store-container">
             <div class="business-info">
               <h3>${business.name} <span class="status-indicator" style="background: ${isStoreOpen(business) ? 'green' : 'red'};"></span></h3>
-              <p class="category">${business.category}</p>
-              ${business.displayPhoto ? `<img class="business-image" src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
+              <p>${business.category}</p>
+              ${business.displayPhoto ? `<img src="${business.displayPhoto}" alt="${business.name}">` : getLetterAvatar(business.name)}
               <p>${business.desc}</p>
               <p><strong>Location:</strong> ${business.location}</p>
-              <div class="contact">
-                <a href="https://wa.me/${business.whatsapp}" target="_blank">WhatsApp</a>
-                <a href="https://instagram.com/${business.instagram}" target="_blank">Instagram</a>
-              </div>
-              <p class="views">Views: ${business.views}</p>
+              <p>Views: ${business.views}</p>
             </div>
             <div class="products-section">
               <h4>Products</h4>
               <div class="products-grid">
-                ${business.products.map(p => `
+                ${products.map(p => `
                   <div class="product-card">
-                    <img src="${p.photo || 'https://via.placeholder.com/300x200.png?text=Product+Photo'}" alt="${p.name}">
+                    <img src="${p.photo || 'https://via.placeholder.com/150'}" alt="${p.name}">
                     <div class="product-info">
-                      <p class="product-name">${p.name}</p>
-                      <p class="product-desc">${p.desc}</p>
-                      <p class="product-views">Views: ${p.views}</p>
+                      <p>${p.name}</p>
+                      <p>${p.desc}</p>
+                      <p>Views: ${p.views || 0}</p>
                     </div>
                   </div>
                 `).join('')}
@@ -779,15 +486,15 @@
         `;
       };
 
-      const showProfile = () => {
+      // Show Profile
+      const showProfile = async () => {
         if (!currentUser) return;
         feed.style.display = 'none';
         storePage.style.display = 'none';
         profilePage.style.display = 'block';
-        let backText = currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed';
         let profileContent = `
           <div class="profile-container">
-            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${backText}</button>
+            <button id="${currentUser.type === 'business' ? 'back-to-store' : 'back-to-feed'}">${currentUser.type === 'business' ? 'Back to Store' : 'Back to Feed'}</button>
             <div class="profile-header">
               ${currentUser.profilePhoto ? `<img src="${currentUser.profilePhoto}" alt="${currentUser.name}">` : getLetterAvatar(currentUser.name)}
               <h3>${currentUser.name}</h3>
@@ -796,31 +503,30 @@
             <div class="profile-details">
         `;
         if (currentUser.type === 'business') {
+          const productsSnapshot = await db.collection('users').doc(currentUser.uid).collection('products').get();
+          const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           profileContent += `
             <h4>Business Metrics</h4>
-            <p>Total Views: ${currentUser.views}</p>
-            <p>Hot Product: ${currentUser.products.sort((a, b) => b.views - a.views)[0]?.name || 'No products'}</p>
+            <p>Total Views: ${currentUser.views || 0}</p>
             <button id="add-product-btn">Add Product</button>
-            <button id="manage-products-btn">Manage Products</button>
-            <div class="product-list" id="profile-product-list">
-              ${currentUser.products.map(p => `
+            <div class="product-list">
+              ${products.map(p => `
                 <div class="product-item">
                   <span>${p.name} - ${p.desc}</span>
-                  <div class="product-item-actions">
-                    <button class="edit-product-btn" data-id="${p.name}">Edit</button>
-                    <button class="delete-product-btn" data-id="${p.name}">Delete</button>
+                  <div>
+                    <button class="edit-product-btn" data-id="${p.id}">Edit</button>
+                    <button class="delete-product-btn" data-id="${p.id}">Delete</button>
                   </div>
                 </div>
-              `).join('') || '<p>No products available.</p>'}
-            </div>
-            <div style="margin-top: 1rem; height:300px;">
-              <canvas id="viewsChart"></canvas>
+              `).join('') || '<p>No products</p>'}
             </div>
           `;
         } else {
           profileContent += `
             <h4>Recent Activity</h4>
-            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') : '<p>No recent views.</p>'}
+            ${currentUser.recentlyViewed && currentUser.recentlyViewed.length 
+              ? currentUser.recentlyViewed.map(item => `<p>${item.name}</p>`).join('') 
+              : '<p>No recent views</p>'}
           `;
         }
         profileContent += `
@@ -830,159 +536,77 @@
           </div>
         `;
         profilePage.innerHTML = profileContent;
-        const settingsBtn = document.getElementById('settings-btn');
-        if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
+
         if (currentUser.type === 'business') {
-          initViewsChart();
-          document.getElementById('add-product-btn').addEventListener('click', openAddProductModal);
-          document.getElementById('manage-products-btn').addEventListener('click', openManageProductsModal);
+          document.getElementById('add-product-btn').addEventListener('click', () => addProductModal.style.display = 'block');
           document.querySelectorAll('.edit-product-btn').forEach(btn => {
             btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
           });
           document.querySelectorAll('.delete-product-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-              if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
-                deleteProduct(btn.getAttribute('data-id'));
-              }
+            btn.addEventListener('click', () => deleteProduct(btn.getAttribute('data-id')));
+          });
+        }
+        document.getElementById('settings-btn').addEventListener('click', () => {
+          document.getElementById('settings-name').value = currentUser.name;
+          document.getElementById('settings-photo').value = currentUser.profilePhoto || '';
+          settingsModal.style.display = 'block';
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => auth.signOut());
+      };
+
+      // Product Management
+      const addProduct = async () => {
+        const name = document.getElementById('prod-name').value.trim();
+        const desc = document.getElementById('prod-desc').value.trim();
+        const photo = document.getElementById('prod-photo').value.trim() || 'https://via.placeholder.com/150';
+        if (!name || !desc) return alert('Please fill in all required fields');
+        await db.collection('users').doc(currentUser.uid).collection('products').add({
+          name, desc, photo, views: 0
+        });
+        closeModal('add-product-modal');
+        showProfile();
+      };
+
+      const editProduct = async (productId) => {
+        const doc = await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).get();
+        if (doc.exists) {
+          const product = doc.data();
+          const name = prompt('Edit Product Name:', product.name);
+          const desc = prompt('Edit Description:', product.desc);
+          const photo = prompt('Edit Photo URL:', product.photo);
+          if (name && desc) {
+            await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).update({
+              name, desc, photo: photo || product.photo
             });
-          });
-        }
-      };
-
-      function initViewsChart() {
-        const ctx = document.getElementById('viewsChart')?.getContext('2d');
-        if (!ctx) return;
-        const labels = [];
-        const dataPoints = [];
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          labels.push(`${d.getMonth() + 1}/${d.getDate()}`);
-          dataPoints.push(Math.floor(Math.random() * 100));
-        }
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Daily Views',
-              data: dataPoints,
-              borderColor: '#2ecc71',
-              backgroundColor: 'rgba(46,204,113,0.1)',
-              fill: true,
-              tension: 0.3
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: 'Views' }, beginAtZero: true }
-            }
+            showProfile();
           }
-        });
-      }
-
-      const openAddProductModal = () => {
-        addProductModal.style.display = 'block';
-        document.getElementById('add-product-error').style.display = 'none';
-      };
-
-      const openSettingsModal = () => {
-        settingsModal.style.display = 'block';
-        document.getElementById('settings-name').value = currentUser.name || '';
-        document.getElementById('settings-photo').value = currentUser.profilePhoto || '';
-        document.getElementById('settings-error').style.display = 'none';
-      };
-
-      const openManageProductsModal = () => {
-        manageProductList.innerHTML = currentUser.products.map(p => `
-          <div class="product-item">
-            <span>${p.name} - ${p.desc}</span>
-            <div class="product-item-actions">
-              <button class="edit-product-btn" data-id="${p.name}">Edit</button>
-              <button class="delete-product-btn" data-id="${p.name}">Delete</button>
-            </div>
-          </div>
-        `).join('') || '<p>No products available.</p>';
-        manageProductsModal.style.display = 'block';
-        document.querySelectorAll('.edit-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => editProduct(btn.getAttribute('data-id')));
-        });
-        document.querySelectorAll('.delete-product-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if (confirm(`Are you sure you want to delete "${btn.getAttribute('data-id')}"?`)) {
-              deleteProduct(btn.getAttribute('data-id'));
-            }
-          });
-        });
-      };
-
-      const editProduct = productId => {
-        const product = currentUser.products.find(p => p.name === productId);
-        if (product) {
-          document.getElementById('edit-prod-name').value = product.name;
-          document.getElementById('edit-prod-desc').value = product.desc;
-          document.getElementById('edit-prod-photo').value = product.photo;
-          editProductModal.style.display = 'block';
-          document.getElementById('edit-product-error').style.display = 'none';
         }
       };
 
-      const saveEditedProduct = async () => {
-        const productId = document.getElementById('edit-prod-name').value.trim();
-        const prodDesc = document.getElementById('edit-prod-desc').value.trim();
-        const prodPhoto = document.getElementById('edit-prod-photo').value.trim();
-        const error = document.getElementById('edit-product-error');
-        if (!productId || !prodDesc) {
-          error.style.display = 'block';
-          return;
-        }
-        if (prodPhoto && !isValidUrl(prodPhoto)) {
-          error.textContent = 'Please provide a valid photo URL';
-          error.style.display = 'block';
-          return;
-        }
-        const product = currentUser.products.find(p => p.name === productId);
-        if (product) {
-          product.desc = prodDesc;
-          product.photo = prodPhoto || '';
-          await db.collection('users').doc(currentUser.id).update({ products: currentUser.products });
-          closeModal('edit-product-modal');
+      const deleteProduct = async (productId) => {
+        if (confirm('Are you sure you want to delete this product?')) {
+          await db.collection('users').doc(currentUser.uid).collection('products').doc(productId).delete();
           showProfile();
         }
       };
 
-      const deleteProduct = async productId => {
-        currentUser.products = currentUser.products.filter(p => p.name !== productId);
-        await db.collection('users').doc(currentUser.id).update({ products: currentUser.products });
-        if (manageProductsModal.style.display === 'block') {
-          openManageProductsModal();
-        } else {
-          showProfile();
-        }
-      };
-
-      // Event Handlers
+      // Event Listeners
       document.getElementById('business-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         businessForm.style.display = 'block';
       });
-
       document.getElementById('customer-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         customerForm.style.display = 'block';
       });
-
       document.getElementById('feed-btn').addEventListener('click', () => {
         popup.style.display = 'none';
         displayFeed();
       });
-
-      loginBtn.addEventListener('click', () => { loginForm.style.display = 'block'; });
-      signupBtn.addEventListener('click', () => { popup.style.display = 'block'; });
+      loginBtn.addEventListener('click', () => loginForm.style.display = 'block');
+      signupBtn.addEventListener('click', () => popup.style.display = 'block');
       profileBtn.addEventListener('click', showProfile);
+      businessName.addEventListener('click', displayFeed);
 
       document.getElementById('submit-business-btn').addEventListener('click', async () => {
         try {
@@ -995,42 +619,21 @@
           const whatsapp = document.getElementById('biz-whatsapp').value.trim();
           const instagram = document.getElementById('biz-instagram').value.trim();
           const location = document.getElementById('biz-location').value.trim();
-
           if (!name || !email || !password || !category || !product || !desc || !whatsapp || !instagram || !location) {
-            throw new Error('Please fill in all fields!');
+            throw new Error('Please fill in all fields');
           }
-          if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
-          }
-          if (!/^(876)\d{7}$/.test(whatsapp)) {
-            throw new Error('Please enter a valid Jamaican WhatsApp number (e.g., 8761234567)');
-          }
-
           const userCredential = await auth.createUserWithEmailAndPassword(email, password);
           const user = userCredential.user;
-          const businessData = {
-            id: user.uid,
-            type: 'business',
-            name,
-            email,
-            category,
-            products: [{ name: product, desc, photo: '', views: 0 }],
-            desc,
-            whatsapp,
-            instagram,
-            location,
-            displayPhoto: '',
-            views: 0,
-            openingHour: "09:00",
-            closingHour: "18:00"
-          };
-          await db.collection('users').doc(user.uid).set(businessData);
-          currentUser = businessData;
+          await db.collection('users').doc(user.uid).set({
+            type: 'business', name, email, category, desc, whatsapp, instagram, location,
+            displayPhoto: '', views: 0, openingHour: "09:00", closingHour: "18:00"
+          });
+          await db.collection('users').doc(user.uid).collection('products').add({
+            name: product, desc, photo: '', views: 0
+          });
           closeModal('business-form');
-          updateUIForUser();
-          displayFeed();
         } catch (error) {
-          alert(`Error signing up: ${error.message}`);
+          alert(`Sign-up error: ${error.message}`);
         }
       });
 
@@ -1039,30 +642,15 @@
           const name = document.getElementById('cust-name').value.trim();
           const email = document.getElementById('cust-email').value.trim();
           const password = document.getElementById('cust-password').value.trim();
-
-          if (!name || !email || !password) {
-            throw new Error('Please fill in all fields!');
-          }
-          if (!/\S+@\S+\.\S+/.test(email)) {
-            throw new Error('Please enter a valid email address!');
-          }
-
+          if (!name || !email || !password) throw new Error('Please fill in all fields');
           const userCredential = await auth.createUserWithEmailAndPassword(email, password);
           const user = userCredential.user;
-          const customerData = {
-            id: user.uid,
-            type: 'customer',
-            name,
-            email,
-            recentlyViewed: []
-          };
-          await db.collection('users').doc(user.uid).set(customerData);
-          currentUser = customerData;
+          await db.collection('users').doc(user.uid).set({
+            type: 'customer', name, email, recentlyViewed: []
+          });
           closeModal('customer-form');
-          updateUIForUser();
-          displayFeed();
         } catch (error) {
-          alert(`Error signing up: ${error.message}`);
+          alert(`Sign-up error: ${error.message}`);
         }
       });
 
@@ -1070,172 +658,39 @@
         try {
           const email = document.getElementById('login-email').value.trim();
           const password = document.getElementById('login-password').value.trim();
-
-          if (!email || !password) {
-            throw new Error('Please enter both email and password!');
-          }
-
-          const userCredential = await auth.signInWithEmailAndPassword(email, password);
-          const user = userCredential.user;
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          if (userDoc.exists) {
-            currentUser = userDoc.data();
-            closeModal('login-form');
-            updateUIForUser();
-            displayFeed();
-          } else {
-            throw new Error('User data not found!');
-          }
+          if (!email || !password) throw new Error('Please enter email and password');
+          await auth.signInWithEmailAndPassword(email, password);
+          closeModal('login-form');
         } catch (error) {
-          alert(`Error logging in: ${error.message}`);
+          alert(`Login error: ${error.message}`);
         }
       });
-
-      document.getElementById('submit-product-btn').addEventListener('click', async () => {
-        const prodName = document.getElementById('prod-name').value.trim();
-        const prodDesc = document.getElementById('prod-desc').value.trim();
-        const prodPhoto = document.getElementById('prod-photo').value.trim();
-        const error = document.getElementById('add-product-error');
-
-        if (!prodName || !prodDesc) {
-          error.style.display = 'block';
-          return;
-        }
-        if (prodPhoto && !isValidUrl(prodPhoto)) {
-          error.textContent = 'Please provide a valid photo URL';
-          error.style.display = 'block';
-          return;
-        }
-
-        const newProduct = { name: prodName, desc: prodDesc, photo: prodPhoto || '', views: 0 };
-        currentUser.products.push(newProduct);
-        await db.collection('users').doc(currentUser.id).update({ products: currentUser.products });
-        closeModal('add-product-modal');
-        showProfile();
-      });
-
-      document.getElementById('save-product-btn').addEventListener('click', saveEditedProduct);
 
       document.getElementById('save-settings-btn').addEventListener('click', async () => {
-        const newName = document.getElementById('settings-name').value.trim();
-        const newPhoto = document.getElementById('settings-photo').value.trim();
-        const error = document.getElementById('settings-error');
-
-        if (!newName) {
-          error.style.display = 'block';
-          return;
-        }
-        if (newPhoto && !isValidUrl(newPhoto)) {
-          error.textContent = 'Please provide a valid photo URL';
-          error.style.display = 'block';
-          return;
-        }
-
-        currentUser.name = newName;
-        currentUser.profilePhoto = newPhoto || '';
-        if (currentUser.type === 'business') currentUser.displayPhoto = newPhoto || '';
-        await db.collection('users').doc(currentUser.id).update({
-          name: newName,
-          profilePhoto: newPhoto || '',
-          ...(currentUser.type === 'business' && { displayPhoto: newPhoto || '' })
-        });
+        const name = document.getElementById('settings-name').value.trim();
+        const photo = document.getElementById('settings-photo').value.trim();
+        if (!name) return alert('Name is required');
+        await db.collection('users').doc(currentUser.uid).update({ name, profilePhoto: photo });
+        currentUser.name = name;
+        currentUser.profilePhoto = photo;
         closeModal('settings-modal');
         showProfile();
       });
 
-      document.getElementById('reset-settings-btn').addEventListener('click', async () => {
-        currentUser.profilePhoto = '';
-        if (currentUser.type === 'business') currentUser.displayPhoto = '';
-        await db.collection('users').doc(currentUser.id).update({
-          profilePhoto: '',
-          ...(currentUser.type === 'business' && { displayPhoto: '' })
-        });
-        closeModal('settings-modal');
-        showProfile();
-      });
-
-      document.getElementById('view-store-btn').addEventListener('click', () => {
-        const bizId = document.getElementById('view-store-btn').getAttribute('data-id');
-        if (bizId) {
-          viewStore(bizId);
-          closeModal('hot-product-popup');
-        }
-      });
+      document.getElementById('submit-product-btn').addEventListener('click', addProduct);
 
       document.body.addEventListener('click', event => {
-        if (event.target.id === 'back-to-feed') displayFeed();
-        if (event.target.id === 'back-to-store') viewStore(currentUser?.id);
-        if (event.target.classList.contains('back-to-feed-btn')) displayFeed();
-        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
-        if (event.target.id === 'logout-btn') {
-          auth.signOut();
-          currentUser = null;
-          updateUIForUser();
-          displayFeed();
-        }
         if (event.target.classList.contains('close-btn')) closeModal(event.target.getAttribute('data-form'));
+        if (event.target.classList.contains('view-store-btn')) viewStore(event.target.getAttribute('data-id'));
+        if (event.target.id === 'back-to-feed' || event.target.classList.contains('back-to-feed-btn')) displayFeed();
+        if (event.target.id === 'back-to-store') viewStore(currentUser.uid);
       });
 
-      businessName.addEventListener('click', () => {
-        if (feed.style.display === 'block') {
-          currentBusinesses = [...businesses].sort(() => Math.random() - 0.5);
-          displayedCount = 6;
-          displayFeed();
-        } else {
-          displayFeed();
-        }
-      });
+      searchBar.addEventListener('keyup', () => setTimeout(displayFeed, 300));
 
-      let searchTimeout;
-      searchBar.addEventListener('keyup', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const query = searchBar.value.toLowerCase().trim();
-          if (query) {
-            currentBusinesses = businesses.filter(biz =>
-              biz.name.toLowerCase().includes(query) ||
-              biz.category.toLowerCase().includes(query) ||
-              biz.location.toLowerCase().includes(query) ||
-              (biz.products && biz.products.some(p => 
-                p.name.toLowerCase().includes(query) || 
-                p.desc.toLowerCase().includes(query)))
-            );
-          } else {
-            currentBusinesses = businesses;
-          }
-          displayedCount = 6;
-          displayFeed();
-        }, 300);
-      });
-
-      window.addEventListener('scroll', () => {
-        if (feed.style.display === 'block' && window.innerWidth < 1024 && 
-            (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && 
-            displayedCount < currentBusinesses.length) {
-          displayedCount = Math.min(displayedCount + 6, currentBusinesses.length);
-          displayFeed();
-        }
-      });
-
-      // Auth State Listener
-      auth.onAuthStateChanged(async user => {
-        if (user) {
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          if (userDoc.exists) {
-            currentUser = userDoc.data();
-            updateUIForUser();
-            displayFeed();
-          } else {
-            currentUser = null;
-            updateUIForUser();
-          }
-        } else {
-          currentUser = null;
-          updateUIForUser();
-          if (!currentUser) popup.style.display = 'block';
-          displayFeed();
-        }
-      });
+      // Initial Load
+      if (!currentUser) popup.style.display = 'block';
+      else displayFeed();
     });
   </script>
 </body>
