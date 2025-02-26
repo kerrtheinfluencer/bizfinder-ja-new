@@ -1,26 +1,67 @@
-// main.js
-import { db } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+// Import Firestore functions
+import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { firebaseApp } from "./firebase-config.js";
 
+// Initialize Firestore
+const db = getFirestore(firebaseApp);
+const vendorList = document.getElementById("vendor-list");
+
+let lastVisible = null; // Stores the last document to enable pagination
+const vendorsPerPage = 6; // Number of vendors per page
+
+// Function to fetch vendor data from Firestore
 async function loadVendors() {
-  const vendorListEl = document.getElementById("vendor-list");
-  try {
-    const vendorsSnapshot = await getDocs(collection(db, "vendors"));
-    vendorsSnapshot.forEach(doc => {
-      const vendor = doc.data();
-      const vendorEl = document.createElement("div");
-      vendorEl.className = "vendor";
-      vendorEl.innerHTML = `
-        <h3>${vendor.name}</h3>
-        <p>${vendor.description}</p>
-        <a href="vendor.html?id=${doc.id}">Visit Store</a>
-      `;
-      vendorListEl.appendChild(vendorEl);
-    });
-  } catch (error) {
-    console.error("Error fetching vendors:", error);
-    vendorListEl.innerHTML = "<p>Failed to load vendors. Please try again later.</p>";
-  }
+    let vendorsQuery;
+    
+    if (lastVisible) {
+        vendorsQuery = query(
+            collection(db, "vendors"),
+            orderBy("name"), 
+            startAfter(lastVisible), // Continue from the last vendor
+            limit(vendorsPerPage)
+        );
+    } else {
+        vendorsQuery = query(
+            collection(db, "vendors"),
+            orderBy("name"),
+            limit(vendorsPerPage)
+        );
+    }
+
+    const querySnapshot = await getDocs(vendorsQuery);
+
+    if (!querySnapshot.empty) {
+        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1]; // Update the last document
+
+        querySnapshot.forEach(doc => {
+            const vendor = doc.data();
+            renderVendorCard(vendor);
+        });
+    }
 }
 
-document.addEventListener("DOMContentLoaded", loadVendors);
+// Function to display vendor cards
+function renderVendorCard(vendor) {
+    const vendorCard = document.createElement("div");
+    vendorCard.classList.add("vendor-card");
+    vendorCard.innerHTML = `
+        <img src="${vendor.profilePhoto || 'default.jpg'}" alt="${vendor.name}">
+        <h3>${vendor.name}</h3>
+        <p>${vendor.description || 'No description available'}</p>
+        <div class="vendor-products">
+            ${vendor.products.slice(0, 3).map(product => `<img src="${product}" alt="Product">`).join('')}
+        </div>
+        <a href="${vendor.storeLink}" target="_blank">Visit Store</a>
+    `;
+    vendorList.appendChild(vendorCard);
+}
+
+// Infinite scroll listener
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+        loadVendors();
+    }
+});
+
+// Initial load
+loadVendors();
