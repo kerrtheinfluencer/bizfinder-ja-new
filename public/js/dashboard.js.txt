@@ -1,0 +1,66 @@
+// dashboard.js
+import { db, auth } from "./firebase-config.js";
+import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+function loadVendorProducts(vendorId) {
+  const vendorProductsEl = document.getElementById("vendor-products");
+  // Assuming each product document has a field 'vendorId'
+  getDocs(collection(db, "products")).then(snapshot => {
+    snapshot.forEach(doc => {
+      const product = doc.data();
+      if (product.vendorId === vendorId) {
+        const productEl = document.createElement("div");
+        productEl.className = "product";
+        productEl.innerHTML = `
+          <h4>${product.name}</h4>
+          <p>${product.description}</p>
+          <span>Price: ${product.price}</span>
+        `;
+        vendorProductsEl.appendChild(productEl);
+      }
+    });
+  }).catch(error => {
+    console.error("Error loading products:", error);
+    vendorProductsEl.innerHTML = "<p>Could not load products.</p>";
+  });
+}
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    loadVendorProducts(user.uid);
+  } else {
+    // Redirect unauthenticated users to login
+    window.location.href = "login.html";
+  }
+});
+
+// Handle product addition
+document.getElementById("add-product-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("product-name").value;
+  const price = parseFloat(document.getElementById("product-price").value);
+  const description = document.getElementById("product-desc").value;
+  try {
+    await addDoc(collection(db, "products"), {
+      name,
+      price,
+      description,
+      vendorId: auth.currentUser.uid
+    });
+    alert("Product added successfully!");
+    location.reload();
+  } catch (error) {
+    console.error("Error adding product:", error);
+    alert("Failed to add product. Please try again.");
+  }
+});
+
+// Logout functionality
+document.getElementById("logout-btn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    window.location.href = "login.html";
+  }).catch(error => {
+    console.error("Logout error:", error);
+  });
+});
