@@ -1,0 +1,19 @@
+body {
+  padding-top: 70px;
+}
+
+.profile-placeholder {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}

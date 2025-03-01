@@ -1,0 +1,36 @@
+<% layout('layout') %>
+<h1><%= store.businessName %></h1>
+<p><strong>Location:</strong> <%= store.location %></p>
+<p><strong>Owner:</strong> <%= store.owner.name %></p>
+
+<!-- Social Links -->
+<div class="mb-3">
+  <% if (store.whatsapp) { %>
+    <a href="https://wa.me/<%= store.whatsapp %>" target="_blank" class="me-2">WhatsApp</a>
+  <% } %>
+  <% if (store.instagram) { %>
+    <a href="<%= store.instagram %>" target="_blank" class="me-2">Instagram</a>
+  <% } %>
+  <% if (store.tiktok) { %>
+    <a href="<%= store.tiktok %>" target="_blank">TikTok</a>
+  <% } %>
+</div>
+
+<!-- Products Listing -->
+<div class="row mt-4">
+  <% products.forEach(function(product) { %>
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <% if (product.images && product.images.length > 0) { %>
+          <img src="<%= product.images[0] %>" class="card-img-top" alt="<%= product.title %>">
+        <% } else { %>
+          <img src="https://via.placeholder.com/300" class="card-img-top" alt="No Image">
+        <% } %>
+        <div class="card-body">
+          <h5 class="card-title"><%= product.title %></h5>
+          <p class="card-text"><%= product.description %></p>
+        </div>
+      </div>
+    </div>
+  <% }); %>
+</div>

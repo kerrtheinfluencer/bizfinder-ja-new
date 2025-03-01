@@ -1,0 +1,72 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const User = require('../models/User');
+
+// Render login page
+router.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Render signup page
+router.get('/signup', (req, res) => {
+  res.render('signup');
+});
+
+// Handle signup
+router.post('/signup', async (req, res) => {
+  const { name, email, password, password2 } = req.body;
+  let errors = [];
+  if (!name || !email || !password || !password2) {
+    errors.push({ msg: 'Please fill in all fields' });
+  }
+  if (password !== password2) {
+    errors.push({ msg: 'Passwords do not match' });
+  }
+  if (password.length < 6) {
+    errors.push({ msg: 'Password should be at least 6 characters' });
+  }
+  if (errors.length > 0) {
+    res.render('signup', { errors, name, email, password, password2 });
+  } else {
+    try {
+      let user = await User.findOne({ email: email.toLowerCase() });
+      if (user) {
+        errors.push({ msg: 'Email is already registered' });
+        res.render('signup', { errors, name, email, password, password2 });
+      } else {
+        const newUser = new User({ name, email: email.toLowerCase(), password });
+        // Hash password before saving
+        const salt = await bcrypt.genSalt(10);
+        newUser.password = await bcrypt.hash(password, salt);
+        await newUser.save();
+        req.flash('success_msg', 'You are now registered and can log in');
+        res.redirect('/auth/login');
+      }
+    } catch (err) {
+      console.error(err);
+      res.render('signup', { errors: [{ msg: 'Error occurred during registration' }], name, email, password, password2 });
+    }
+  }
+});
+
+// Handle login
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/auth/login',
+    failureFlash: true
+  })(req, res, next);
+});
+
+// Handle logout
+router.get('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/auth/login');
+  });
+});
+
+module.exports = router;
